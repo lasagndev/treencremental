@@ -1,0 +1,166 @@
+.pointTree {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #080812;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    cursor: grab;
+}
+
+.pointTree:active {
+    cursor: grabbing;
+}
+
+.upgradeCanvas {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+}
+
+/* ── connection lines ── */
+.upgradeSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* tube — wide, translucent background */
+.upgradeLine__tube {
+    stroke-width: 8;
+    stroke-linecap: round;
+    fill: none;
+}
+
+/* core — narrow, solid foreground */
+.upgradeLine__core {
+    stroke-width: 2;
+    stroke-linecap: round;
+    fill: none;
+}
+
+/* dash — animated flow on top of core */
+.upgradeLine__dash {
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 8 6;
+    fill: none;
+    animation: lineFlow 1.2s linear infinite;
+}
+
+@keyframes lineFlow {
+    from { stroke-dashoffset: 14; }
+    to   { stroke-dashoffset: 0; }
+}
+
+/* locked */
+.upgradeLine--locked .upgradeLine__tube { stroke: #111122; stroke-opacity: 0.8; }
+.upgradeLine--locked .upgradeLine__core { stroke: #1c1c34; }
+
+/* default (unlocked, not yet active) */
+.upgradeLine--default .upgradeLine__tube { stroke: #252550; stroke-opacity: 0.4; }
+.upgradeLine--default .upgradeLine__core { stroke: #34346a; }
+
+/* active (from-node has been bought — path is live) */
+.upgradeLine--active .upgradeLine__tube  { stroke: #5050c0; stroke-opacity: 0.25; }
+.upgradeLine--active .upgradeLine__core  { stroke: #6666cc; }
+.upgradeLine--active .upgradeLine__dash  { stroke: #aaaaff; }
+
+/* ── stats bar ── */
+.pointTreeCurrencyBar {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #0e0e22;
+    border: 1px solid #1e1e40;
+    border-radius: 6px;
+    padding: 8px 14px;
+    z-index: 10;
+}
+
+.pointTreeCurrencyBar p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #5858a0;
+}
+
+/* ── base button ── */
+.upgradeButton {
+    width: 120px;
+    height: 100px;
+    margin: 0;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #222244;
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.upgradeButton:hover:not(:disabled) {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+}
+
+.upgradeButton:active:not(:disabled) {
+    transform: translateY(0px);
+}
+
+.upgradeId {
+    margin: 0 0 4px 0;
+    font-size: 0.65rem;
+    opacity: 0.4;
+}
+
+/* ── 1. locked (prerequisite not met) ── */
+.upgradeButton--locked {
+    background: #0c0c1a;
+    border-color: #181830;
+    color: #303055;
+    cursor: not-allowed;
+}
+
+/* ── 2. unaffordable (unlocked but can't afford) ── */
+.upgradeButton--unaffordable {
+    background: #1c0e0e;
+    border-color: #3a1818;
+    color: #904848;
+}
+
+/* ── 3. affordable (can buy right now) ── */
+.upgradeButton--affordable {
+    background: #0c1e10;
+    border-color: #1e5028;
+    color: #58d070;
+    box-shadow: 0 0 10px rgba(60, 180, 80, 0.18);
+}
+
+/* ── 4. partial (buyable, bought some but not maxed) ── */
+.upgradeButton--partial {
+    background: #0c1428;
+    border-color: #1e3464;
+    color: #5888d8;
+}
+
+/* ── 5. maxed / bought ── */
+.upgradeButton--maxed {
+    background: #1c1a08;
+    border-color: #3c3410;
+    color: #a89828;
+    cursor: default;
+}

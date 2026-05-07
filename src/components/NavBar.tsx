@@ -1,20 +1,26 @@
-﻿
-import "../styles/NavBar.css"
+﻿import "../styles/NavBar.css"
 
 interface Props {
+    currentTab: string
     setCurrentTab: React.Dispatch<React.SetStateAction<string>>
 }
 
-
-function NavBar( { setCurrentTab } : Props ) {
+function NavBar( { currentTab, setCurrentTab } : Props ) {
 
     return (
         <section className="navBar">
-            <button onClick={ () => setCurrentTab("MainTree") }>Main Tree</button>
-            <button onClick={ () => setCurrentTab("PrestigeTree") }>Prestige Tree</button>
+            <button
+                className={currentTab === "MainTree" ? "navTab--active" : ""}
+                onClick={ () => setCurrentTab("MainTree") }>
+                Main Tree
+            </button>
+            <button
+                className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
+                onClick={ () => setCurrentTab("PrestigeTree") }>
+                Prestige Tree
+            </button>
         </section>
     )
-
 
 }
 

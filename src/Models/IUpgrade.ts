@@ -1,9 +1,11 @@
-﻿export interface IOneTimeUpgrade {
+﻿import type { Game } from "./Game.ts";
+
+export interface IOneTimeUpgrade {
     id: number;
     description: string;
     price: number;
     isBought: boolean;
-    effect: Function;
+    effect: (game: Game) => void;
 }
 
 export interface IBuyableUpgrade {
@@ -15,7 +17,7 @@ export interface IBuyableUpgrade {
     maxAmount: number;
     isBought: boolean;
     isMaxed: boolean;
-    effect: Function;
+    effect: (game: Game) => void;
 }
 
 export interface IUnlockUpgrade {
@@ -24,5 +26,5 @@ export interface IUnlockUpgrade {
     price: number;
     isBought: boolean;
     unlocks: string;
-    effect: Function;
+    effect: (game: Game) => void;
 }

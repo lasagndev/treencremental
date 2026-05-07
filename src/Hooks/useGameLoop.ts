@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Game } from "../Models/Game.ts";
 
 export function useGameLoop() {
-  const [point, setPoint] = useState(0);
-  const [bonusPoints, setBonusPoints] = useState(1);
+  const [point, setPoint] = useState(10);
+  const [bonusPoints, setBonusPoints] = useState(0);
   const [globalPointMultiplier, setGlobalPointMultiplier] = useState(1);
   const [globalPointExponent, setGlobalPointExponent] = useState(1);
 
