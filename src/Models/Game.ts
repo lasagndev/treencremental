@@ -1,4 +1,5 @@
 ﻿import type {Dispatch, SetStateAction} from "react";
+import type Decimal from "break_eternity.js";
 
 
 export class Game {
@@ -10,16 +11,20 @@ export class Game {
     setGlobalPointMultiplier
     globalPointExponent
     setGlobalPointExponent
+    globalMultiplierMultiplier
+    setGlobalMultiplierMultiplier
 
 
-    constructor(point: number,
-                setPoint: Dispatch<SetStateAction<number>>,
-                globalPointAddition: number,
-                setGlobalPointAddition: Dispatch<SetStateAction<number>>,
-                globalPointMultiplier: number,
-                setGlobalPointMultiplier: Dispatch<SetStateAction<number>>,
-                globalPointExponent: number,
-                setGlobalPointExponent: Dispatch<SetStateAction<number>>) {
+    constructor(point: Decimal,
+                setPoint: Dispatch<SetStateAction<Decimal>>,
+                globalPointAddition: Decimal,
+                setGlobalPointAddition: Dispatch<SetStateAction<Decimal>>,
+                globalPointMultiplier: Decimal,
+                setGlobalPointMultiplier: Dispatch<SetStateAction<Decimal>>,
+                globalPointExponent: Decimal,
+                setGlobalPointExponent: Dispatch<SetStateAction<Decimal>>,
+                globalMultiplierMultiplier: Decimal,
+                setGlobalMultiplierMultiplier: Dispatch<SetStateAction<Decimal>>) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -29,5 +34,7 @@ export class Game {
         this.setGlobalPointMultiplier = setGlobalPointMultiplier;
         this.globalPointExponent = globalPointExponent;
         this.setGlobalPointExponent = setGlobalPointExponent;
+        this.globalMultiplierMultiplier = globalMultiplierMultiplier;
+        this.setGlobalMultiplierMultiplier = setGlobalMultiplierMultiplier;
     }
 }

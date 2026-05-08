@@ -7,7 +7,7 @@ interface Props {
 const PrestigeTree = ({game}: Props) => {
     return (
         <>
-            <button onClick={() => {game.setGlobalPointMultiplier(n => n + 1)}}>SKIBIDI MNOZNIK!!</button>
+            <button onClick={() => {game.setGlobalPointMultiplier(n => n.plus(1))}}>SKIBIDI MNOZNIK!!</button>
         </>
     )
 

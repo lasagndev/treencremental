@@ -1,43 +1,27 @@
 import type {Game} from "../Models/Game.ts";
 import {pUp1} from "../data/pointUpgrades.ts";
-import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
+import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
 import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 
-const UPGRADE_GAP = 160 // px between upgrade steps
+const UPGRADE_GAP = 160 // px between upgrade nodes
 
-function getUpgradeStyle(id: number): CSSProperties {
-    const category = Math.floor(id / 100)
-    const step = id % 100
-    const base: CSSProperties = {
+function getUpgradeStyle(pos: UpgradePosition): CSSProperties {
+    return {
         position: 'absolute',
         transform: 'translate(-50%, -50%)',
-        top: '50%',
-        left: '50%',
+        top: `calc(50% + ${pos.y * UPGRADE_GAP}px)`,
+        left: `calc(50% + ${pos.x * UPGRADE_GAP}px)`,
         margin: 0,
-    }
-    switch (category) {
-        case 1: return { ...base, left: `calc(50% - ${step * UPGRADE_GAP}px)` }
-        case 2: return { ...base, left: `calc(50% + ${step * UPGRADE_GAP}px)` }
-        case 3: return { ...base, top:  `calc(50% + ${step * UPGRADE_GAP}px)` }
-        case 4: return { ...base, top:  `calc(50% - ${step * UPGRADE_GAP}px)` }
-        default: return base
     }
 }
 
-function getUpgradeCenter(id: number, w: number, h: number): { x: number, y: number } {
-    const category = Math.floor(id / 100)
-    const step = id % 100
-    const cx = w / 2
-    const cy = h / 2
-    switch (category) {
-        case 1: return { x: cx - step * UPGRADE_GAP, y: cy }
-        case 2: return { x: cx + step * UPGRADE_GAP, y: cy }
-        case 3: return { x: cx,                      y: cy + step * UPGRADE_GAP }
-        case 4: return { x: cx,                      y: cy - step * UPGRADE_GAP }
-        default: return { x: cx, y: cy }
+function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: number, y: number } {
+    return {
+        x: w / 2 + pos.x * UPGRADE_GAP,
+        y: h / 2 + pos.y * UPGRADE_GAP,
     }
 }
 
@@ -110,76 +94,82 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
         isDragging.current = false
     }
 
-
+    // Build id → position lookup for SVG line drawing
+    const posById: Record<number, UpgradePosition> = { [pUp1.id]: pUp1.position }
+    buyableUpgrades.forEach(u => { posById[u.id] = u.position })
+    oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
 
     function up1() {
-        game.setPoint(n => n - pUp1.price)
-        game.setGlobalPointAddition(n => n + 1)
+        game.setPoint(n => n.minus(pUp1.price))
+        game.setGlobalPointAddition(n => n.plus(1))
         pUp1.isBought = true
     }
 
     function buyOneTime(upg: IOneTimeUpgrade) {
-        game.setPoint(n => n - upg.price)
+        game.setPoint(n => n.minus(upg.price))
         upg.effect(game)
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }
 
+    function getPrice(upg: IBuyableUpgrade) {
+        return upg.calcPrice ? upg.calcPrice(upg) : upg.price
+    }
+
     function buyBuyable(upg: IBuyableUpgrade) {
-        const currentPrice = upg.price
-        game.setPoint(n => n - currentPrice)
+        game.setPoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
         setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
             ...u,
-            price: u.price * u.priceMultiplier,
-            currentAmount: u.currentAmount + 1,
-            isMaxed: u.currentAmount + 1 === u.maxAmount
+            ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),
+            currentAmount: u.currentAmount.plus(1),
+            isMaxed: u.currentAmount.plus(1).eq(u.maxAmount)
         } : u))
     }
 
     function isLocked(id: number): boolean {
-        const step = id % 100
-        if (step <= 1) return false
-        const prevId = id - 1
-        const prevBuyable = buyableUpgrades.find(u => u.id === prevId)
-        if (prevBuyable) return prevBuyable.currentAmount === 0
-        const prevOneTime = oneTimeUpgrades.find(u => u.id === prevId)
-        if (prevOneTime) return !prevOneTime.isBought
+        const upg = [...buyableUpgrades, ...oneTimeUpgrades].find(u => u.id === id)
+        if (!upg || upg.parentId === undefined) return false
+        const { parentId } = upg
+        // direct children of root are never locked
+        if (parentId === pUp1.id) return false
+        const parentBuyable = buyableUpgrades.find(u => u.id === parentId)
+        if (parentBuyable) return parentBuyable.currentAmount.eq(0)
+        const parentOneTime = oneTimeUpgrades.find(u => u.id === parentId)
+        if (parentOneTime) return !parentOneTime.isBought
         return false
     }
 
     function oneTimeClass(upg: IOneTimeUpgrade): string {
         if (isLocked(upg.id)) return 'upgradeButton--locked'
         if (upg.isBought) return 'upgradeButton--maxed'
-        if (upg.price > game.point) return 'upgradeButton--unaffordable'
+        if (upg.price.gt(game.point)) return 'upgradeButton--unaffordable'
         return 'upgradeButton--affordable'
     }
 
     function buyableClass(upg: IBuyableUpgrade): string {
         if (isLocked(upg.id)) return 'upgradeButton--locked'
         if (upg.isMaxed) return 'upgradeButton--maxed'
-        if (upg.price <= game.point) return 'upgradeButton--affordable'
-        if (upg.currentAmount > 0) return 'upgradeButton--partial'
+        if (getPrice(upg).lte(game.point)) return 'upgradeButton--affordable'
+        if (upg.currentAmount.gt(0)) return 'upgradeButton--partial'
         return 'upgradeButton--unaffordable'
     }
 
     function rootClass(): string {
         if (pUp1.isBought) return 'upgradeButton--maxed'
-        if (pUp1.price > game.point) return 'upgradeButton--unaffordable'
+        if (pUp1.price.gt(game.point)) return 'upgradeButton--unaffordable'
         return 'upgradeButton--affordable'
     }
 
     function getConnections(): Array<{ from: number, to: number }> {
-        const allMapped = [...buyableUpgrades, ...oneTimeUpgrades]
-        return allMapped.map(upg => ({
-            from: upg.id % 100 === 1 ? pUp1.id : upg.id - 1,
-            to: upg.id,
-        }))
+        return [...buyableUpgrades, ...oneTimeUpgrades]
+            .filter(upg => upg.parentId !== undefined)
+            .map(upg => ({ from: upg.parentId!, to: upg.id }))
     }
 
     function isNodeActive(id: number): boolean {
         if (id === pUp1.id) return pUp1.isBought
         const buyable = buyableUpgrades.find(u => u.id === id)
-        if (buyable) return buyable.currentAmount > 0
+        if (buyable) return buyable.currentAmount.gt(0)
         const oneTime = oneTimeUpgrades.find(u => u.id === id)
         if (oneTime) return oneTime.isBought
         return false
@@ -187,7 +177,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
 
     function getLineState(from: number, to: number): 'locked' | 'active' | 'default' {
         if (isLocked(to)) return 'locked'
-        if (isNodeActive(from)) return 'active'
+        if (isNodeActive(from) && isNodeActive(to)) return 'active'
         return 'default'
     }
 
@@ -203,19 +193,19 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
             onMouseLeave={handleMouseUp}
         >
 
-            {game.globalPointAddition > 0 && <section className={"pointTreeCurrencyBar"}>
-                <p>Base point gain: {game.globalPointAddition}</p>
-                {game.globalPointMultiplier > 1 && <p>Point multi: {game.globalPointMultiplier.toFixed(1)}</p>}
-                {game.globalPointExponent > 1 && <p>Point exponent: {game.globalPointExponent}</p>}
+            {game.globalPointAddition.gt(0) && <section className={"pointTreeCurrencyBar"}>
+                <p>Base point gain: {game.globalPointAddition.toFixed(0)}</p>
+                {game.globalPointMultiplier.gt(1) && <p>Point multi: {game.globalPointMultiplier.toFixed(1)}</p>}
+                {game.globalPointExponent.gt(1) && <p>Point exponent: {game.globalPointExponent.toFixed(0)}</p>}
             </section>}
 
             <div className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
 
                 {width > 0 && (
-                    <svg className="upgradeSvg">
+                    <svg className="upgradeSvg" overflow="visible">
                         {getConnections().map(({ from, to }) => {
-                            const a = getUpgradeCenter(from, width, height)
-                            const b = getUpgradeCenter(to, width, height)
+                            const a = getUpgradeCenter(posById[from], width, height)
+                            const b = getUpgradeCenter(posById[to], width, height)
                             const state = getLineState(from, to)
                             return (
                                 <g key={`${from}-${to}`} className={`upgradeLine upgradeLine--${state}`}>
@@ -233,28 +223,28 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                 <button
                     id={"rootUpgrade"}
                     className={`upgradeButton ${rootClass()}`}
-                    style={getUpgradeStyle(pUp1.id)}
+                    style={getUpgradeStyle(pUp1.position)}
                     onClick={() => up1()}
-                    disabled={pUp1.isBought || pUp1.price > game.point}>
+                    disabled={pUp1.isBought || pUp1.price.gt(game.point)}>
                     <p className={"upgradeId"}>{pUp1.id}</p>
                     {pUp1.description}
                     <br/>
-                    Price: {pUp1.price}
+                    Price: {pUp1.price.toFixed(0)}
                 </button>
 
                 {buyableUpgrades.map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${buyableClass(upg)}`}
-                        style={getUpgradeStyle(upg.id)}
+                        style={getUpgradeStyle(upg.position)}
                         onClick={() => buyBuyable(upg)}
-                        disabled={upg.isMaxed || upg.price > game.point || isLocked(upg.id)}>
+                        disabled={upg.isMaxed || getPrice(upg).gt(game.point) || isLocked(upg.id)}>
                         <p className={"upgradeId"}>{upg.id}</p>
-                        {upg.description}
+                        {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {Math.round(upg.price)}
+                        Price: {getPrice(upg).toFixed(0)}
                         <br/>
-                        {upg.currentAmount}/{upg.maxAmount}
+                        {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
                     </button>
                 ))}
 
@@ -262,13 +252,13 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                     <button
                         key={upg.id}
                         className={`upgradeButton ${oneTimeClass(upg)}`}
-                        style={getUpgradeStyle(upg.id)}
+                        style={getUpgradeStyle(upg.position)}
                         onClick={() => buyOneTime(upg)}
-                        disabled={upg.isBought || upg.price > game.point || isLocked(upg.id)}>
+                        disabled={upg.isBought || upg.price.gt(game.point) || isLocked(upg.id)}>
                         <p className={"upgradeId"}>{upg.id}</p>
-                        {upg.description}
+                        {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {upg.price}
+                        Price: {upg.price.toFixed(0)}
                     </button>
                 ))}
 

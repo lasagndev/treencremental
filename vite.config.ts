@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
-  server: {allowedHosts: ["makena-unconceited-malapertly.ngrok-free.dev"]}
+  server: {allowedHosts: ["makena-unconceited-malapertly.ngrok-free.dev", "agility-crazily-acorn.ngrok-free.dev"]}
 })
