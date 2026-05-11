@@ -242,7 +242,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {getPrice(upg).toFixed(0)}
+                        Price: {getPrice(upg).gte(1e6) ? getPrice(upg).toExponential(2).replace('e+', 'e') : getPrice(upg).toFixed(0) }
                         <br/>
                         {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
                     </button>
@@ -258,7 +258,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {upg.price.toFixed(0)}
+                        Price: {upg.price.gte(1e6) ? upg.price.toExponential(2).replace('e+', 'e') : upg.price.toFixed(0)}
                     </button>
                 ))}
 

@@ -6,10 +6,12 @@ interface Props {
 
 function CurrencyBar( { game }: Props ) {
 
+    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).pow(game.globalPointExponent)
+
     return (
         <section className={"CurrencyBar"}>
-            <h2>p {game.point.lt(1e9) ? game.point.toFixed(0) : game.point.toExponential(2).replace('e+', 'e')}</h2>
-            <h3>+{game.globalPointAddition.times(game.globalPointMultiplier).pow(game.globalPointExponent).toFixed(2)} p/s</h3>
+            <h2>p {game.point.lt(1e6) ? game.point.toFixed(0) : game.point.toExponential(2).replace('e+', 'e')}</h2>
+            <h3>+ {pointsPerSecond.lt(1e6) ? pointsPerSecond.toFixed(0) : pointsPerSecond.toExponential(2).replace('e+', 'e')} p/s</h3>
         </section>
     )
 
