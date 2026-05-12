@@ -25,6 +25,14 @@ export const prestigeUnlock : IUnlockUpgrade = {
     }
 }
 
+function fmt_upgrade(n: Decimal): string {
+    if (n.gte('1e1000000')) return n.toExponential(6).replace('e+', 'e')
+    if (n.gte('1e100000'))  return n.toExponential(5).replace('e+', 'e')
+    if (n.gte('1e10000'))   return n.toExponential(4).replace('e+', 'e')
+    if (n.gte('1e1000'))    return n.toExponential(3).replace('e+', 'e')
+    if (n.gte(1e6))         return n.toExponential(2).replace('e+', 'e')
+    return n.toFixed(2)
+}
 
 // -------------------------------------
 // ---------- buyable upgrady ----------
@@ -50,7 +58,7 @@ const pUp102: IBuyableUpgrade = {
     parentId: 101,
     position: { x: -2, y: -0.5 },
     description: "+ 0.2 point multi",
-    dynamicDescription: (game) => `+${new Decimal(0.2).times(game.globalMultiplierMultiplier).toFixed(2)} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(0.2).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(600),
     priceMultiplier: new Decimal(1.2),
     calcPrice: (upg) => upg.price.times(((upg.currentAmount).pow(1.1)).plus(new Decimal(1))),
@@ -188,7 +196,7 @@ const pUp111: IBuyableUpgrade = {
     parentId: 106,
     position: { x: -5, y: -2 },
     description: "",
-    dynamicDescription: (game) => `+${new Decimal(2).times(game.globalMultiplierMultiplier).toFixed(2)} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(2).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(5e7),
     priceMultiplier: new Decimal(1.2),
     calcPrice: (upg) => upg.price.times(((upg.currentAmount.plus(new Decimal(1))).pow(2))),
@@ -333,7 +341,7 @@ const pUp201: IOneTimeUpgrade = {
     parentId: 1,
     position: { x: 1, y: 0 },
     description: "+1 point multi",
-    dynamicDescription: (game) => `+${new Decimal(1).times(game.globalMultiplierMultiplier).toFixed(2)} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(1).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(100),
     isBought: false,
     effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(1).times(game.globalMultiplierMultiplier)))
@@ -387,7 +395,7 @@ const pUp206: IOneTimeUpgrade = {
     parentId: 203,
     position: { x: 3, y: 1 },
     description: "+5 point multi",
-    dynamicDescription: (game) => `+${new Decimal(5).times(game.globalMultiplierMultiplier).toFixed(2)} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(5).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(30000),
     isBought: false,
     effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(5).times(game.globalMultiplierMultiplier)))
@@ -471,7 +479,7 @@ const pUp214: IOneTimeUpgrade = {
     parentId: 211,
     position: { x: 5, y: 2 },
     description: "",
-    dynamicDescription: (game) => `+${new Decimal(15).times(game.globalMultiplierMultiplier).toFixed(2)} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(15).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(1e10),
     isBought: false,
     effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(15).times(game.globalMultiplierMultiplier)))

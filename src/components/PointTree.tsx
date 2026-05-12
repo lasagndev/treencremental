@@ -228,7 +228,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                     onClick={handlePrestige}
                     disabled={game.point.lt(1e15)}>
                     PRESTIGE<br/>
-                    for { game.point.gte(1e15) ? prestigePointFormula.toFixed(0) : 0 } PP
+                    for { game.point.gte(1e15) ? fmt(prestigePointFormula) : 0 } PP
                 </button>
             )}
 
@@ -283,7 +283,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{prestigeUnlock.id}</p>
                         {prestigeUnlock.description}
                         <br/>
-                        Price: {prestigeUnlock.price.toExponential(2).replace('e+', 'e')}
+                        Price: {fmt(prestigeUnlock.price)}
                     </button>
                 }
 
@@ -297,7 +297,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {getPrice(upg).gte(1e6) ? getPrice(upg).toExponential(2).replace('e+', 'e') : getPrice(upg).toFixed(0) }
+                        Price: {fmt(getPrice(upg)) }
                         <br/>
                         {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
                     </button>
@@ -313,7 +313,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {upg.price.gte(1e6) ? upg.price.toExponential(2).replace('e+', 'e') : upg.price.toFixed(0)}
+                        Price: {fmt(upg.price)}
                     </button>
                 ))}
 
