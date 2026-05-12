@@ -164,3 +164,53 @@
     color: #a89828;
     cursor: default;
 }
+
+/* ── 6. unlock (prestige-type upgrade, affordable) ── */
+.upgradeButton--unlock {
+    background: #160c28;
+    border-color: #5a2090;
+    color: #c884ff;
+    box-shadow: 0 0 14px rgba(160, 80, 255, 0.25);
+}
+
+/* ── prestige reset button (fixed overlay, top-right of PointTree) ── */
+.prestigeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    padding: 10px 24px;
+    background: #1e0a30;
+    border: 1px solid #7030b0;
+    border-radius: 8px;
+    color: #d090ff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 0 16px rgba(160, 60, 255, 0.3);
+}
+
+.prestigeButton:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+    box-shadow: 0 0 28px rgba(160, 60, 255, 0.55);
+}
+
+.prestigeButton:active {
+    transform: translateY(0px);
+}
+
+.prestigeButton:disabled {
+    background: #303030;
+    border-color: #737373;
+    color: #a8a8a8;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.prestigeButton:disabled:hover {
+    filter: none;
+    transform: none;
+}
