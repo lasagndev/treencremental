@@ -1,5 +1,5 @@
 import type {Game} from "../Models/Game.ts";
-import {prestigeUnlock, pUp1} from "../data/pointUpgrades.ts";
+import {fmt_upgrade, prestigeUnlock, pUp1} from "../data/pointUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
@@ -101,6 +101,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
     const posById: Record<number, UpgradePosition> = { [pUp1.id]: pUp1.position }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
     oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
+    posById[prestigeUnlock.id] = prestigeUnlock.position
 
     function up1() {
         console.log(game.prestigePoint.toFixed(2))
@@ -118,11 +119,19 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
     function handlePrestige() {
         game.setPrestigePoint(n => n.plus(prestigePointFormula))
 
+        // TypeScript suck my balls
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setPoint(_ => new Decimal(10))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointAddition(_ => new Decimal(0))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointMultiplier(_ => new Decimal(1))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointExponent(_ => new Decimal(1))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalMultiplierMultiplier(_ => new Decimal(1))
+        // eslint-disable-next-line react-hooks/immutability
         pUp1.isBought = false
         resetUpgrades()
 
@@ -190,14 +199,24 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
         return 'upgradeButton--affordable'
     }
 
+    function isVisible(upg: { whenCanShow?: string }): boolean {
+        if (!upg.whenCanShow) return true
+        if (upg.whenCanShow === 'prestige') return game.canShowPrestigeTree
+        return true
+    }
+
     function getConnections(): Array<{ from: number, to: number }> {
-        return [...buyableUpgrades, ...oneTimeUpgrades]
-            .filter(upg => upg.parentId !== undefined)
+        const connections = [...buyableUpgrades, ...oneTimeUpgrades]
+            .filter(upg => upg.parentId !== undefined && isVisible(upg))
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
+        if (prestigeUnlock.parentId !== undefined && (game.point.gte(1e10) || prestigeUnlock.isBought))
+            connections.push({ from: prestigeUnlock.parentId, to: prestigeUnlock.id })
+        return connections
     }
 
     function isNodeActive(id: number): boolean {
         if (id === pUp1.id) return pUp1.isBought
+        if (id === prestigeUnlock.id) return prestigeUnlock.isBought
         const buyable = buyableUpgrades.find(u => u.id === id)
         if (buyable) return buyable.currentAmount.gt(0)
         const oneTime = oneTimeUpgrades.find(u => u.id === id)
@@ -233,9 +252,9 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
             )}
 
             {game.globalPointAddition.gt(0) && <section className={"pointTreeCurrencyBar"}>
-                <p>Base point gain: {fmt(game.globalPointAddition)}</p>
-                {game.globalPointMultiplier.gt(1) && <p>Point multi: {fmt(game.globalPointMultiplier)}</p>}
-                {game.globalPointExponent.gt(1) && <p>Point exponent: {fmt(game.globalPointExponent)}</p>}
+                <p>Base point gain: {fmt_upgrade(game.globalPointAddition)}</p>
+                {game.globalPointMultiplier.gt(1) && <p>Point multi: {fmt_upgrade(game.globalPointMultiplier)}</p>}
+                {game.globalPointExponent.gt(1) && <p>Point exponent: {fmt_upgrade(game.globalPointExponent)}</p>}
             </section>}
 
 
@@ -287,7 +306,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                     </button>
                 }
 
-                {buyableUpgrades.map(upg => (
+                {buyableUpgrades.filter(isVisible).map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${buyableClass(upg)}`}
@@ -303,7 +322,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                     </button>
                 ))}
 
-                {oneTimeUpgrades.map(upg => (
+                {oneTimeUpgrades.filter(isVisible).map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${oneTimeClass(upg)}`}

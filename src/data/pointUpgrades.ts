@@ -14,18 +14,17 @@ export const pUp1: IOneTimeUpgrade = {
 export const prestigeUnlock : IUnlockUpgrade = {
     id: 301,
     parentId: 1,
-    position: { x: 0, y: -1 },
+    position: { x: 0, y: 1 },
     description: "Reset point tree, to unlock new content.",
     price: new Decimal(1e15),
     isBought: false,
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
         console.log(game)
-        // game.prestige
     }
 }
 
-function fmt_upgrade(n: Decimal): string {
+export function fmt_upgrade(n: Decimal): string {
     if (n.gte('1e1000000')) return n.toExponential(6).replace('e+', 'e')
     if (n.gte('1e100000'))  return n.toExponential(5).replace('e+', 'e')
     if (n.gte('1e10000'))   return n.toExponential(4).replace('e+', 'e')
@@ -525,7 +524,7 @@ const pUp217: IOneTimeUpgrade = {
 const pUp401: IBuyableUpgrade = {
     id: 401,
     parentId: 1,
-    position: { x: 0, y: 3 },
+    position: { x: 1, y: -3 },
     description: "siur",
     price: new Decimal(1000),
     priceMultiplier: new Decimal(1.2),
@@ -539,7 +538,7 @@ const pUp401: IBuyableUpgrade = {
 const pUp402: IBuyableUpgrade = {
     id: 402,
     parentId: 401,
-    position: { x: 0, y: -2 },
+    position: { x: 0, y: -3 },
     description: "siur",
     price: new Decimal(1000),
     priceMultiplier: new Decimal(1.2),
@@ -553,7 +552,7 @@ const pUp402: IBuyableUpgrade = {
 const pUp501: IBuyableUpgrade = {
     id: 501,
     parentId: 1,
-    position: { x: -1, y: 2 },
+    position: { x: -1, y: -2 },
     description: "siur 1e8",
     price: new Decimal(0),
     priceMultiplier: new Decimal(1),
@@ -561,13 +560,14 @@ const pUp501: IBuyableUpgrade = {
     maxAmount: 1000000,
     isBought: false,
     isMaxed: false,
+    whenCanShow: "prestige",
     effect: (game) => game.setPoint(n => n.plus(new Decimal(1e8)))
 }
 
 const pUp502: IBuyableUpgrade = {
     id: 502,
     parentId: 1,
-    position: { x: 0, y: 2 },
+    position: { x: 0, y: -2 },
     description: "siur 1000",
     price: new Decimal(0),
     priceMultiplier: new Decimal(1),
@@ -581,7 +581,7 @@ const pUp502: IBuyableUpgrade = {
 const pUp503: IBuyableUpgrade = {
     id: 503,
     parentId: 1,
-    position: { x: 1, y: 2 },
+    position: { x: 1, y: -2 },
     description: "siur 10000",
     price: new Decimal(0),
     priceMultiplier: new Decimal(1),
@@ -595,7 +595,7 @@ const pUp503: IBuyableUpgrade = {
 const pUp504: IBuyableUpgrade = {
     id: 504,
     parentId: 1,
-    position: { x: 2, y: 2 },
+    position: { x: 2, y: -2 },
     description: "siur 1e6",
     price: new Decimal(0),
     priceMultiplier: new Decimal(1),

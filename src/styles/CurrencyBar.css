@@ -31,6 +31,13 @@
     color: #c8d8ff;
     letter-spacing: 0.06em;
     text-shadow: 0 0 18px rgba(120, 140, 255, 0.45);
+    font-variant-numeric: tabular-nums;
+}
+
+.CurrencyBar__points {
+    flex: 0 0 300px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .CurrencyBar h3 {
@@ -52,4 +59,11 @@
 h2.CurrencyBar__prestige {
     color: #d090ff;
     text-shadow: 0 0 18px rgba(180, 80, 255, 0.4);
+}
+
+.CurrencyBar__value {
+    display: inline-block;
+    width: 16ch;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
 }

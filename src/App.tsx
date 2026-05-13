@@ -1,6 +1,7 @@
 import './App.css'
 import { useGameLoop } from "./Hooks/useGameLoop.ts";
 import { usePointUpgrades } from "./Hooks/usePointUpgrades.ts";
+import { usePrestigeUpgrades } from "./Hooks/usePrestigeUpgrades.ts";
 import CurrencyBar from "./components/CurrencyBar.tsx";
 import PointTree from "./components/PointTree.tsx";
 import NavBar from "./components/NavBar.tsx";
@@ -13,6 +14,7 @@ function App() {
 
     const game = useGameLoop();
     const pointUpgrades = usePointUpgrades();
+    const prestigeUpgrades = usePrestigeUpgrades();
 
     const [currentTab, setCurrentTab] = useState("MainTree");
 
@@ -23,7 +25,7 @@ function App() {
 
             <section className="MainTab">
                 {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game}/> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades}/> }
             </section>
 
         </>

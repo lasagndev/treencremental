@@ -14,6 +14,7 @@ export interface IOneTimeUpgrade {
     dynamicDescription?: (game: Game) => string;
     price: Decimal;
     isBought: boolean;
+    whenCanShow?: string;
     effect: (game: Game) => void;
 }
 
@@ -30,6 +31,7 @@ export interface IBuyableUpgrade {
     isBought: boolean;
     isMaxed: boolean;
     calcPrice?: (upg: IBuyableUpgrade) => Decimal;
+    whenCanShow?: string;
     effect: (game: Game) => void;
 }
 
