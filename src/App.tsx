@@ -1,6 +1,7 @@
 import './App.css'
 import { useGameLoop } from "./Hooks/useGameLoop.ts";
 import { usePointUpgrades } from "./Hooks/usePointUpgrades.ts";
+import { usePrestigeUpgrades } from "./Hooks/usePrestigeUpgrades.ts";
 import CurrencyBar from "./components/CurrencyBar.tsx";
 import PointTree from "./components/PointTree.tsx";
 import NavBar from "./components/NavBar.tsx";
@@ -13,25 +14,20 @@ function App() {
 
     const game = useGameLoop();
     const pointUpgrades = usePointUpgrades();
+    const prestigeUpgrades = usePrestigeUpgrades();
 
     const [currentTab, setCurrentTab] = useState("MainTree");
 
     return (
         <>
             <CurrencyBar game={game}/>
-            <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
                 {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game}/> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades}/> }
             </section>
 
-            {/*<button onClick={() => {game.setGlobalPointAddition(n => n+1)}}>DODAJ SIURA</button>
-            <h3>{game.globalPointAddition}</h3>
-            <button onClick={() => {game.setGlobalPointMultiplier(n => n+1)}}>MNÓŻ SIURA</button>
-            <h3>{game.globalPointMultiplier}</h3>
-            <button onClick={() => {game.setGlobalPointExponent(n => n+1)}}>POTEGUJ SIURA</button>
-            <h3>{game.globalPointExponent}</h3>*/}
         </>
     )
 }

@@ -1,0 +1,103 @@
+.prestigeTree {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0e0812;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    cursor: grab;
+}
+
+.prestigeTree:active {
+    cursor: grabbing;
+}
+
+.upgradeCanvas {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+}
+
+/* ── connection lines ── */
+.upgradeSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* locked */
+.prestigeTree .upgradeLine--locked .upgradeLine__tube { stroke: #160812; stroke-opacity: 0.8; }
+.prestigeTree .upgradeLine--locked .upgradeLine__core { stroke: #2a1028; }
+
+/* default */
+.prestigeTree .upgradeLine--default .upgradeLine__tube { stroke: #3a1850; stroke-opacity: 0.4; }
+.prestigeTree .upgradeLine--default .upgradeLine__core { stroke: #5a2870; }
+
+/* active */
+.prestigeTree .upgradeLine--active .upgradeLine__tube  { stroke: #a030a0; stroke-opacity: 0.25; }
+.prestigeTree .upgradeLine--active .upgradeLine__core  { stroke: #c050b0; }
+.prestigeTree .upgradeLine--active .upgradeLine__dash  { stroke: #ff80e0; }
+
+/* ── stats bar ── */
+.prestigeTreeCurrencyBar {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #160e22;
+    border: 1px solid #341840;
+    border-radius: 6px;
+    padding: 8px 14px;
+    z-index: 10;
+}
+
+.prestigeTreeCurrencyBar p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #9858a0;
+}
+
+/* ── 1. locked ── */
+.prestigeTree .upgradeButton--locked {
+    background: #120a18;
+    border-color: #221430;
+    color: #3a2050;
+    cursor: not-allowed;
+}
+
+/* ── 2. unaffordable ── */
+.prestigeTree .upgradeButton--unaffordable {
+    background: #1c0e0e;
+    border-color: #3a1818;
+    color: #904848;
+}
+
+/* ── 3. affordable ── */
+.prestigeTree .upgradeButton--affordable {
+    background: #0c1c1e;
+    border-color: #1e4c50;
+    color: #48c0b8;
+    box-shadow: 0 0 10px rgba(50, 180, 170, 0.18);
+}
+
+/* ── 4. partial ── */
+.prestigeTree .upgradeButton--partial {
+    background: #160c28;
+    border-color: #341860;
+    color: #8858c8;
+}
+
+/* ── 5. maxed / bought ── */
+.prestigeTree .upgradeButton--maxed {
+    background: #1c1a08;
+    border-color: #3c3410;
+    color: #a89828;
+    cursor: default;
+}

@@ -1,10 +1,12 @@
 import type {Game} from "../Models/Game.ts";
-import {pUp1} from "../data/pointUpgrades.ts";
+import {fmt_upgrade, prestigeUnlock, pUp1} from "../data/pointUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
 import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
+import Decimal from "break_eternity.js";
+import {fmt} from "./CurrencyBar.tsx";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 
@@ -31,7 +33,8 @@ interface PointTreeProps {
 }
 
 const PointTree = ( {game, upgrades} : PointTreeProps ) => {
-    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
+    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
+    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).floor()
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -98,11 +101,41 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
     const posById: Record<number, UpgradePosition> = { [pUp1.id]: pUp1.position }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
     oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
+    posById[prestigeUnlock.id] = prestigeUnlock.position
 
     function up1() {
+        console.log(game.prestigePoint.toFixed(2))
         game.setPoint(n => n.minus(pUp1.price))
         game.setGlobalPointAddition(n => n.plus(1))
         pUp1.isBought = true
+    }
+
+    function buyPrestigeUnlock() {
+        game.setPoint(n => n.minus(prestigeUnlock.price))
+        prestigeUnlock.effect(game)
+        prestigeUnlock.isBought = true
+    }
+
+    function handlePrestige() {
+        game.setPrestigePoint(n => n.plus(prestigePointFormula))
+
+        // TypeScript suck my balls
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        game.setPoint(_ => new Decimal(10))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        game.setGlobalPointAddition(_ => new Decimal(0))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        game.setGlobalPointMultiplier(_ => new Decimal(1))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        game.setGlobalPointExponent(_ => new Decimal(1))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        game.setGlobalMultiplierMultiplier(_ => new Decimal(1))
+        // eslint-disable-next-line react-hooks/immutability
+        pUp1.isBought = false
+        resetUpgrades()
+
+        game.setCanShowPrestigeTree(true)
     }
 
     function buyOneTime(upg: IOneTimeUpgrade) {
@@ -154,20 +187,36 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
         return 'upgradeButton--unaffordable'
     }
 
+    function unlockClass(): string {
+        if (prestigeUnlock.isBought) return 'upgradeButton--maxed'
+        if (prestigeUnlock.price.gt(game.point)) return 'upgradeButton--unaffordable'
+        return 'upgradeButton--unlock'
+    }
+
     function rootClass(): string {
         if (pUp1.isBought) return 'upgradeButton--maxed'
         if (pUp1.price.gt(game.point)) return 'upgradeButton--unaffordable'
         return 'upgradeButton--affordable'
     }
 
+    function isVisible(upg: { whenCanShow?: string }): boolean {
+        if (!upg.whenCanShow) return true
+        if (upg.whenCanShow === 'prestige') return game.canShowPrestigeTree
+        return true
+    }
+
     function getConnections(): Array<{ from: number, to: number }> {
-        return [...buyableUpgrades, ...oneTimeUpgrades]
-            .filter(upg => upg.parentId !== undefined)
+        const connections = [...buyableUpgrades, ...oneTimeUpgrades]
+            .filter(upg => upg.parentId !== undefined && isVisible(upg))
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
+        if (prestigeUnlock.parentId !== undefined && (game.point.gte(1e10) || prestigeUnlock.isBought))
+            connections.push({ from: prestigeUnlock.parentId, to: prestigeUnlock.id })
+        return connections
     }
 
     function isNodeActive(id: number): boolean {
         if (id === pUp1.id) return pUp1.isBought
+        if (id === prestigeUnlock.id) return prestigeUnlock.isBought
         const buyable = buyableUpgrades.find(u => u.id === id)
         if (buyable) return buyable.currentAmount.gt(0)
         const oneTime = oneTimeUpgrades.find(u => u.id === id)
@@ -192,12 +241,23 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
         >
+            {prestigeUnlock.isBought && (
+                <button
+                    className="prestigeButton"
+                    onClick={handlePrestige}
+                    disabled={game.point.lt(1e15)}>
+                    PRESTIGE<br/>
+                    for { game.point.gte(1e15) ? fmt(prestigePointFormula) : 0 } PP
+                </button>
+            )}
 
             {game.globalPointAddition.gt(0) && <section className={"pointTreeCurrencyBar"}>
-                <p>Base point gain: {game.globalPointAddition.toFixed(0)}</p>
-                {game.globalPointMultiplier.gt(1) && <p>Point multi: {game.globalPointMultiplier.toFixed(1)}</p>}
-                {game.globalPointExponent.gt(1) && <p>Point exponent: {game.globalPointExponent.toFixed(0)}</p>}
+                <p>Base point gain: {fmt_upgrade(game.globalPointAddition)}</p>
+                {game.globalPointMultiplier.gt(1) && <p>Point multi: {fmt_upgrade(game.globalPointMultiplier)}</p>}
+                {game.globalPointExponent.gt(1) && <p>Point exponent: {fmt_upgrade(game.globalPointExponent)}</p>}
             </section>}
+
+
 
             <div className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
 
@@ -232,7 +292,21 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                     Price: {pUp1.price.toFixed(0)}
                 </button>
 
-                {buyableUpgrades.map(upg => (
+                {(game.point.gte(1e10) || prestigeUnlock.isBought) &&
+                    <button
+                        id={"prestigeUnlock"}
+                        className={`upgradeButton ${unlockClass()}`}
+                        style={getUpgradeStyle(prestigeUnlock.position)}
+                        onClick={() => buyPrestigeUnlock()}
+                        disabled={prestigeUnlock.isBought || prestigeUnlock.price.gt(game.point)}>
+                        <p className={"upgradeId"}>{prestigeUnlock.id}</p>
+                        {prestigeUnlock.description}
+                        <br/>
+                        Price: {fmt(prestigeUnlock.price)}
+                    </button>
+                }
+
+                {buyableUpgrades.filter(isVisible).map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${buyableClass(upg)}`}
@@ -242,13 +316,13 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {getPrice(upg).gte(1e6) ? getPrice(upg).toExponential(2).replace('e+', 'e') : getPrice(upg).toFixed(0) }
+                        Price: {fmt(getPrice(upg)) }
                         <br/>
                         {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
                     </button>
                 ))}
 
-                {oneTimeUpgrades.map(upg => (
+                {oneTimeUpgrades.filter(isVisible).map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${oneTimeClass(upg)}`}
@@ -258,7 +332,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
                         <p className={"upgradeId"}>{upg.id}</p>
                         {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
                         <br/>
-                        Price: {upg.price.gte(1e6) ? upg.price.toExponential(2).replace('e+', 'e') : upg.price.toFixed(0)}
+                        Price: {fmt(upg.price)}
                     </button>
                 ))}
 

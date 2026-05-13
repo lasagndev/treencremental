@@ -1,11 +1,13 @@
 ﻿import "../styles/NavBar.css"
+import type {Game} from "../Models/Game.ts";
 
 interface Props {
     currentTab: string
     setCurrentTab: React.Dispatch<React.SetStateAction<string>>
+    game: Game
 }
 
-function NavBar( { currentTab, setCurrentTab } : Props ) {
+function NavBar( { currentTab, setCurrentTab, game } : Props ) {
 
     return (
         <section className="navBar">
@@ -14,11 +16,11 @@ function NavBar( { currentTab, setCurrentTab } : Props ) {
                 onClick={ () => setCurrentTab("MainTree") }>
                 Main Tree
             </button>
-            <button
+            {game.canShowPrestigeTree && <button
                 className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
                 onClick={ () => setCurrentTab("PrestigeTree") }>
                 Prestige Tree
-            </button>
+            </button>}
         </section>
     )
 

@@ -8,13 +8,17 @@ export function useGameLoop() {
   const [globalMultiplierMultiplier, setGlobalMultiplierMultiplier] = useState(new Decimal(1));
   const [globalPointMultiplier, setGlobalPointMultiplier] = useState(new Decimal(1));
   const [globalPointExponent, setGlobalPointExponent] = useState(new Decimal(1));
-
+  const [canShowPrestigeTree, setCanShowPrestigeTree] = useState(true);
+  const [prestigePoint, setPrestigePoint] = useState(new Decimal(10));
 
   const game = new Game(point, setPoint,
       bonusPoints, setBonusPoints,
       globalPointMultiplier, setGlobalPointMultiplier,
       globalPointExponent, setGlobalPointExponent,
-      globalMultiplierMultiplier, setGlobalMultiplierMultiplier);
+      globalMultiplierMultiplier, setGlobalMultiplierMultiplier,
+      canShowPrestigeTree, setCanShowPrestigeTree,
+
+      prestigePoint, setPrestigePoint);
 
 
   const globalPointAdditionRef = useRef(bonusPoints);

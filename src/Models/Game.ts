@@ -1,5 +1,5 @@
 ﻿import type {Dispatch, SetStateAction} from "react";
-import type Decimal from "break_eternity.js";
+import Decimal from "break_eternity.js";
 
 
 export class Game {
@@ -14,6 +14,11 @@ export class Game {
     globalMultiplierMultiplier
     setGlobalMultiplierMultiplier
 
+    canShowPrestigeTree
+    setCanShowPrestigeTree
+
+    prestigePoint
+    setPrestigePoint
 
     constructor(point: Decimal,
                 setPoint: Dispatch<SetStateAction<Decimal>>,
@@ -24,7 +29,11 @@ export class Game {
                 globalPointExponent: Decimal,
                 setGlobalPointExponent: Dispatch<SetStateAction<Decimal>>,
                 globalMultiplierMultiplier: Decimal,
-                setGlobalMultiplierMultiplier: Dispatch<SetStateAction<Decimal>>) {
+                setGlobalMultiplierMultiplier: Dispatch<SetStateAction<Decimal>>,
+                canShowPrestigeTree: boolean,
+                setCanShowPrestigeTree: Dispatch<SetStateAction<boolean>>,
+                prestigePoint: Decimal,
+                setPrestigePoint: Dispatch<SetStateAction<Decimal>>,) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -36,5 +45,9 @@ export class Game {
         this.setGlobalPointExponent = setGlobalPointExponent;
         this.globalMultiplierMultiplier = globalMultiplierMultiplier;
         this.setGlobalMultiplierMultiplier = setGlobalMultiplierMultiplier;
+        this.canShowPrestigeTree = canShowPrestigeTree;
+        this.setCanShowPrestigeTree = setCanShowPrestigeTree;
+        this.prestigePoint = prestigePoint;
+        this.setPrestigePoint = setPrestigePoint;
     }
 }
