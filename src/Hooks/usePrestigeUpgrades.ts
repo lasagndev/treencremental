@@ -1,8 +1,7 @@
 import {useState} from "react";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {
-    ppUp101, ppUp102, ppUp103, ppUp104,
-    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205,
+    ppUp101
 } from "../data/prestigeUpgrades.ts";
 import Decimal from "break_eternity.js";
 
