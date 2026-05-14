@@ -13,7 +13,7 @@ export interface IOneTimeUpgrade {
     description: string;
     dynamicDescription?: (game: Game) => string;
     price: Decimal;
-    isBought: boolean;
+    isBought: boolean ;
     whenCanShow?: string;
     effect: (game: Game) => void;
 }
@@ -41,7 +41,7 @@ export interface IUnlockUpgrade {
     position: UpgradePosition;
     description: string;
     price: Decimal;
-    isBought: boolean;
+    isBought: boolean ;
     unlocks: string;
     effect: (game: Game) => void;
 }
