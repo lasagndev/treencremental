@@ -18,7 +18,7 @@ export const prestigeUnlock : IUnlockUpgrade = {
     position: { x: 0, y: 1 },
     description: "Reset point tree, to unlock new content.",
     price: new Decimal(1e15),
-    isBought: JSON.parse(localStorage.getItem("prestigeUnlock") || "false") || true,
+    isBought: JSON.parse(localStorage.getItem("prestigeUnlock") || "false") || false,
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
         console.log(game)

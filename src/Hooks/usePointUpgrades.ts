@@ -12,8 +12,7 @@ const defaultOneTime: IOneTimeUpgrade[] = [
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119,
-    pUp401, pUp402,
-    pUp501, pUp502, pUp503, pUp504
+
 ];
 
 export function usePointUpgrades() {
