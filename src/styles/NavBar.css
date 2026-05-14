@@ -32,6 +32,17 @@
     background: #1e1e40;
 }
 
+.navTab--danger {
+    margin-left: auto;
+    color: #a05050 !important;
+}
+
+.navTab--danger:hover {
+    color: #e07070 !important;
+    border-color: #502020 !important;
+    background: #200a0a !important;
+}
+
 .navTab--active {
     color: #c0c0e8 !important;
     border-color: #4a4a80 !important;

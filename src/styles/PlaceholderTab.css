@@ -1,0 +1,12 @@
+.placeholderTab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.placeholderTab__text {
+    color: #4a4a70;
+    font-size: 1rem;
+    font-style: italic;
+}

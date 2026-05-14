@@ -2,12 +2,13 @@ import type {IBuyableUpgrade, IOneTimeUpgrade, IUnlockUpgrade} from "../Models/I
 import Decimal from "break_eternity.js";
 import type {Game} from "../Models/Game.ts";
 
+
 export const pUp1: IOneTimeUpgrade = {
     id: 1,
     position: { x: -0, y: 0 },
     description: "Generate 1p/s",
     price: new Decimal(10),
-    isBought: false,
+    isBought: JSON.parse(localStorage.getItem("pUp1") || "false") || false,
     effect: (game) => game.setGlobalPointAddition(n => n.plus(1))
 }
 
@@ -17,7 +18,7 @@ export const prestigeUnlock : IUnlockUpgrade = {
     position: { x: 0, y: 1 },
     description: "Reset point tree, to unlock new content.",
     price: new Decimal(1e15),
-    isBought: false,
+    isBought: JSON.parse(localStorage.getItem("prestigeUnlock") || "false") || true,
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
         console.log(game)

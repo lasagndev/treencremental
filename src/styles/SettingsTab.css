@@ -1,0 +1,48 @@
+.settingsTab {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 32px 40px;
+}
+
+.settingsTab__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #a0a0d0;
+    letter-spacing: 0.05em;
+}
+
+.settingsTab__group {
+    display: flex;
+    gap: 10px;
+}
+
+.settingsTab__btn {
+    padding: 8px 20px;
+    background: #141430;
+    color: #8080b8;
+    border: 1px solid #2a2a50;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.settingsTab__btn:hover {
+    color: #c0c0e8;
+    border-color: #4a4a80;
+    background: #1a1a3a;
+}
+
+.settingsTab__btn--danger {
+    color: #a05050;
+    border-color: #3a1a1a;
+}
+
+.settingsTab__btn--danger:hover {
+    color: #e07070 !important;
+    border-color: #502020 !important;
+    background: #200a0a !important;
+}

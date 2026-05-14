@@ -1,4 +1,4 @@
-﻿import "../styles/NavBar.css"
+import "../styles/NavBar.css"
 import type {Game} from "../Models/Game.ts";
 
 interface Props {
@@ -21,6 +21,23 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                 onClick={ () => setCurrentTab("PrestigeTree") }>
                 Prestige Tree
             </button>}
+
+            <button
+                style={{ marginLeft: "auto" }}
+                className={currentTab === "Achievements" ? "navTab--active" : ""}
+                onClick={ () => setCurrentTab("Achievements") }>
+                Achievements
+            </button>
+            <button
+                className={currentTab === "Statistics" ? "navTab--active" : ""}
+                onClick={ () => setCurrentTab("Statistics") }>
+                Statistics
+            </button>
+            <button
+                className={currentTab === "Settings" ? "navTab--active" : ""}
+                onClick={ () => setCurrentTab("Settings") }>
+                Settings
+            </button>
         </section>
     )
 
