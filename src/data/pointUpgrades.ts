@@ -8,8 +8,11 @@ export const pUp1: IOneTimeUpgrade = {
     position: { x: -0, y: 0 },
     description: "Generate 1p/s",
     price: new Decimal(10),
-    isBought: JSON.parse(localStorage.getItem("pUp1") || "false") || false,
-    effect: (game) => game.setGlobalPointAddition(n => n.plus(1))
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("pUp1") ?? "false"); } catch { return false; } })() || false,
+    effect: (game) => {
+        game.setGlobalPointAddition(n => n.plus(1))
+
+    }
 }
 
 export const prestigeUnlock : IUnlockUpgrade = {
@@ -18,7 +21,7 @@ export const prestigeUnlock : IUnlockUpgrade = {
     position: { x: 0, y: 1 },
     description: "Reset point tree, to unlock new content.",
     price: new Decimal(1e15),
-    isBought: JSON.parse(localStorage.getItem("prestigeUnlock") || "false") || false,
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("prestigeUnlock") ?? "false"); } catch { return false; } })(),
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
         console.log(game)
@@ -521,7 +524,6 @@ const pUp217: IOneTimeUpgrade = {
 // -------------------------------------
 // ---------- upgrady dla nas ----------
 // ---------------- vvv ----------------
-
 
 
 export {

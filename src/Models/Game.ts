@@ -13,12 +13,18 @@ export class Game {
     setGlobalPointExponent
     globalMultiplierMultiplier
     setGlobalMultiplierMultiplier
+    pointMultiFromPrestige
+    setPointMultiFromPrestige
+    pointExponentFromPrestige
+    setPointExponentFromPrestige
 
     canShowPrestigeTree
     setCanShowPrestigeTree
 
     prestigePoint
     setPrestigePoint
+    prestigePointMulti
+    setPrestigePointMulti
 
     constructor(point: Decimal,
                 setPoint: Dispatch<SetStateAction<Decimal>>,
@@ -33,7 +39,13 @@ export class Game {
                 canShowPrestigeTree: boolean,
                 setCanShowPrestigeTree: Dispatch<SetStateAction<boolean>>,
                 prestigePoint: Decimal,
-                setPrestigePoint: Dispatch<SetStateAction<Decimal>>,) {
+                setPrestigePoint: Dispatch<SetStateAction<Decimal>>,
+                pointMultiFromPrestige: Decimal,
+                setPointMultiFromPrestige: Dispatch<SetStateAction<Decimal>>,
+                pointExponentFromPrestige: Decimal,
+                setPointExponentFromPrestige: Dispatch<SetStateAction<Decimal>>,
+                prestigePointMulti: Decimal,
+                setPrestigePointMulti: Dispatch<SetStateAction<Decimal>>,) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -49,5 +61,11 @@ export class Game {
         this.setCanShowPrestigeTree = setCanShowPrestigeTree;
         this.prestigePoint = prestigePoint;
         this.setPrestigePoint = setPrestigePoint;
+        this.pointMultiFromPrestige = pointMultiFromPrestige;
+        this.setPointMultiFromPrestige = setPointMultiFromPrestige;
+        this.pointExponentFromPrestige = pointExponentFromPrestige;
+        this.setPointExponentFromPrestige = setPointExponentFromPrestige;
+        this.prestigePointMulti = prestigePointMulti;
+        this.setPrestigePointMulti = setPrestigePointMulti;
     }
 }

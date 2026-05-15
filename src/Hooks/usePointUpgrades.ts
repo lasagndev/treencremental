@@ -1,8 +1,42 @@
 import {useState} from "react";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119,
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217,
+    pUp101,
+    pUp102,
+    pUp103,
+    pUp104,
+    pUp105,
+    pUp106,
+    pUp107,
+    pUp108,
+    pUp109,
+    pUp110,
+    pUp111,
+    pUp112,
+    pUp113,
+    pUp114,
+    pUp115,
+    pUp116,
+    pUp117,
+    pUp118,
+    pUp119,
+    pUp201,
+    pUp202,
+    pUp203,
+    pUp204,
+    pUp205,
+    pUp206,
+    pUp207,
+    pUp208,
+    pUp209,
+    pUp210,
+    pUp211,
+    pUp212,
+    pUp213,
+    pUp214,
+    pUp215,
+    pUp216,
+    pUp217
 
 } from "../data/pointUpgrades.ts";
 import Decimal from "break_eternity.js";
@@ -11,8 +45,7 @@ const defaultOneTime: IOneTimeUpgrade[] = [
     pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119,
-
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119
 ];
 
 export function usePointUpgrades() {
@@ -28,7 +61,9 @@ export function usePointUpgrades() {
                     return s !== undefined ? { ...u, isBought: s.isBought } : u;
                 });
             }
-        } catch {}
+        } catch(e) {
+            console.error(e);
+        }
         return defaultOneTime;
     });
 

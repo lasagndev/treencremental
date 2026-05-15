@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Game } from "../Models/Game.ts";
 import Decimal from "break_eternity.js";
+import type {Statistics} from "../Models/Statistics.ts";
 
 function loadSaved() {
     try {
@@ -10,7 +11,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop() {
+export function useGameLoop(stats: Statistics) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -39,6 +40,18 @@ export function useGameLoop() {
         const s = loadSaved();
         return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
     });
+    const [pointMultiFromPrestige, setPointMultiFromPrestige] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.pointMultiFromPrestige ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
+    })
+    const [pointExponentFromPrestige, setPointExponentFromPrestige] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.pointExponentFromPrestige ? new Decimal(s.pointExponentFromPrestige as string) : new Decimal(1);
+    })
+    const [prestigePointMulti, setPrestigePointMulti] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.prestigePointMulti ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
+    })
 
     const game = new Game(
         point, setPoint,
@@ -48,6 +61,9 @@ export function useGameLoop() {
         globalMultiplierMultiplier, setGlobalMultiplierMultiplier,
         canShowPrestigeTree, setCanShowPrestigeTree,
         prestigePoint, setPrestigePoint,
+        pointMultiFromPrestige, setPointMultiFromPrestige,
+        pointExponentFromPrestige, setPointExponentFromPrestige,
+        prestigePointMulti, setPrestigePointMulti,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
@@ -65,6 +81,7 @@ export function useGameLoop() {
     useEffect(() => {
         const skibidi = setInterval(() => {
             setPoint(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).pow(globalPointExponentRef.current).dividedBy(25)));
+            stats.setAllPoints(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).pow(globalPointExponentRef.current).dividedBy(25)))
         }, 40);
         return () => clearInterval(skibidi);
     }, []);

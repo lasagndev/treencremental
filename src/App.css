@@ -16,6 +16,68 @@
   100% { opacity: 0; }
 }
 
+@keyframes achievementToast {
+  0%   { transform: translateX(110%); opacity: 0; }
+  12%  { transform: translateX(0);    opacity: 1; }
+  75%  { transform: translateX(0);    opacity: 1; }
+  100% { transform: translateX(0);    opacity: 0; }
+}
+
+.achievement-popup {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 280px;
+  background: #100e04;
+  border: 1px solid #6b5010;
+  border-radius: 8px;
+  padding: 14px 16px 10px;
+  z-index: 1000;
+  pointer-events: none;
+  animation: achievementToast 4s ease forwards;
+  box-shadow: 0 0 24px rgba(212, 168, 67, 0.15);
+  overflow: hidden;
+}
+
+.achievement-popup__label {
+  font-size: 0.68rem;
+  color: #d4a843;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.achievement-popup__name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e8c870;
+  margin-bottom: 3px;
+}
+
+.achievement-popup__desc {
+  font-size: 0.78rem;
+  color: #7a6a30;
+  margin-bottom: 10px;
+}
+
+.achievement-popup__bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: #d4a843;
+  transform-origin: left;
+  animation: achievementBar 4s linear forwards;
+  opacity: 0.6;
+}
+
+@keyframes achievementBar {
+  0%   { transform: scaleX(1); }
+  12%  { transform: scaleX(0.88); }
+  100% { transform: scaleX(0); }
+}
+
 .save-toast {
   position: fixed;
   bottom: 16px;

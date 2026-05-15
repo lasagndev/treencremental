@@ -6,6 +6,7 @@ import {
 import Decimal from "break_eternity.js";
 
 const defaultOneTime: IOneTimeUpgrade[] = [
+
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
     ppUp101
