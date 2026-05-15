@@ -6,10 +6,11 @@ export const ppUp1: IOneTimeUpgrade = {
     position: { x: 0, y: 0 },
     description: "*2 point multi",
     price: new Decimal(1),
-    isBought: false,
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("ppUp1") ?? "false"); } catch { return false; } })() || false,
     effect: (game) => {
         game.setGlobalMultiplierMultiplier(n => n.times(2))
         game.setGlobalPointMultiplier(n => n.times(2))
+        game.setPointMultiFromPrestige(n => n.times(2))
     }
 }
 
@@ -24,14 +25,21 @@ const ppUp101: IBuyableUpgrade = {
     description: "+0.01 point exponent",
     price: new Decimal(1),
     priceMultiplier: new Decimal(5),
+    calcPrice: (upg) => upg.price.times(upg.priceMultiplier.pow(upg.currentAmount)),
     currentAmount: new Decimal(0),
     maxAmount: 10,
     isBought: false,
     isMaxed: false,
-    effect: (game) => game.setGlobalPointExponent(n => n.plus(0.01))
+    effect: (game) => {
+        game.setGlobalPointExponent(n => n.plus(0.01))
+        game.setPointExponentFromPrestige(n => n.plus(0.01))
+    }
+
 }
 
-
+// -------------------------------------
+// ---------- onetime upgrady ----------
+// ---------------- vvv ----------------
 
 export {
     ppUp101

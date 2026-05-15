@@ -7,6 +7,7 @@ import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import Decimal from "break_eternity.js";
 import {fmt} from "./CurrencyBar.tsx";
+import type {Statistics} from "../Models/Statistics.ts";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 
@@ -30,9 +31,10 @@ function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: numb
 interface PointTreeProps {
     game: Game
     upgrades: ReturnType<typeof usePointUpgrades>
+    stats: Statistics
 }
 
-const PointTree = ( {game, upgrades} : PointTreeProps ) => {
+const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
     const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).floor()
 
@@ -107,6 +109,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
         console.log(game.prestigePoint.toFixed(2))
         game.setPoint(n => n.minus(pUp1.price))
         game.setGlobalPointAddition(n => n.plus(1))
+        stats.setTotalUpgradesBought(n => n.plus(1))
         pUp1.isBought = true
     }
 
@@ -118,7 +121,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
 
     function handlePrestige() {
         game.setPrestigePoint(n => n.plus(prestigePointFormula))
-
+        stats.setAllPrestigePoints(n => n.plus(prestigePointFormula))
         // TypeScript suck my balls
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -126,21 +129,22 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointAddition(_ => new Decimal(0))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        game.setGlobalPointMultiplier(_ => new Decimal(1))
+        game.setGlobalPointMultiplier(_ => new Decimal(1).times(game.pointMultiFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        game.setGlobalPointExponent(_ => new Decimal(1))
+        game.setGlobalPointExponent(_ => new Decimal(1).times(game.pointExponentFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        game.setGlobalMultiplierMultiplier(_ => new Decimal(1))
+        game.setGlobalMultiplierMultiplier(_ => new Decimal(1).times(game.pointMultiFromPrestige))
         // eslint-disable-next-line react-hooks/immutability
         pUp1.isBought = false
         resetUpgrades()
-
+        stats.setTotalPrestiges(n => n.plus(1))
         game.setCanShowPrestigeTree(true)
     }
 
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setPoint(n => n.minus(upg.price))
         upg.effect(game)
+        stats.setTotalUpgradesBought(n => n.plus(1))
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }
 
@@ -151,6 +155,7 @@ const PointTree = ( {game, upgrades} : PointTreeProps ) => {
     function buyBuyable(upg: IBuyableUpgrade) {
         game.setPoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
+        stats.setTotalUpgradesBought(n => n.plus(1))
         setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
             ...u,
             ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),

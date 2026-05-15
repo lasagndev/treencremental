@@ -6,10 +6,10 @@ import {
 import Decimal from "break_eternity.js";
 
 const defaultOneTime: IOneTimeUpgrade[] = [
-    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205,
+
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    ppUp101, ppUp102, ppUp103, ppUp104,
+    ppUp101
 ];
 
 export function usePrestigeUpgrades() {

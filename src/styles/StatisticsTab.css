@@ -1,0 +1,78 @@
+.statisticsTab {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 32px 40px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.statisticsTab__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #a0a0d0;
+    letter-spacing: 0.05em;
+}
+
+.statisticsTab__section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #0d0d20;
+    border: 1px solid #2a2a50;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.statisticsTab__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid #1a1a38;
+}
+
+.statisticsTab__row:last-child {
+    border-bottom: none;
+}
+
+.statisticsTab__row:hover {
+    background: #111128;
+}
+
+.statisticsTab__label {
+    font-size: 0.85rem;
+    color: #6060a0;
+    letter-spacing: 0.03em;
+}
+
+.statisticsTab__value {
+    font-size: 0.9rem;
+    color: #c8d8ff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+
+.statisticsTab__value--time {
+    color: #a0c8ff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.statisticsTab__value--prestige {
+    color: #d090ff;
+}
+
+.statisticsTab__clock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statisticsTab__clock-icon {
+    font-size: 0.85rem;
+    opacity: 0.5;
+}

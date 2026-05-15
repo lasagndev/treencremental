@@ -1,0 +1,501 @@
+/* ═══════════════════════════════════════════════
+   ACHIEVEMENTS TAB — ULTRA FANCY
+   ═══════════════════════════════════════════════ */
+
+/* ─── Tab container + nebula background ──────── */
+
+.achievementsTab {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 32px 40px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+    /* Animated nebula layers */
+    background:
+        radial-gradient(ellipse at 8%  15%, rgba(120, 60,  240, 0.06) 0%, transparent 45%),
+        radial-gradient(ellipse at 90% 10%, rgba(60,  120, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 80%, rgba(80,  30,  180, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 60%, rgba(200, 80,  255, 0.03) 0%, transparent 40%);
+    animation: nebulaShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes nebulaShift {
+    0%   { background-position: 0% 0%,   100% 0%,   50% 80%, 80% 60%; }
+    50%  { background-position: 10% 20%, 85%  15%,  45% 75%, 75% 55%; }
+    100% { background-position: 5%  10%, 92%  5%,   55% 85%, 85% 65%; }
+}
+
+/* Scanline overlay */
+.achievementsTab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 20, 0.04) 3px,
+        rgba(0, 0, 20, 0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* ─── Header ──────────────────────────────────── */
+
+.achievementsTab__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.achievementsTab__titleWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.achievementsTab__title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: linear-gradient(90deg,
+        #5050b0,
+        #9080ff,
+        #c8d8ff,
+        #a0c0ff,
+        #d090ff,
+        #9080ff,
+        #5050b0
+    );
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleFlow 6s linear infinite;
+    filter: drop-shadow(0 0 24px rgba(140, 120, 255, 0.5));
+}
+
+@keyframes titleFlow {
+    0%   { background-position: 0%   center; }
+    100% { background-position: 250% center; }
+}
+
+.achievementsTab__subtitle {
+    font-size: 0.7rem;
+    color: #383860;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* Badge */
+.achievementsTab__badge {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: badgeFloat 4s ease-in-out infinite;
+}
+
+.achievementsTab__badge::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #d4a843, #fff8a0, #ff80ff, #8080ff, #40c0ff, #d4a843
+    );
+    animation: spinBadge 4s linear infinite;
+    filter: blur(1px);
+}
+
+.achievementsTab__badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(
+        #d4a843, #fff8a0, #ff80ff, #8080ff, #40c0ff, #d4a843
+    );
+    animation: spinBadge 4s linear infinite;
+    filter: blur(6px);
+    opacity: 0.4;
+}
+
+.achievementsTab__badgeInner {
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #1e1800, #080602);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: #d4a843;
+    letter-spacing: 0.01em;
+    box-shadow: inset 0 0 16px rgba(212, 168, 67, 0.15);
+}
+
+.achievementsTab__badgeSep {
+    color: #6b5010;
+    margin: 0 1px;
+}
+
+@keyframes spinBadge { to { transform: rotate(360deg); } }
+
+@keyframes badgeFloat {
+    0%, 100% { transform: translateY(0)   rotate(0deg); }
+    33%       { transform: translateY(-4px) rotate(1deg); }
+    66%       { transform: translateY(-2px) rotate(-1deg); }
+}
+
+/* ─── Divider ─────────────────────────────────── */
+
+.achievementsTab__divider {
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent,
+        #6040c0,
+        #d4a843,
+        #c060ff,
+        #d4a843,
+        #6040c0,
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: dividerFlow 5s linear infinite;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 8px rgba(180, 140, 255, 0.3);
+}
+
+@keyframes dividerFlow {
+    0%   { background-position: 0%   0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ─── Progress bar ────────────────────────────── */
+
+.achievementsTab__progress {
+    height: 6px;
+    background: #08081a;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03);
+    position: relative;
+    z-index: 1;
+}
+
+.achievementsTab__progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #7030c0, #d4a843, #fff8a0, #ff80ff, #d4a843);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    animation: progressColorShift 4s linear infinite;
+    box-shadow: 0 0 14px rgba(212, 168, 67, 0.6), 0 0 30px rgba(180, 100, 255, 0.3);
+}
+
+@keyframes progressColorShift {
+    0%   { background-position: 0%   0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Glowing tip */
+.achievementsTab__progressFill::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: 0;
+    width: 12px;
+    height: calc(100% + 4px);
+    background: white;
+    filter: blur(3px);
+    opacity: 0.7;
+    animation: tipPulse 1.4s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+@keyframes tipPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+    50%       { opacity: 1;   transform: scaleY(1.2); }
+}
+
+/* ─── Grid ────────────────────────────────────── */
+
+.achievementsTab__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── Card ────────────────────────────────────── */
+
+.achievementsTab__card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    cursor: default;
+    /* Staggered entrance */
+    animation: cardEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ─── Unlocked ────────────────────────────────── */
+
+.achievementsTab__card--unlocked {
+    background: transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Aurora rotating border */
+.achievementsTab__card--unlocked::before {
+    content: '';
+    position: absolute;
+    inset: -100%;
+    background: conic-gradient(
+        from 0deg,
+        #c08020,
+        #d4a843,
+        #fff8a0,
+        #ff90ff,
+        #9070ff,
+        #40b8ff,
+        #d4a843,
+        #c08020
+    );
+    animation: spinCard 6s linear infinite;
+    z-index: -2;
+}
+
+/* Interior fill */
+.achievementsTab__card--unlocked::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: #0c0a04;
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.achievementsTab__card--unlocked:hover {
+    transform: perspective(600px) rotateX(-4deg) translateY(-6px) scale(1.03);
+    box-shadow:
+        0 20px 60px rgba(212, 168, 67, 0.3),
+        0 8px 20px rgba(160, 100, 255, 0.2),
+        0 0 0 1px rgba(212, 168, 67, 0.2);
+}
+
+@keyframes spinCard { to { transform: rotate(360deg); } }
+
+/* ─── Shimmer diagonal sweep ─────────────────── */
+
+.achievementsTab__shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        112deg,
+        transparent 25%,
+        rgba(255, 240, 130, 0.11) 48%,
+        rgba(255, 255, 200, 0.06) 52%,
+        transparent 75%
+    );
+    background-size: 250% 100%;
+    animation: sweepShimmer 5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+@keyframes sweepShimmer {
+    0%   { background-position: -250% 0; }
+    60%  { background-position:  250% 0; }
+    100% { background-position:  250% 0; }
+}
+
+/* ─── Holographic iridescent layer ───────────── */
+
+.achievementsTab__holo {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 10px;
+    background:
+        linear-gradient(125deg,
+            hsla(0,   100%, 60%, 0.04) 0%,
+            hsla(60,  100%, 60%, 0.04) 20%,
+            hsla(120, 100%, 50%, 0.04) 40%,
+            hsla(200, 100%, 60%, 0.05) 60%,
+            hsla(270, 100%, 65%, 0.05) 80%,
+            hsla(330, 100%, 60%, 0.04) 100%
+        );
+    background-size: 300% 300%;
+    animation: holoShift 9s ease-in-out infinite alternate;
+    mix-blend-mode: screen;
+}
+
+@keyframes holoShift {
+    0%   { background-position: 0%   0%;   opacity: 0.6; }
+    33%  { background-position: 100% 50%;  opacity: 1;   }
+    66%  { background-position: 50%  100%; opacity: 0.7; }
+    100% { background-position: 0%   50%;  opacity: 1;   }
+}
+
+.achievementsTab__card--unlocked:hover .achievementsTab__holo {
+    animation-duration: 2s;
+}
+
+/* ─── Card inner — corner brackets ───────────── */
+
+.achievementsTab__cardInner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    position: relative;
+    z-index: 4;
+}
+
+/* Corner brackets on unlocked */
+.achievementsTab__card--unlocked .achievementsTab__cardInner::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 12px;
+    height: 12px;
+    border-top: 1.5px solid #d4a843;
+    border-left: 1.5px solid #d4a843;
+    opacity: 0.5;
+    border-radius: 1px 0 0 0;
+    transition: opacity 0.2s;
+}
+
+.achievementsTab__card--unlocked .achievementsTab__cardInner::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    border-bottom: 1.5px solid #d4a843;
+    border-right: 1.5px solid #d4a843;
+    opacity: 0.5;
+    border-radius: 0 0 1px 0;
+    transition: opacity 0.2s;
+}
+
+.achievementsTab__card--unlocked:hover .achievementsTab__cardInner::before,
+.achievementsTab__card--unlocked:hover .achievementsTab__cardInner::after {
+    opacity: 1;
+}
+
+/* ─── Locked ──────────────────────────────────── */
+
+.achievementsTab__card--locked {
+    background: #06060e;
+    border: 1px solid #101022;
+    opacity: 0.35;
+    filter: grayscale(0.5) blur(0.3px);
+    transition: opacity 0.2s, filter 0.2s, transform 0.2s;
+}
+
+.achievementsTab__card--locked:hover {
+    opacity: 0.55;
+    filter: grayscale(0.3) blur(0px);
+    transform: translateY(-2px);
+}
+
+.achievementsTab__card--locked .achievementsTab__cardInner {
+    padding: 18px;
+}
+
+/* ─── Icon ────────────────────────────────────── */
+
+.achievementsTab__icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.achievementsTab__card--unlocked .achievementsTab__icon {
+    animation: iconGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes iconGlow {
+    from {
+        filter: drop-shadow(0 0 4px rgba(212, 168, 67, 0.5))
+                drop-shadow(0 0 0px rgba(255, 100, 255, 0));
+    }
+    to {
+        filter: drop-shadow(0 0 18px rgba(255, 220, 60,  1))
+                drop-shadow(0 0 30px rgba(212, 168, 67, 0.6))
+                drop-shadow(0 0 8px  rgba(255, 150, 255, 0.3));
+    }
+}
+
+/* ─── Name ────────────────────────────────────── */
+
+.achievementsTab__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #c8d8ff;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+}
+
+.achievementsTab__card--unlocked .achievementsTab__name {
+    background: linear-gradient(130deg, #ffc840 0%, #fff8b0 40%, #ffb020 70%, #ffe880 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: nameShimmer 4s linear infinite;
+    filter: drop-shadow(0 0 8px rgba(212, 168, 67, 0.5));
+}
+
+@keyframes nameShimmer {
+    0%   { background-position: 0%   center; }
+    100% { background-position: 200% center; }
+}
+
+/* ─── Description ─────────────────────────────── */
+
+.achievementsTab__desc {
+    font-size: 0.73rem;
+    color: #2a2a48;
+    line-height: 1.5;
+}
+
+.achievementsTab__card--unlocked .achievementsTab__desc {
+    color: #7a6535;
+}

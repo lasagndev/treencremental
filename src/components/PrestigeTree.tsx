@@ -6,6 +6,7 @@ import "../styles/PrestigeTree.css"
 import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
+import type {Statistics} from "../Models/Statistics.ts";
 
 const UPGRADE_GAP = 160
 
@@ -29,9 +30,10 @@ function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: numb
 interface PrestigeTreeProps {
     game: Game
     upgrades: ReturnType<typeof usePrestigeUpgrades>
+    stats: Statistics
 }
 
-const PrestigeTree = ({ game, upgrades }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
 
     const containerRef = useRef<HTMLElement>(null)
@@ -100,6 +102,7 @@ const PrestigeTree = ({ game, upgrades }: PrestigeTreeProps) => {
 
     function buyRoot() {
         game.setPrestigePoint(n => n.minus(ppUp1.price))
+        stats.setTotalUpgradesBought(n => n.plus(1))
         ppUp1.effect(game)
         ppUp1.isBought = true
     }
@@ -107,6 +110,7 @@ const PrestigeTree = ({ game, upgrades }: PrestigeTreeProps) => {
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setPrestigePoint(n => n.minus(upg.price))
         upg.effect(game)
+        stats.setTotalUpgradesBought(n => n.plus(1))
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }
 
@@ -117,6 +121,7 @@ const PrestigeTree = ({ game, upgrades }: PrestigeTreeProps) => {
     function buyBuyable(upg: IBuyableUpgrade) {
         game.setPrestigePoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
+        stats.setTotalUpgradesBought(n => n.plus(1))
         setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
             ...u,
             ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),
