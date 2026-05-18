@@ -23,10 +23,12 @@ import Decimal from "break_eternity.js";
 function App() {
 
     const stats = useStatistics();
-    const game = useGameLoop(stats);
-    const pointUpgrades = usePointUpgrades();
     const prestigeUpgrades = usePrestigeUpgrades();
+    const pp102Amount = prestigeUpgrades.buyableUpgrades.find(u => u.id === 102)?.currentAmount ?? new Decimal(0);
+    const game = useGameLoop(stats, pp102Amount);
+    const pointUpgrades = usePointUpgrades();
     const achievementsHook = useAchievements();
+
 
     const gameRef = useRef(game);
     const statsRef = useRef(stats);

@@ -36,11 +36,12 @@ export function useSaveSystem(
         pointExponentFromPrestige: game.pointExponentFromPrestige.toString(),
         prestigePoint: game.prestigePoint.toString(),
         prestigePointMulti: game.prestigePointMulti.toString(),
+        pointGainFromPrestige: game.pointGainFromPrestige.toString(),
     }));
 
     localStorage.setItem("stats", JSON.stringify({
         allPoints: stats.allPoints.toString(),
-        totalUpradesBought: stats.totalUpgradesBought.toString(),
+        totalUpgradesBought: stats.totalUpgradesBought.toString(),
         totalPrestiges: stats.totalPrestiges.toString(),
         allPrestigePoints: stats.allPrestigePoints.toString(),
         timePlayed: stats.timePlayed.toString(),

@@ -13,6 +13,9 @@ export class Game {
     setGlobalPointExponent
     globalMultiplierMultiplier
     setGlobalMultiplierMultiplier
+
+    pointGainFromPrestige
+    setPointGainFromPrestige
     pointMultiFromPrestige
     setPointMultiFromPrestige
     pointExponentFromPrestige
@@ -25,6 +28,9 @@ export class Game {
     setPrestigePoint
     prestigePointMulti
     setPrestigePointMulti
+
+    pp102DynamicMulti
+    setPp102DynamicMulti
 
     constructor(point: Decimal,
                 setPoint: Dispatch<SetStateAction<Decimal>>,
@@ -40,12 +46,16 @@ export class Game {
                 setCanShowPrestigeTree: Dispatch<SetStateAction<boolean>>,
                 prestigePoint: Decimal,
                 setPrestigePoint: Dispatch<SetStateAction<Decimal>>,
+                pointGainFromPrestige: Decimal,
+                setPointGainFromPrestige: Dispatch<SetStateAction<Decimal>>,
                 pointMultiFromPrestige: Decimal,
                 setPointMultiFromPrestige: Dispatch<SetStateAction<Decimal>>,
                 pointExponentFromPrestige: Decimal,
                 setPointExponentFromPrestige: Dispatch<SetStateAction<Decimal>>,
                 prestigePointMulti: Decimal,
-                setPrestigePointMulti: Dispatch<SetStateAction<Decimal>>,) {
+                setPrestigePointMulti: Dispatch<SetStateAction<Decimal>>,
+                pp102DynamicMulti: Decimal,
+                setPp102DynamicMulti: Dispatch<SetStateAction<Decimal>>,) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -61,11 +71,15 @@ export class Game {
         this.setCanShowPrestigeTree = setCanShowPrestigeTree;
         this.prestigePoint = prestigePoint;
         this.setPrestigePoint = setPrestigePoint;
+        this.pointGainFromPrestige = pointGainFromPrestige;
+        this.setPointGainFromPrestige = setPointGainFromPrestige;
         this.pointMultiFromPrestige = pointMultiFromPrestige;
         this.setPointMultiFromPrestige = setPointMultiFromPrestige;
         this.pointExponentFromPrestige = pointExponentFromPrestige;
         this.setPointExponentFromPrestige = setPointExponentFromPrestige;
         this.prestigePointMulti = prestigePointMulti;
         this.setPrestigePointMulti = setPrestigePointMulti;
+        this.pp102DynamicMulti = pp102DynamicMulti;
+        this.setPp102DynamicMulti = setPp102DynamicMulti;
     }
 }

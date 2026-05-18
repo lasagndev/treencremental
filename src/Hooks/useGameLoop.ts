@@ -11,7 +11,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop(stats: Statistics) {
+export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -34,12 +34,16 @@ export function useGameLoop(stats: Statistics) {
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
     });
+    const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.pointMultiFromPrestige ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(0);
+    })
     const [pointMultiFromPrestige, setPointMultiFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.pointMultiFromPrestige ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
@@ -52,6 +56,7 @@ export function useGameLoop(stats: Statistics) {
         const s = loadSaved();
         return s?.prestigePointMulti ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
     })
+    const [pp102DynamicMulti, setPp102DynamicMulti] = useState<Decimal>(new Decimal(1));
 
     const game = new Game(
         point, setPoint,
@@ -61,27 +66,40 @@ export function useGameLoop(stats: Statistics) {
         globalMultiplierMultiplier, setGlobalMultiplierMultiplier,
         canShowPrestigeTree, setCanShowPrestigeTree,
         prestigePoint, setPrestigePoint,
+        pointGainFromPrestige, setPointGainFromPrestige,
         pointMultiFromPrestige, setPointMultiFromPrestige,
         pointExponentFromPrestige, setPointExponentFromPrestige,
         prestigePointMulti, setPrestigePointMulti,
+        pp102DynamicMulti, setPp102DynamicMulti,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
     const globalPointMultiplierRef = useRef(globalPointMultiplier);
     const globalPointExponentRef = useRef(globalPointExponent);
     const globalMultiplierMultiplierRef = useRef(globalMultiplierMultiplier);
+    const pp102DynamicMultiRef = useRef(pp102DynamicMulti);
+    const pointRef = useRef(point);
+    const prestigePointRef = useRef(prestigePoint);
+    const pp102AmountRef = useRef(pp102Amount);
 
     useEffect(() => {
         globalPointAdditionRef.current = bonusPoints;
         globalPointMultiplierRef.current = globalPointMultiplier;
         globalPointExponentRef.current = globalPointExponent;
         globalMultiplierMultiplierRef.current = globalMultiplierMultiplier;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier]);
+        pp102DynamicMultiRef.current = pp102DynamicMulti;
+        pointRef.current = point;
+        prestigePointRef.current = prestigePoint;
+        pp102AmountRef.current = pp102Amount;
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, pp102DynamicMulti, point, pp102Amount]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
-            setPoint(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).pow(globalPointExponentRef.current).dividedBy(25)));
-            stats.setAllPoints(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).pow(globalPointExponentRef.current).dividedBy(25)))
+            const newMulti = Decimal.max(new Decimal(1), new Decimal(2).plus(prestigePointRef.current.log2().pow((pp102AmountRef.current).pow(0.8))));
+            setPp102DynamicMulti(newMulti);
+            pp102DynamicMultiRef.current = newMulti;
+            setPoint(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).pow(globalPointExponentRef.current).dividedBy(25)));
+            stats.setAllPoints(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).pow(globalPointExponentRef.current).dividedBy(25)))
         }, 40);
         return () => clearInterval(skibidi);
     }, []);

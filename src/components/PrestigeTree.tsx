@@ -7,6 +7,9 @@ import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
+// @ts-ignore
+import Decimal from "break_eternity.js";
+import {fmt_upgrade} from "../data/pointUpgrades.ts";
 
 const UPGRADE_GAP = 160
 
@@ -41,6 +44,10 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const [view, setView] = useState({ panX: 0, panY: 0, zoom: 1 })
     const isDragging = useRef(false)
     const dragOrigin = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
+
+
+
+
 
     useEffect(() => {
         const el = containerRef.current
@@ -134,7 +141,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         const upg = [...buyableUpgrades, ...oneTimeUpgrades].find(u => u.id === id)
         if (!upg || upg.parentId === undefined) return false
         const { parentId } = upg
-        if (parentId === ppUp1.id) return false
+        if (parentId === ppUp1.id) return !ppUp1.isBought
         const parentBuyable = buyableUpgrades.find(u => u.id === parentId)
         if (parentBuyable) return parentBuyable.currentAmount.eq(0)
         const parentOneTime = oneTimeUpgrades.find(u => u.id === parentId)
@@ -197,9 +204,10 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         >
             <section className="prestigeTreeCurrencyBar">
                 <p>Prestige Points: {fmt(game.prestigePoint)}</p>
+                { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.pp102DynamicMulti)}</p>}
             </section>
 
-            <div className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
+            <div  className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
 
                 {width > 0 && (
                     <svg className="upgradeSvg" overflow="visible">

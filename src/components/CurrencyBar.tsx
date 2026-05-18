@@ -10,7 +10,8 @@ function fmtExp(n: Decimal, d: number): string {
     const s = n.toExponential(d).replace('e+', 'e')
     const [mantissa, exp] = s.split('e')
     const decimals = mantissa.includes('.') ? mantissa.split('.')[1].length : 0
-    return mantissa + '0'.repeat(d - decimals) + 'e' + exp
+    const dot = decimals === 0 && d > 0 ? '.' : ''
+    return mantissa + dot + '0'.repeat(Math.max(0, d - decimals)) + 'e' + exp
 }
 
 export function fmt(n: Decimal): string {
@@ -24,7 +25,7 @@ export function fmt(n: Decimal): string {
 
 function CurrencyBar( { game }: Props ) {
 
-    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).pow(game.globalPointExponent)
+    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.pp102DynamicMulti).pow(game.globalPointExponent)
 
     return (
         <section className={"CurrencyBar"}>

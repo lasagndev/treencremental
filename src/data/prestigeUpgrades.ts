@@ -1,5 +1,7 @@
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import Decimal from "break_eternity.js";
+// import {useEffect, useState} from "react";
+// import {ppUp102Effect} from "../components/PrestigeTree.tsx";
 
 export const ppUp1: IOneTimeUpgrade = {
     id: 1,
@@ -34,13 +36,126 @@ const ppUp101: IBuyableUpgrade = {
         game.setGlobalPointExponent(n => n.plus(0.01))
         game.setPointExponentFromPrestige(n => n.plus(0.01))
     }
-
 }
 
+const ppUp102: IBuyableUpgrade = {
+    id: 102,
+    parentId: 101,
+    position: { x: -2, y: 0 },
+    description: "Boost your points based on PP",
+    price: new Decimal(4),
+    priceMultiplier: new Decimal(2),
+    currentAmount: new Decimal(0),
+    maxAmount: 10,
+    isBought: false,
+    isMaxed: false,
+    effect: () => {}
+}
+
+const ppUp201: IOneTimeUpgrade = {
+    id: 201,
+    parentId: 1,
+    position: { x: 1, y: 0 },
+    description: "+10 base point gain",
+    price: new Decimal(2),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointAddition(n => n.plus(10))
+        game.setPointGainFromPrestige(n => n.plus(10))
+    }
+}
+
+const ppUp202: IOneTimeUpgrade = {
+    id: 202,
+    parentId: 201,
+    position: { x: 2, y: 0 },
+    description: "+0.01 point exponent",
+    price: new Decimal(1),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointExponent(n => n.plus(0.01))
+        game.setPointExponentFromPrestige(n => n.plus(0.01))
+    }
+}
 // -------------------------------------
 // ---------- onetime upgrady ----------
 // ---------------- vvv ----------------
 
+
+
+//NASZE SIURKI!!!!!!!!!!!!!!!!!!!
+
+const ppUp501: IBuyableUpgrade = {
+    id: 501,
+    parentId: 1,
+    position: { x: -1, y: -2 },
+    description: "siur 1e8",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 1000000,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setPrestigePoint(n => n.plus(new Decimal(1e8)))
+}
+
+const ppUp502: IBuyableUpgrade = {
+    id: 502,
+    parentId: 1,
+    position: { x: 0, y: -2 },
+    description: "siur razy 1000",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 1000000,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setPrestigePoint(n => n.times(1000))
+}
+
+const ppUp503: IBuyableUpgrade = {
+    id: 503,
+    parentId: 1,
+    position: { x: 1, y: -2 },
+    description: "OPARCIEEEEEEEEEEEEEEE ^2",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setPrestigePoint(n => n.pow(2))
+}
+
+const ppUp504: IBuyableUpgrade = {
+    id: 504,
+    parentId: 1,
+    position: { x: 2, y: -2 },
+    description: "ŚRUBAAAAAAAAAAAAAAAAAAAA 1",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setPrestigePoint(n => n.plus(new Decimal(1)))
+}
+
+const ppUp505: IBuyableUpgrade = {
+    id: 505,
+    parentId: 1,
+    position: { x: 3, y: -2 },
+    description: "ŚRUBAAAAAAAAAAAAAAAAAAAA *2",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setPrestigePoint(n => n.times(new Decimal(2)))
+}
+
 export {
-    ppUp101
+    ppUp101, ppUp102, ppUp201, ppUp202, ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

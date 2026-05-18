@@ -1,18 +1,21 @@
 import {useState} from "react";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {
-    ppUp101
+    ppUp101, ppUp201, ppUp102, ppUp501, ppUp504, ppUp503, ppUp502, ppUp505
 } from "../data/prestigeUpgrades.ts";
 import Decimal from "break_eternity.js";
 
-const defaultOneTime: IOneTimeUpgrade[] = [
 
+const defaultOneTime: IOneTimeUpgrade[] = [
+    ppUp201
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    ppUp101
+    ppUp101, ppUp102, ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 ];
 
 export function usePrestigeUpgrades() {
+
+
     const [oneTimeUpgrades, setOneTimeUpgrades] = useState<IOneTimeUpgrade[]>(() => {
         try {
             const saved = JSON.parse(localStorage.getItem("prestigeUpgrades") || "null");

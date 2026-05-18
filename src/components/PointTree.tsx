@@ -127,7 +127,7 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setPoint(_ => new Decimal(10))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        game.setGlobalPointAddition(_ => new Decimal(0))
+        game.setGlobalPointAddition(_ => new Decimal(0).plus(game.pointGainFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointMultiplier(_ => new Decimal(1).times(game.pointMultiFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
