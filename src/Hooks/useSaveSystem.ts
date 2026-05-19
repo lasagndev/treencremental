@@ -37,6 +37,7 @@ export function useSaveSystem(
         prestigePoint: game.prestigePoint.toString(),
         prestigePointMulti: game.prestigePointMulti.toString(),
         pointGainFromPrestige: game.pointGainFromPrestige.toString(),
+        automationInterval: game.automationInterval.toString(),
     }));
 
     localStorage.setItem("stats", JSON.stringify({

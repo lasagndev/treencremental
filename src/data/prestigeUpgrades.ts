@@ -23,7 +23,7 @@ export const ppUp1: IOneTimeUpgrade = {
 const ppUp101: IBuyableUpgrade = {
     id: 101,
     parentId: 1,
-    position: { x: -1, y: 0 },
+    position: { x: -1, y: -0.5 },
     description: "+0.01 point exponent",
     price: new Decimal(1),
     priceMultiplier: new Decimal(5),
@@ -41,7 +41,7 @@ const ppUp101: IBuyableUpgrade = {
 const ppUp102: IBuyableUpgrade = {
     id: 102,
     parentId: 101,
-    position: { x: -2, y: 0 },
+    position: { x: -2, y: -0.5 },
     description: "Boost your points based on PP",
     price: new Decimal(4),
     priceMultiplier: new Decimal(2),
@@ -50,6 +50,23 @@ const ppUp102: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: () => {}
+}
+
+const ppUp103: IBuyableUpgrade = {
+    id: 103,
+    parentId: 1,
+    position: { x: -1, y: 0.5 },
+    description: "Automation interval / 1.10",
+    price: new Decimal(5),
+    priceMultiplier: new Decimal(2),
+    currentAmount: new Decimal(0),
+    maxAmount: 13,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "Automation",
+    effect: (game) => {
+        game.setAutomationInterval(n => n / 1.2)
+    }
 }
 
 const ppUp201: IOneTimeUpgrade = {
@@ -65,21 +82,22 @@ const ppUp201: IOneTimeUpgrade = {
     }
 }
 
-const ppUp202: IOneTimeUpgrade = {
-    id: 202,
-    parentId: 201,
-    position: { x: 2, y: 0 },
-    description: "+0.01 point exponent",
-    price: new Decimal(1),
-    isBought: false,
-    effect: (game) => {
-        game.setGlobalPointExponent(n => n.plus(0.01))
-        game.setPointExponentFromPrestige(n => n.plus(0.01))
-    }
-}
+// const ppUp202: IOneTimeUpgrade = {
+//     id: 202,
+//     parentId: 201,
+//     position: { x: 2, y: 0 },
+//     description: "+0.01 point exponent",
+//     price: new Decimal(1),
+//     isBought: false,
+//     effect: (game) => {
+//         game.setGlobalPointExponent(n => n.plus(0.01))
+//         game.setPointExponentFromPrestige(n => n.plus(0.01))
+//     }
+// }
 // -------------------------------------
 // ---------- onetime upgrady ----------
 // ---------------- vvv ----------------
+
 
 
 
@@ -156,6 +174,46 @@ const ppUp505: IBuyableUpgrade = {
     effect: (game) => game.setPrestigePoint(n => n.times(new Decimal(2)))
 }
 
+export const ppUpAuto1to5: IOneTimeUpgrade = {
+    id: 301,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 1-5",
+    price: new Decimal(3),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto6to10: IOneTimeUpgrade = {
+    id: 302,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 6-10",
+    price: new Decimal(5),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto11to15: IOneTimeUpgrade = {
+    id: 303,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 11-15",
+    price: new Decimal(8),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto16to20: IOneTimeUpgrade = {
+    id: 304,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 16-20",
+    price: new Decimal(12),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
 export {
-    ppUp101, ppUp102, ppUp201, ppUp202, ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    ppUp101, ppUp102, ppUp103, ppUp201, ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

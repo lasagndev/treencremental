@@ -127,15 +127,13 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setPoint(_ => new Decimal(10))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        game.setGlobalPointAddition(_ => new Decimal(0).plus(game.pointGainFromPrestige))
+        game.setGlobalPointAddition(_ => new Decimal(1).plus(game.pointGainFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointMultiplier(_ => new Decimal(1).times(game.pointMultiFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalPointExponent(_ => new Decimal(1).times(game.pointExponentFromPrestige))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         game.setGlobalMultiplierMultiplier(_ => new Decimal(1).times(game.pointMultiFromPrestige))
-        // eslint-disable-next-line react-hooks/immutability
-        pUp1.isBought = false
         resetUpgrades()
         stats.setTotalPrestiges(n => n.plus(1))
         game.setCanShowPrestigeTree(true)
@@ -156,6 +154,7 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         game.setPoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
         stats.setTotalUpgradesBought(n => n.plus(1))
+        console.log(game.automationInterval)
         setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
             ...u,
             ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),

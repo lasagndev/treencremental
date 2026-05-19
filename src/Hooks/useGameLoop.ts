@@ -57,6 +57,10 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         return s?.prestigePointMulti ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
     })
     const [pp102DynamicMulti, setPp102DynamicMulti] = useState<Decimal>(new Decimal(1));
+    const [automationInterval, setAutomationInterval] = useState<number>(() => {
+        const s = loadSaved()
+        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 1000;
+    })
 
     const game = new Game(
         point, setPoint,
@@ -71,6 +75,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         pointExponentFromPrestige, setPointExponentFromPrestige,
         prestigePointMulti, setPrestigePointMulti,
         pp102DynamicMulti, setPp102DynamicMulti,
+        automationInterval, setAutomationInterval
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
@@ -95,7 +100,8 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
 
     useEffect(() => {
         const skibidi = setInterval(() => {
-            const newMulti = Decimal.max(new Decimal(1), new Decimal(2).plus(prestigePointRef.current.log2().pow((pp102AmountRef.current).pow(0.8))));
+            let newMulti = new Decimal(2).plus(prestigePointRef.current.log2().pow((pp102AmountRef.current).pow(0.8)));
+            if(pp102AmountRef.current.lte(new Decimal(0)) || newMulti.lte(new Decimal(1))) newMulti = new Decimal(1)
             setPp102DynamicMulti(newMulti);
             pp102DynamicMultiRef.current = newMulti;
             setPoint(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).pow(globalPointExponentRef.current).dividedBy(25)));

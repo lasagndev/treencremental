@@ -131,7 +131,7 @@
 .upgradeButton--locked {
     background: #0c0c1a;
     border-color: #181830;
-    color: #303055;
+    color: #ffffff;
     cursor: not-allowed;
     /*display: none;*/
 }

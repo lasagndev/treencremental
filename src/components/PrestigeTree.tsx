@@ -7,7 +7,6 @@ import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
-// @ts-ignore
 import Decimal from "break_eternity.js";
 import {fmt_upgrade} from "../data/pointUpgrades.ts";
 
@@ -38,6 +37,7 @@ interface PrestigeTreeProps {
 
 const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
+    const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -105,7 +105,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
 
     const posById: Record<number, UpgradePosition> = { [ppUp1.id]: ppUp1.position }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
-    oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
+    visibleOneTime.forEach(u => { posById[u.id] = u.position })
 
     function buyRoot() {
         game.setPrestigePoint(n => n.minus(ppUp1.price))
@@ -171,7 +171,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     }
 
     function getConnections(): Array<{ from: number, to: number }> {
-        return [...buyableUpgrades, ...oneTimeUpgrades]
+        return [...buyableUpgrades, ...visibleOneTime]
             .filter(upg => upg.parentId !== undefined)
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
     }
@@ -256,7 +256,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
                     </button>
                 ))}
 
-                {oneTimeUpgrades.map(upg => (
+                {visibleOneTime.map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${oneTimeClass(upg)}`}

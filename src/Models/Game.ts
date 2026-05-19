@@ -32,6 +32,9 @@ export class Game {
     pp102DynamicMulti
     setPp102DynamicMulti
 
+    automationInterval
+    setAutomationInterval
+
     constructor(point: Decimal,
                 setPoint: Dispatch<SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
@@ -55,7 +58,9 @@ export class Game {
                 prestigePointMulti: Decimal,
                 setPrestigePointMulti: Dispatch<SetStateAction<Decimal>>,
                 pp102DynamicMulti: Decimal,
-                setPp102DynamicMulti: Dispatch<SetStateAction<Decimal>>,) {
+                setPp102DynamicMulti: Dispatch<SetStateAction<Decimal>>,
+                automationInterval: number,
+                setAutomationInterval: Dispatch<SetStateAction<number>>,) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -81,5 +86,7 @@ export class Game {
         this.setPrestigePointMulti = setPrestigePointMulti;
         this.pp102DynamicMulti = pp102DynamicMulti;
         this.setPp102DynamicMulti = setPp102DynamicMulti;
+        this.automationInterval = automationInterval;
+        this.setAutomationInterval = setAutomationInterval;
     }
 }
