@@ -242,7 +242,6 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         game.setPoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
         stats.setTotalUpgradesBought(n => n.plus(1))
-        console.log(game.automationInterval)
         setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
             ...u,
             ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),
