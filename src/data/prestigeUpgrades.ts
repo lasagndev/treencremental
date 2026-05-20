@@ -82,6 +82,46 @@ const ppUp201: IOneTimeUpgrade = {
     }
 }
 
+export const ppUpAuto1to5: IOneTimeUpgrade = {
+    id: 301,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 1-5",
+    price: new Decimal(3),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto6to10: IOneTimeUpgrade = {
+    id: 302,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 6-10",
+    price: new Decimal(10),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto11to15: IOneTimeUpgrade = {
+    id: 303,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 11-15",
+    price: new Decimal(25),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
+export const ppUpAuto16to20: IOneTimeUpgrade = {
+    id: 304,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 16-20",
+    price: new Decimal(100),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
 // const ppUp202: IOneTimeUpgrade = {
 //     id: 202,
 //     parentId: 201,
@@ -94,12 +134,10 @@ const ppUp201: IOneTimeUpgrade = {
 //         game.setPointExponentFromPrestige(n => n.plus(0.01))
 //     }
 // }
-// -------------------------------------
-// ---------- onetime upgrady ----------
-// ---------------- vvv ----------------
 
 
 
+/*
 
 //NASZE SIURKI!!!!!!!!!!!!!!!!!!!
 
@@ -174,46 +212,10 @@ const ppUp505: IBuyableUpgrade = {
     effect: (game) => game.setPrestigePoint(n => n.times(new Decimal(2)))
 }
 
-export const ppUpAuto1to5: IOneTimeUpgrade = {
-    id: 301,
-    position: { x: 0, y: 0 },
-    description: "Automate upgrades 1-5",
-    price: new Decimal(3),
-    isBought: false,
-    whenCanShow: "automation",
-    effect: () => {}
-}
 
-export const ppUpAuto6to10: IOneTimeUpgrade = {
-    id: 302,
-    position: { x: 0, y: 0 },
-    description: "Automate upgrades 6-10",
-    price: new Decimal(10),
-    isBought: false,
-    whenCanShow: "automation",
-    effect: () => {}
-}
-
-export const ppUpAuto11to15: IOneTimeUpgrade = {
-    id: 303,
-    position: { x: 0, y: 0 },
-    description: "Automate upgrades 11-15",
-    price: new Decimal(25),
-    isBought: false,
-    whenCanShow: "automation",
-    effect: () => {}
-}
-
-export const ppUpAuto16to20: IOneTimeUpgrade = {
-    id: 304,
-    position: { x: 0, y: 0 },
-    description: "Automate upgrades 16-20",
-    price: new Decimal(100),
-    isBought: false,
-    whenCanShow: "automation",
-    effect: () => {}
-}
+*/
 
 export {
-    ppUp101, ppUp102, ppUp103, ppUp201, ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    ppUp101, ppUp102, ppUp103, ppUp201,
+    // ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

@@ -34,11 +34,11 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
     });
     const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
