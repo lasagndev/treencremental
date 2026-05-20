@@ -7,6 +7,8 @@ import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
+import Decimal from "break_eternity.js";
+import {fmt_upgrade} from "../data/pointUpgrades.ts";
 
 const UPGRADE_GAP = 160
 
@@ -35,12 +37,25 @@ interface PrestigeTreeProps {
 
 const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
+    const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
     const [view, setView] = useState({ panX: 0, panY: 0, zoom: 1 })
+    const viewRef = useRef(view)
     const isDragging = useRef(false)
     const dragOrigin = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
+    const pinchOrigin = useRef<{
+        dist: number; zoom: number;
+        centerX: number; centerY: number;
+        panX: number; panY: number;
+    } | null>(null)
+
+
+
+
+
+    useEffect(() => { viewRef.current = view }, [view])
 
     useEffect(() => {
         const el = containerRef.current
@@ -76,6 +91,86 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         return () => el.removeEventListener('wheel', onWheel)
     }, [])
 
+    useEffect(() => {
+        const el = containerRef.current
+        if (!el) return
+
+        const onTouchStart = (e: TouchEvent) => {
+            if (e.touches.length === 1) {
+                isDragging.current = true
+                pinchOrigin.current = null
+                dragOrigin.current = {
+                    mouseX: e.touches[0].clientX,
+                    mouseY: e.touches[0].clientY,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            } else if (e.touches.length === 2) {
+                isDragging.current = false
+                const t0 = e.touches[0], t1 = e.touches[1]
+                const rect = el.getBoundingClientRect()
+                pinchOrigin.current = {
+                    dist: Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY),
+                    zoom: viewRef.current.zoom,
+                    centerX: (t0.clientX + t1.clientX) / 2 - rect.left,
+                    centerY: (t0.clientY + t1.clientY) / 2 - rect.top,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            }
+        }
+
+        const onTouchMove = (e: TouchEvent) => {
+            e.preventDefault()
+            if (e.touches.length === 1 && isDragging.current) {
+                const { mouseX, mouseY, panX, panY } = dragOrigin.current
+                setView(prev => ({
+                    ...prev,
+                    panX: panX + e.touches[0].clientX - mouseX,
+                    panY: panY + e.touches[0].clientY - mouseY,
+                }))
+            } else if (e.touches.length === 2 && pinchOrigin.current) {
+                const t0 = e.touches[0], t1 = e.touches[1]
+                const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY)
+                const { dist: initDist, zoom: initZoom, centerX, centerY, panX, panY } = pinchOrigin.current
+                const newZoom = Math.max(0.3, Math.min(3, initZoom * (dist / initDist)))
+                const ratio = newZoom / initZoom
+                setView({
+                    zoom: newZoom,
+                    panX: centerX - ratio * (centerX - panX),
+                    panY: centerY - ratio * (centerY - panY),
+                })
+            }
+        }
+
+        const onTouchEnd = (e: TouchEvent) => {
+            if (e.touches.length === 0) {
+                isDragging.current = false
+                pinchOrigin.current = null
+            } else if (e.touches.length === 1) {
+                isDragging.current = true
+                pinchOrigin.current = null
+                dragOrigin.current = {
+                    mouseX: e.touches[0].clientX,
+                    mouseY: e.touches[0].clientY,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            }
+        }
+
+        el.addEventListener('touchstart', onTouchStart, { passive: false })
+        el.addEventListener('touchmove', onTouchMove, { passive: false })
+        el.addEventListener('touchend', onTouchEnd, { passive: false })
+        el.addEventListener('touchcancel', onTouchEnd, { passive: false })
+        return () => {
+            el.removeEventListener('touchstart', onTouchStart)
+            el.removeEventListener('touchmove', onTouchMove)
+            el.removeEventListener('touchend', onTouchEnd)
+            el.removeEventListener('touchcancel', onTouchEnd)
+        }
+    }, [])
+
     function handleMouseDown(e: React.MouseEvent) {
         if (e.button !== 0) return
         if ((e.target as HTMLElement).closest('.upgradeButton')) return
@@ -98,7 +193,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
 
     const posById: Record<number, UpgradePosition> = { [ppUp1.id]: ppUp1.position }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
-    oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
+    visibleOneTime.forEach(u => { posById[u.id] = u.position })
 
     function buyRoot() {
         game.setPrestigePoint(n => n.minus(ppUp1.price))
@@ -134,7 +229,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         const upg = [...buyableUpgrades, ...oneTimeUpgrades].find(u => u.id === id)
         if (!upg || upg.parentId === undefined) return false
         const { parentId } = upg
-        if (parentId === ppUp1.id) return false
+        if (parentId === ppUp1.id) return !ppUp1.isBought
         const parentBuyable = buyableUpgrades.find(u => u.id === parentId)
         if (parentBuyable) return parentBuyable.currentAmount.eq(0)
         const parentOneTime = oneTimeUpgrades.find(u => u.id === parentId)
@@ -164,7 +259,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     }
 
     function getConnections(): Array<{ from: number, to: number }> {
-        return [...buyableUpgrades, ...oneTimeUpgrades]
+        return [...buyableUpgrades, ...visibleOneTime]
             .filter(upg => upg.parentId !== undefined)
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
     }
@@ -197,9 +292,10 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         >
             <section className="prestigeTreeCurrencyBar">
                 <p>Prestige Points: {fmt(game.prestigePoint)}</p>
+                { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.pp102DynamicMulti)}</p>}
             </section>
 
-            <div className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
+            <div  className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
 
                 {width > 0 && (
                     <svg className="upgradeSvg" overflow="visible">
@@ -248,7 +344,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
                     </button>
                 ))}
 
-                {oneTimeUpgrades.map(upg => (
+                {visibleOneTime.map(upg => (
                     <button
                         key={upg.id}
                         className={`upgradeButton ${oneTimeClass(upg)}`}

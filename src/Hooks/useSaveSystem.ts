@@ -36,11 +36,13 @@ export function useSaveSystem(
         pointExponentFromPrestige: game.pointExponentFromPrestige.toString(),
         prestigePoint: game.prestigePoint.toString(),
         prestigePointMulti: game.prestigePointMulti.toString(),
+        pointGainFromPrestige: game.pointGainFromPrestige.toString(),
+        automationInterval: game.automationInterval.toString(),
     }));
 
     localStorage.setItem("stats", JSON.stringify({
         allPoints: stats.allPoints.toString(),
-        totalUpradesBought: stats.totalUpgradesBought.toString(),
+        totalUpgradesBought: stats.totalUpgradesBought.toString(),
         totalPrestiges: stats.totalPrestiges.toString(),
         allPrestigePoints: stats.allPrestigePoints.toString(),
         timePlayed: stats.timePlayed.toString(),
@@ -49,13 +51,13 @@ export function useSaveSystem(
     localStorage.setItem("upgrades", JSON.stringify({
         oneTimeUpgrades: upgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: upgrades.buyableUpgrades.map(u => ({
-            id: u.id, isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
+            id: u.id, price: u.price, isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
         })),
     }));
     localStorage.setItem("prestigeUpgrades", JSON.stringify({
         oneTimeUpgrades: pupgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: pupgrades.buyableUpgrades.map(u => ({
-            id: u.id, isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
+            id: u.id, price: u.price, isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
         })),
     }));
     localStorage.setItem("pUp1", JSON.stringify(pUp1 ?? false));

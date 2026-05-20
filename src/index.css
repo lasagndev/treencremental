@@ -12,3 +12,8 @@ html, body, #root {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   user-select: none;
 }
+
+#root {
+  display: flex;
+  flex-direction: column;
+}

@@ -16,11 +16,22 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                 onClick={ () => setCurrentTab("MainTree") }>
                 Main Tree
             </button>
-            {game.canShowPrestigeTree && <button
-                className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
-                onClick={ () => setCurrentTab("PrestigeTree") }>
-                Prestige Tree
-            </button>}
+            {game.canShowPrestigeTree &&
+                <>
+                    <button
+                        className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
+                        onClick={ () => setCurrentTab("PrestigeTree") }>
+                        Prestige Tree
+                    </button>
+                    <button
+                        className={currentTab === "Automation" ? "navTab--active" : ""}
+                        onClick={() => setCurrentTab("Automation")}>
+                        Automation
+                    </button>
+                </>
+
+
+            }
 
             <button
                 style={{ marginLeft: "auto" }}

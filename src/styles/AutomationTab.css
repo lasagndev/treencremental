@@ -1,0 +1,268 @@
+/* ── Layout ──────────────────────────────────────────────── */
+
+.automation-tab {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.automation-tab__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #d0d0d0;
+    text-shadow: 0 0 24px rgba(100, 220, 180, 0.4);
+}
+
+.automation-tab__header-icon {
+    font-size: 28px;
+    animation: spin-slow 8s linear infinite;
+    display: inline-block;
+    opacity: 0.8;
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.automation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .automation-tab {
+        padding: 16px 12px;
+        gap: 16px;
+    }
+    .automation-tab__header {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+    .automation-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Card base ───────────────────────────────────────────── */
+
+.automation-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    padding: 20px 22px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.4s, box-shadow 0.4s, background 0.4s;
+}
+
+/* animated radial glow behind card content */
+.automation-card__glow {
+    position: absolute;
+    inset: -60%;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+    background: radial-gradient(circle, rgba(0, 255, 160, 0.12) 0%, transparent 65%);
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { transform: scale(0.85); opacity: 0.5; }
+    50%       { transform: scale(1.1);  opacity: 1;   }
+}
+
+/* ── Card states ─────────────────────────────────────────── */
+
+.automation-card--active {
+    border-color: rgba(0, 255, 150, 0.35);
+    background: rgba(0, 255, 150, 0.04);
+    box-shadow:
+        0 0 0 1px rgba(0, 255, 150, 0.15),
+        0 4px 24px rgba(0, 255, 150, 0.08);
+}
+
+.automation-card--active .automation-card__glow {
+    opacity: 1;
+}
+
+.automation-card--paused {
+    border-color: rgba(255, 185, 0, 0.3);
+    background: rgba(255, 185, 0, 0.03);
+    box-shadow: 0 0 0 1px rgba(255, 185, 0, 0.1);
+}
+
+.automation-card--paused .automation-card__glow {
+    background: radial-gradient(circle, rgba(255, 185, 0, 0.1) 0%, transparent 65%);
+    opacity: 0.6;
+    animation: none;
+}
+
+.automation-card--locked {
+    opacity: 0.55;
+    filter: grayscale(0.3);
+}
+
+/* ── Card internals ──────────────────────────────────────── */
+
+.automation-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.automation-card__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ddd;
+    white-space: nowrap;
+}
+
+/* status dot */
+.automation-card__dot {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.automation-card--active .automation-card__dot {
+    background: #00ff96;
+    box-shadow: 0 0 6px #00ff96, 0 0 14px rgba(0, 255, 150, 0.5);
+    animation: dot-beat 1.4s ease-in-out infinite;
+}
+
+.automation-card--paused .automation-card__dot {
+    background: #ffb800;
+    box-shadow: 0 0 6px #ffb800;
+}
+
+@keyframes dot-beat {
+    0%, 100% { box-shadow: 0 0 4px #00ff96, 0 0 8px rgba(0,255,150,0.3); }
+    50%       { box-shadow: 0 0 10px #00ff96, 0 0 22px rgba(0,255,150,0.6); }
+}
+
+.automation-card__desc {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 14px;
+    line-height: 1.5;
+}
+
+.automation-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.automation-card__status {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #444;
+    transition: color 0.3s;
+}
+
+.automation-card--active .automation-card__status  { color: #00ff96; }
+.automation-card--paused .automation-card__status  { color: #ffb800; }
+
+.automation-card__cost {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+/* ── Unlock button ───────────────────────────────────────── */
+
+.automation-unlock-btn {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(120, 70, 255, 0.25), rgba(60, 120, 255, 0.25));
+    border: 1px solid rgba(130, 90, 255, 0.45);
+    color: #b89cff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.automation-unlock-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(120, 70, 255, 0.45), rgba(60, 120, 255, 0.45));
+    box-shadow: 0 0 16px rgba(130, 90, 255, 0.45);
+    color: #d0bcff;
+}
+
+.automation-unlock-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ── Toggle switch ───────────────────────────────────────── */
+
+.toggle {
+    flex-shrink: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle input {
+    display: none;
+}
+
+.toggle__track {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    position: relative;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.toggle input:checked + .toggle__track {
+    background: rgba(0, 180, 100, 0.25);
+    border-color: rgba(0, 255, 150, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 150, 0.2);
+}
+
+.toggle__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #555;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s, box-shadow 0.28s;
+}
+
+.toggle input:checked + .toggle__track .toggle__thumb {
+    transform: translateX(20px);
+    background: #00ff96;
+    box-shadow: 0 0 8px rgba(0, 255, 150, 0.9);
+}

@@ -17,16 +17,20 @@ import {useStatistics} from "./Hooks/useStatistics.ts";
 import {useAchievements} from "./Hooks/useAchievements.ts";
 import AchievementPopup from "./components/AchievementPopup.tsx";
 import Decimal from "break_eternity.js";
+import AutomationTab from "./components/AutomationTab.tsx";
+import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
+
 
 
 
 function App() {
-
     const stats = useStatistics();
-    const game = useGameLoop(stats);
-    const pointUpgrades = usePointUpgrades();
     const prestigeUpgrades = usePrestigeUpgrades();
+    const pp102Amount = prestigeUpgrades.buyableUpgrades.find(u => u.id === 102)?.currentAmount ?? new Decimal(0);
+    const game = useGameLoop(stats, pp102Amount);
+    const pointUpgrades = usePointUpgrades();
     const achievementsHook = useAchievements();
+
 
     const gameRef = useRef(game);
     const statsRef = useRef(stats);
@@ -40,6 +44,7 @@ function App() {
 
     // eslint-disable-next-line react-hooks/refs
     gameRef.current = game;
+
     // eslint-disable-next-line react-hooks/refs
     statsRef.current = stats;
     // eslint-disable-next-line react-hooks/refs
@@ -72,7 +77,6 @@ function App() {
     useEffect(() => {
         const siur = setInterval(() => {
             stats.setTimePlayed(n => n.plus(new Decimal(1)))
-            console.log(stats.timePlayed)
         }, 1000)
         return () => clearInterval(siur)
     }, []);
@@ -84,6 +88,96 @@ function App() {
         return () => clearInterval(ach);
     }, []);
 
+    let automationInterval = game.automationInterval;
+    if(automationInterval <= 100) automationInterval = 100;
+
+    useEffect(() => {
+        const automation = setInterval(() => {
+            const game = gameRef.current;
+            const stats = statsRef.current;
+            const { buyableUpgrades, oneTimeUpgrades, setBuyableUpgrades, setOneTimeUpgrades } = pointUpgradesRef.current;
+            const prestigeOneTime = prestigeUpgradesRef.current.oneTimeUpgrades;
+
+            const tog = autoEnabledRef.current;
+            const auto1to5   = (prestigeOneTime.find(u => u.id === 301)?.isBought ?? false) && (tog[301] ?? true);
+            const auto6to10  = (prestigeOneTime.find(u => u.id === 302)?.isBought ?? false) && (tog[302] ?? true);
+            const auto11to15 = (prestigeOneTime.find(u => u.id === 303)?.isBought ?? false) && (tog[303] ?? true);
+            const auto16to20 = (prestigeOneTime.find(u => u.id === 304)?.isBought ?? false) && (tog[304] ?? true);
+
+            if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20) return;
+
+            // Track spend within this tick so multiple purchases don't overdraw the same balance
+            let available = game.point;
+
+            function isLocked(id: number): boolean {
+                const upg = [...buyableUpgrades, ...oneTimeUpgrades].find(u => u.id === id);
+                if (!upg || upg.parentId === undefined) return false;
+                if (upg.parentId === pUp1.id) return false;
+                const parentBuyable = buyableUpgrades.find(u => u.id === upg.parentId);
+                if (parentBuyable) return parentBuyable.currentAmount.eq(0);
+                const parentOneTime = oneTimeUpgrades.find(u => u.id === upg.parentId);
+                if (parentOneTime) return !parentOneTime.isBought;
+                return false;
+            }
+
+            function getPrice(upg: IBuyableUpgrade) {
+                return upg.calcPrice ? upg.calcPrice(upg) : upg.price;
+            }
+
+            function buyOneTime(upg: IOneTimeUpgrade) {
+                if (upg.isBought || isLocked(upg.id) || available.lt(upg.price)) return;
+                available = available.minus(upg.price);
+                game.setPoint(n => n.minus(upg.price));
+                upg.effect(game);
+                stats.setTotalUpgradesBought(n => n.plus(1));
+                setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u));
+            }
+
+            function buyBuyable(upg: IBuyableUpgrade) {
+                const price = getPrice(upg);
+                if (upg.isMaxed || isLocked(upg.id) || available.lt(price)) return;
+                available = available.minus(price);
+                game.setPoint(n => n.minus(price));
+                upg.effect(game);
+                stats.setTotalUpgradesBought(n => n.plus(1));
+                setBuyableUpgrades(prev => prev.map(u => u.id === upg.id ? {
+                    ...u,
+                    ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier) }),
+                    currentAmount: u.currentAmount.plus(1),
+                    isMaxed: u.currentAmount.plus(1).eq(u.maxAmount)
+                } : u));
+            }
+
+            if (auto1to5) {
+                buyableUpgrades.filter(u => u.id >= 101 && u.id <= 105).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 201 && u.id <= 205).forEach(buyOneTime);
+            }
+            if (auto6to10) {
+                buyableUpgrades.filter(u => u.id >= 106 && u.id <= 110).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 206 && u.id <= 210).forEach(buyOneTime);
+            }
+            if (auto11to15) {
+                buyableUpgrades.filter(u => u.id >= 111 && u.id <= 115).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 211 && u.id <= 215).forEach(buyOneTime);
+            }
+            if (auto16to20) {
+                buyableUpgrades.filter(u => u.id >= 116 && u.id <= 120).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 216 && u.id <= 220).forEach(buyOneTime);
+            }
+            console.log(automationInterval)
+        }, automationInterval);
+        return () => clearInterval(automation);
+    }, [automationInterval]);
+
+
+    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 301: true, 302: true, 303: true, 304: true })
+    const autoEnabledRef = useRef(autoEnabled)
+    // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
+    autoEnabledRef.current = autoEnabled
+
+    function setAutoGroup(id: number, enabled: boolean) {
+        setAutoEnabled(prev => ({ ...prev, [id]: enabled }))
+    }
 
     const [toastKey, setToastKey] = useState<number | null>(null);
     const [currentTab, setCurrentTab] = useState("MainTree");
@@ -99,6 +193,7 @@ function App() {
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
                 {currentTab === "Settings" && <SettingsTab onSave={handleSave} />}
+                {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
             </section>
 
             {toastKey !== null && <div key={toastKey} className="save-toast">Game saved...</div>}

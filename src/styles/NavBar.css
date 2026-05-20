@@ -1,12 +1,26 @@
 .navBar {
     width: 100%;
-    height: 5%;
+    height: auto;
+    min-height: 44px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 4px;
     padding: 0 12px;
     background-color: #0a0a1a;
     border-bottom: 1px solid #1a1a38;
+}
+
+@media (max-width: 600px) {
+    .navBar {
+        overflow-x: auto;
+        padding: 4px 8px;
+    }
+    .navBar button {
+        flex-shrink: 0;
+        padding: 0 12px;
+        font-size: 0.8rem;
+    }
 }
 
 .navBar button {
