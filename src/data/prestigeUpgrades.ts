@@ -188,7 +188,7 @@ export const ppUpAuto6to10: IOneTimeUpgrade = {
     id: 302,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 6-10",
-    price: new Decimal(5),
+    price: new Decimal(10),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
@@ -198,7 +198,7 @@ export const ppUpAuto11to15: IOneTimeUpgrade = {
     id: 303,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 11-15",
-    price: new Decimal(8),
+    price: new Decimal(25),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
@@ -208,7 +208,7 @@ export const ppUpAuto16to20: IOneTimeUpgrade = {
     id: 304,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 16-20",
-    price: new Decimal(12),
+    price: new Decimal(100),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}

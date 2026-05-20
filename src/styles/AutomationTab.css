@@ -39,6 +39,20 @@
     gap: 16px;
 }
 
+@media (max-width: 600px) {
+    .automation-tab {
+        padding: 16px 12px;
+        gap: 16px;
+    }
+    .automation-tab__header {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+    .automation-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ── Card base ───────────────────────────────────────────── */
 
 .automation-card {

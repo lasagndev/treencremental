@@ -245,6 +245,18 @@
     z-index: 1;
 }
 
+@media (max-width: 480px) {
+    .achievementsTab {
+        padding: 16px 12px;
+    }
+    .achievementsTab__title {
+        font-size: 1.3rem;
+    }
+    .achievementsTab__grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
 /* ─── Card ────────────────────────────────────── */
 
 .achievementsTab__card {

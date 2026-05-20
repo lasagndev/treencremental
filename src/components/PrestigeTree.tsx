@@ -42,12 +42,20 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
     const [view, setView] = useState({ panX: 0, panY: 0, zoom: 1 })
+    const viewRef = useRef(view)
     const isDragging = useRef(false)
     const dragOrigin = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
+    const pinchOrigin = useRef<{
+        dist: number; zoom: number;
+        centerX: number; centerY: number;
+        panX: number; panY: number;
+    } | null>(null)
 
 
 
 
+
+    useEffect(() => { viewRef.current = view }, [view])
 
     useEffect(() => {
         const el = containerRef.current
@@ -81,6 +89,86 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         }
         el.addEventListener('wheel', onWheel, { passive: false })
         return () => el.removeEventListener('wheel', onWheel)
+    }, [])
+
+    useEffect(() => {
+        const el = containerRef.current
+        if (!el) return
+
+        const onTouchStart = (e: TouchEvent) => {
+            if (e.touches.length === 1) {
+                isDragging.current = true
+                pinchOrigin.current = null
+                dragOrigin.current = {
+                    mouseX: e.touches[0].clientX,
+                    mouseY: e.touches[0].clientY,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            } else if (e.touches.length === 2) {
+                isDragging.current = false
+                const t0 = e.touches[0], t1 = e.touches[1]
+                const rect = el.getBoundingClientRect()
+                pinchOrigin.current = {
+                    dist: Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY),
+                    zoom: viewRef.current.zoom,
+                    centerX: (t0.clientX + t1.clientX) / 2 - rect.left,
+                    centerY: (t0.clientY + t1.clientY) / 2 - rect.top,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            }
+        }
+
+        const onTouchMove = (e: TouchEvent) => {
+            e.preventDefault()
+            if (e.touches.length === 1 && isDragging.current) {
+                const { mouseX, mouseY, panX, panY } = dragOrigin.current
+                setView(prev => ({
+                    ...prev,
+                    panX: panX + e.touches[0].clientX - mouseX,
+                    panY: panY + e.touches[0].clientY - mouseY,
+                }))
+            } else if (e.touches.length === 2 && pinchOrigin.current) {
+                const t0 = e.touches[0], t1 = e.touches[1]
+                const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY)
+                const { dist: initDist, zoom: initZoom, centerX, centerY, panX, panY } = pinchOrigin.current
+                const newZoom = Math.max(0.3, Math.min(3, initZoom * (dist / initDist)))
+                const ratio = newZoom / initZoom
+                setView({
+                    zoom: newZoom,
+                    panX: centerX - ratio * (centerX - panX),
+                    panY: centerY - ratio * (centerY - panY),
+                })
+            }
+        }
+
+        const onTouchEnd = (e: TouchEvent) => {
+            if (e.touches.length === 0) {
+                isDragging.current = false
+                pinchOrigin.current = null
+            } else if (e.touches.length === 1) {
+                isDragging.current = true
+                pinchOrigin.current = null
+                dragOrigin.current = {
+                    mouseX: e.touches[0].clientX,
+                    mouseY: e.touches[0].clientY,
+                    panX: viewRef.current.panX,
+                    panY: viewRef.current.panY,
+                }
+            }
+        }
+
+        el.addEventListener('touchstart', onTouchStart, { passive: false })
+        el.addEventListener('touchmove', onTouchMove, { passive: false })
+        el.addEventListener('touchend', onTouchEnd, { passive: false })
+        el.addEventListener('touchcancel', onTouchEnd, { passive: false })
+        return () => {
+            el.removeEventListener('touchstart', onTouchStart)
+            el.removeEventListener('touchmove', onTouchMove)
+            el.removeEventListener('touchend', onTouchEnd)
+            el.removeEventListener('touchcancel', onTouchEnd)
+        }
     }, [])
 
     function handleMouseDown(e: React.MouseEvent) {
