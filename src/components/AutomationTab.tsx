@@ -18,6 +18,7 @@ const GROUPS = [
     { id: 302, label: "Upgrades 6–10",  desc: "Automatically purchase point upgrades 6 through 10" },
     { id: 303, label: "Upgrades 11–15", desc: "Automatically purchase point upgrades 11 through 15" },
     { id: 304, label: "Upgrades 16–20", desc: "Automatically purchase point upgrades 16 through 20" },
+    { id: 305, label: "Upgrades 21–25", desc: "Automatically purchase point upgrades 21 through 25" },
 ]
 
 const AutomationTab = ({ game, stats, prestigeOneTimeUpgrades, setPrestigeOneTimeUpgrades, autoEnabled, setAutoGroup }: IAutomationTab) => {

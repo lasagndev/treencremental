@@ -19,7 +19,7 @@ import {
     pUp116,
     pUp117,
     pUp118,
-    pUp119,
+    pUp119, pUp120, pUp121, pUp122,
     pUp201,
     pUp202,
     pUp203,
@@ -36,23 +36,24 @@ import {
     pUp214,
     pUp215,
     pUp216,
-    pUp217,
-    // pUp401,
-    // pUp402,
-    // pUp501,
-    // pUp502,
-    // pUp503,
-    // pUp504
+    pUp217, pUp218, pUp219, pUp220, pUp221, pUp302,
+    pUp401,
+    pUp402,
+    pUp501,
+    pUp502,
+    pUp503,
+    pUp504
 
 } from "../data/pointUpgrades.ts";
 import Decimal from "break_eternity.js";
 
 const defaultOneTime: IOneTimeUpgrade[] = [
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217
+    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221,
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119,
-    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122,
+    pUp302,
+    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504
 ];
 
 export function usePointUpgrades() {
@@ -91,8 +92,12 @@ export function usePointUpgrades() {
     });
 
     function resetUpgrades() {
-        setOneTimeUpgrades(defaultOneTime.map(u => ({ ...u })));
-        setBuyableUpgrades(defaultBuyable.map(u => ({ ...u })));
+        setOneTimeUpgrades(prev =>
+            prev.map(u => u.id >= 301 ? u : { ...defaultOneTime.find(d => d.id === u.id)! })
+        );
+        setBuyableUpgrades(prev =>
+            prev.map(u => u.id >= 301 ? u : { ...defaultBuyable.find(d => d.id === u.id)! })
+        );
     }
 
     return { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades }

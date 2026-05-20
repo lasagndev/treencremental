@@ -82,10 +82,10 @@ function App() {
     }, []);
 
     useEffect(() => {
-        const ach = setInterval(() => {
+        const who_touch_me_bird = setInterval(() => {
             checkAchievementsRef.current(gameRef.current, statsRef.current);
         }, 1000);
-        return () => clearInterval(ach);
+        return () => clearInterval(who_touch_me_bird);
     }, []);
 
     let automationInterval = game.automationInterval;
@@ -103,8 +103,9 @@ function App() {
             const auto6to10  = (prestigeOneTime.find(u => u.id === 302)?.isBought ?? false) && (tog[302] ?? true);
             const auto11to15 = (prestigeOneTime.find(u => u.id === 303)?.isBought ?? false) && (tog[303] ?? true);
             const auto16to20 = (prestigeOneTime.find(u => u.id === 304)?.isBought ?? false) && (tog[304] ?? true);
+            const auto21to25 = (prestigeOneTime.find(u => u.id === 305)?.isBought ?? false) && (tog[305] ?? true);
 
-            if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20) return;
+            if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20 && !auto21to25) return;
 
             // Track spend within this tick so multiple purchases don't overdraw the same balance
             let available = game.point;
@@ -164,13 +165,17 @@ function App() {
                 buyableUpgrades.filter(u => u.id >= 116 && u.id <= 120).forEach(buyBuyable);
                 oneTimeUpgrades.filter(u => u.id >= 216 && u.id <= 220).forEach(buyOneTime);
             }
+            if(auto21to25) {
+                buyableUpgrades.filter(u => u.id >= 121 && u.id <= 125).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 221 && u.id <= 225).forEach(buyOneTime);
+            }
             console.log(automationInterval)
         }, automationInterval);
         return () => clearInterval(automation);
     }, [automationInterval]);
 
 
-    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 301: true, 302: true, 303: true, 304: true })
+    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 301: true, 302: true, 303: true, 304: true, 305: true })
     const autoEnabledRef = useRef(autoEnabled)
     // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
     autoEnabledRef.current = autoEnabled

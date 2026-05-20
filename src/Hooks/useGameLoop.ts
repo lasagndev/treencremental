@@ -34,11 +34,11 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
     });
     const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
@@ -59,8 +59,8 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     const [pp102DynamicMulti, setPp102DynamicMulti] = useState<Decimal>(new Decimal(1));
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
-        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 1000;
-    })
+        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
+    });
 
     const game = new Game(
         point, setPoint,
@@ -75,7 +75,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         pointExponentFromPrestige, setPointExponentFromPrestige,
         prestigePointMulti, setPrestigePointMulti,
         pp102DynamicMulti, setPp102DynamicMulti,
-        automationInterval, setAutomationInterval
+        automationInterval, setAutomationInterval,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);

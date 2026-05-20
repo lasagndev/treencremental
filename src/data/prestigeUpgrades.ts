@@ -6,13 +6,13 @@ import Decimal from "break_eternity.js";
 export const ppUp1: IOneTimeUpgrade = {
     id: 1,
     position: { x: 0, y: 0 },
-    description: "*2 point multi",
+    description: "*3 point multi",
     price: new Decimal(1),
     isBought: (() => { try { return JSON.parse(localStorage.getItem("ppUp1") ?? "false"); } catch { return false; } })() || false,
     effect: (game) => {
-        game.setGlobalMultiplierMultiplier(n => n.times(2))
-        game.setGlobalPointMultiplier(n => n.times(2))
-        game.setPointMultiFromPrestige(n => n.times(2))
+        game.setGlobalMultiplierMultiplier(n => n.times(3))
+        game.setGlobalPointMultiplier(n => n.times(3))
+        game.setPointMultiFromPrestige(n => n.times(3))
     }
 }
 
@@ -41,10 +41,10 @@ const ppUp101: IBuyableUpgrade = {
 const ppUp102: IBuyableUpgrade = {
     id: 102,
     parentId: 101,
-    position: { x: -2, y: -0.5 },
+    position: { x: -2, y: -1 },
     description: "Boost your points based on PP",
-    price: new Decimal(4),
-    priceMultiplier: new Decimal(2),
+    price: new Decimal(15),
+    priceMultiplier: new Decimal(4),
     currentAmount: new Decimal(0),
     maxAmount: 10,
     isBought: false,
@@ -56,9 +56,9 @@ const ppUp103: IBuyableUpgrade = {
     id: 103,
     parentId: 1,
     position: { x: -1, y: 0.5 },
-    description: "Automation interval / 1.10",
+    description: "Automation interval / 1.20",
     price: new Decimal(5),
-    priceMultiplier: new Decimal(2),
+    priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
     maxAmount: 13,
     isBought: false,
@@ -66,6 +66,41 @@ const ppUp103: IBuyableUpgrade = {
     whenCanShow: "Automation",
     effect: (game) => {
         game.setAutomationInterval(n => n / 1.2)
+    }
+}
+
+const ppUp104: IBuyableUpgrade = {
+    id: 104,
+    parentId: 101,
+    position: { x: -2, y: 0 },
+    description: "*1.7 Point multi",
+    price: new Decimal(8),
+    priceMultiplier: new Decimal(1.5),
+    currentAmount: new Decimal(0),
+    maxAmount: 15,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "Automation",
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(1.7))
+        game.setGlobalMultiplierMultiplier(n => n.times(1.7))
+    }
+}
+
+const ppUp105: IBuyableUpgrade = {
+    id: 105,
+    parentId: 104,
+    position: { x: -3, y: 0 },
+    description: "*1.2 Prestige points",
+    price: new Decimal(10),
+    priceMultiplier: new Decimal(4),
+    currentAmount: new Decimal(0),
+    maxAmount: 10,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "Automation",
+    effect: (game) => {
+        game.setPrestigePointMulti(n => n.times(1.2))
     }
 }
 
@@ -81,6 +116,34 @@ const ppUp201: IOneTimeUpgrade = {
         game.setPointGainFromPrestige(n => n.plus(10))
     }
 }
+
+const ppUp202: IOneTimeUpgrade = {
+    id: 202,
+    parentId: 201,
+    position: { x: 2, y: 0.5 },
+    description: "+90 base point gain",
+    price: new Decimal(10),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointAddition(n => n.plus(90))
+        game.setPointGainFromPrestige(n => n.plus(90))
+    }
+}
+
+const ppUp203: IOneTimeUpgrade = {
+    id: 203,
+    parentId: 201,
+    position: { x: 2, y: -0.5 },
+    description: "*2.5 point multi",
+    price: new Decimal(10),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(2.5))
+        game.setGlobalMultiplierMultiplier(n => n.times(2.5))
+    }
+}
+
+// automatyzacj
 
 export const ppUpAuto1to5: IOneTimeUpgrade = {
     id: 301,
@@ -122,6 +185,16 @@ export const ppUpAuto16to20: IOneTimeUpgrade = {
     effect: () => {}
 }
 
+export const ppUpAuto21to25: IOneTimeUpgrade = {
+    id: 305,
+    position: { x: 0, y: 0 },
+    description: "Automate upgrades 21-25",
+    price: new Decimal(200),
+    isBought: false,
+    whenCanShow: "automation",
+    effect: () => {}
+}
+
 // const ppUp202: IOneTimeUpgrade = {
 //     id: 202,
 //     parentId: 201,
@@ -137,7 +210,7 @@ export const ppUpAuto16to20: IOneTimeUpgrade = {
 
 
 
-/*
+
 
 //NASZE SIURKI!!!!!!!!!!!!!!!!!!!
 
@@ -213,9 +286,10 @@ const ppUp505: IBuyableUpgrade = {
 }
 
 
-*/
+
 
 export {
-    ppUp101, ppUp102, ppUp103, ppUp201,
-    // ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105,
+    ppUp201, ppUp202, ppUp203,
+    ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }
