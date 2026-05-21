@@ -19,6 +19,7 @@ import AchievementPopup from "./components/AchievementPopup.tsx";
 import Decimal from "break_eternity.js";
 import AutomationTab from "./components/AutomationTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
+import GeneratorTab, {generatorUpgrades} from "./components/GeneratorTab.tsx";
 
 
 
@@ -31,6 +32,22 @@ function App() {
     const pointUpgrades = usePointUpgrades();
     const achievementsHook = useAchievements();
 
+
+    // Restore module-level generator upgrades from localStorage on first mount
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem("generatorUpgrades") ?? "null") as Array<{ id: number; price: string; currentAmount: string }> | null;
+            if (saved) {
+                saved.forEach(s => {
+                    const upg = generatorUpgrades.find(u => u.id === s.id);
+                    if (upg) {
+                        upg.price = new Decimal(s.price);
+                        upg.currentAmount = new Decimal(s.currentAmount);
+                    }
+                });
+            }
+        } catch { /* ignore corrupt saves */ }
+    }, []);
 
     const gameRef = useRef(game);
     const statsRef = useRef(stats);
@@ -64,7 +81,7 @@ function App() {
 
     function handleSave() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current)
+        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgrades)
         // eslint-disable-next-line react-hooks/immutability
         setToastKey(Date.now())
     }
@@ -99,11 +116,11 @@ function App() {
             const prestigeOneTime = prestigeUpgradesRef.current.oneTimeUpgrades;
 
             const tog = autoEnabledRef.current;
-            const auto1to5   = (prestigeOneTime.find(u => u.id === 301)?.isBought ?? false) && (tog[301] ?? true);
-            const auto6to10  = (prestigeOneTime.find(u => u.id === 302)?.isBought ?? false) && (tog[302] ?? true);
-            const auto11to15 = (prestigeOneTime.find(u => u.id === 303)?.isBought ?? false) && (tog[303] ?? true);
-            const auto16to20 = (prestigeOneTime.find(u => u.id === 304)?.isBought ?? false) && (tog[304] ?? true);
-            const auto21to25 = (prestigeOneTime.find(u => u.id === 305)?.isBought ?? false) && (tog[305] ?? true);
+            const auto1to5   = (prestigeOneTime.find(u => u.id === 3001)?.isBought ?? false) && (tog[3001] ?? true);
+            const auto6to10  = (prestigeOneTime.find(u => u.id === 3002)?.isBought ?? false) && (tog[3002] ?? true);
+            const auto11to15 = (prestigeOneTime.find(u => u.id === 3003)?.isBought ?? false) && (tog[3003] ?? true);
+            const auto16to20 = (prestigeOneTime.find(u => u.id === 3004)?.isBought ?? false) && (tog[3004] ?? true);
+            const auto21to25 = (prestigeOneTime.find(u => u.id === 3005)?.isBought ?? false) && (tog[3005] ?? true);
 
             if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20 && !auto21to25) return;
 
@@ -175,7 +192,7 @@ function App() {
     }, [automationInterval]);
 
 
-    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 301: true, 302: true, 303: true, 304: true, 305: true })
+    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 3001: true, 3002: true, 3003: true, 3004: true, 3005: true })
     const autoEnabledRef = useRef(autoEnabled)
     // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
     autoEnabledRef.current = autoEnabled
@@ -183,6 +200,31 @@ function App() {
     function setAutoGroup(id: number, enabled: boolean) {
         setAutoEnabled(prev => ({ ...prev, [id]: enabled }))
     }
+
+    const [generatorStart, setGeneratorStart] = useState<number>(() => {
+        const saved = parseInt(localStorage.getItem("generatorStart") ?? "");
+        const now = Date.now();
+        if (isNaN(saved) || saved > now || saved < 1_000_000_000_000) return now;
+        return saved;
+    });
+    const generatorStartRef = useRef(generatorStart);
+    useEffect(() => { generatorStartRef.current = generatorStart; }, [generatorStart]);
+
+    useEffect(() => {
+        const id = setInterval(() => {
+            const now = Date.now();
+            const duration = Math.max(Number(gameRef.current.generatorDuration), 40);
+            if (duration <= 500) return; // current mode — PE added continuously by game loop
+            if (now - generatorStartRef.current >= duration) {
+                const newStart = generatorStartRef.current + duration;
+                generatorStartRef.current = newStart;
+                setGeneratorStart(newStart);
+                localStorage.setItem("generatorStart", String(newStart));
+                gameRef.current.setPrestigeEnergy(n => n.plus(gameRef.current.peMulti));
+            }
+        }, 16);
+        return () => clearInterval(id);
+    }, []);
 
     const [toastKey, setToastKey] = useState<number | null>(null);
     const [currentTab, setCurrentTab] = useState("MainTree");
@@ -199,6 +241,7 @@ function App() {
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
                 {currentTab === "Settings" && <SettingsTab onSave={handleSave} />}
                 {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
+                {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart}/>}
             </section>
 
             {toastKey !== null && <div key={toastKey} className="save-toast">Game saved...</div>}

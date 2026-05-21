@@ -25,7 +25,8 @@ export function fmt(n: Decimal): string {
 
 function CurrencyBar( { game }: Props ) {
 
-    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.pp102DynamicMulti).pow(game.globalPointExponent)
+    const peBoostFactor = game.prestigeEnergy.pow(0.3).times(game.peBoostToP);
+    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.pp102DynamicMulti).times(peBoostFactor).pow(game.globalPointExponent)
 
     return (
         <section className={"CurrencyBar"}>
@@ -35,6 +36,10 @@ function CurrencyBar( { game }: Props ) {
                     {game.canShowPrestigeTree && <>
                         <div className={"CurrencyBar__divider"} />
                         <h2 className={"CurrencyBar__prestige"}>PP <span className={"CurrencyBar__value"}>{fmt(game.prestigePoint)}</span></h2>
+                    </>}
+                    {game.canShowGenerator && <>
+                        <div className={"CurrencyBar__divider"} />
+                        <h2 className={"CurrencyBar__generator"}>PE <span className={"CurrencyBar__value"}>{fmt(game.prestigeEnergy)}</span></h2>
                     </>}
                 </div>
                 <h3>+ {fmt(pointsPerSecond)} p/s</h3>

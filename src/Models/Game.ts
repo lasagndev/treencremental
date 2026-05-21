@@ -34,6 +34,24 @@ export class Game {
     automationInterval
     setAutomationInterval
 
+    canShowGenerator
+    setCanShowGenerator
+
+    prestigeEnergy
+    setPrestigeEnergy
+
+    generatorDuration
+    setGeneratorDuration
+
+    peMulti
+    setPeMulti
+
+    peBoostToP
+    setPeBoostToP
+
+    peBoostToPP
+    setPeBoostToPP
+
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
@@ -59,7 +77,19 @@ export class Game {
                 pp102DynamicMulti: Decimal,
                 setPp102DynamicMulti: React.Dispatch<React.SetStateAction<Decimal>>,
                 automationInterval: number,
-                setAutomationInterval: React.Dispatch<React.SetStateAction<number>>) {
+                setAutomationInterval: React.Dispatch<React.SetStateAction<number>>,
+                canShowGenerator: boolean,
+                setCanShowGenerator: React.Dispatch<React.SetStateAction<boolean>>,
+                prestigeEnergy: Decimal,
+                setPrestigeEnergy: React.Dispatch<React.SetStateAction<Decimal>>,
+                generatorDuration: number,
+                setGeneratorDuration: React.Dispatch<React.SetStateAction<number>>,
+                peMulti: Decimal,
+                setPeMulti: React.Dispatch<React.SetStateAction<Decimal>>,
+                peBoostToP: Decimal,
+                setPeBoostToP: React.Dispatch<React.SetStateAction<Decimal>>,
+                peBoostToPP: Decimal,
+                setPeBoostToPP: React.Dispatch<React.SetStateAction<Decimal>>) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -87,5 +117,17 @@ export class Game {
         this.setPp102DynamicMulti = setPp102DynamicMulti;
         this.automationInterval = automationInterval;
         this.setAutomationInterval = setAutomationInterval;
+        this.canShowGenerator = canShowGenerator;
+        this.setCanShowGenerator = setCanShowGenerator;
+        this.prestigeEnergy = prestigeEnergy;
+        this.setPrestigeEnergy = setPrestigeEnergy;
+        this.generatorDuration = generatorDuration;
+        this.setGeneratorDuration = setGeneratorDuration;
+        this.peMulti = peMulti;
+        this.setPeMulti = setPeMulti;
+        this.peBoostToP = peBoostToP;
+        this.setPeBoostToP = setPeBoostToP;
+        this.peBoostToPP = peBoostToPP;
+        this.setPeBoostToPP = setPeBoostToPP;
     }
 }

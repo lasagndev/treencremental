@@ -29,7 +29,7 @@ export interface IBuyableUpgrade {
     currentAmount: Decimal;
     maxAmount: number;
     isBought: boolean;
-    isMaxed: boolean;
+    isMaxed?: boolean;
     calcPrice?: (upg: IBuyableUpgrade) => Decimal;
     whenCanShow?: string;
     effect: (game: Game) => void;

@@ -54,13 +54,43 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     })
     const [prestigePointMulti, setPrestigePointMulti] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePointMulti ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
+        return s?.prestigePointMulti ? new Decimal(s.prestigePointMulti as string) : new Decimal(1);
     })
     const [pp102DynamicMulti, setPp102DynamicMulti] = useState<Decimal>(new Decimal(1));
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
         return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
     });
+
+    const [canShowGenerator, setCanShowGenerator] = useState<boolean>(() => {
+        const s = loadSaved();
+        return s !== null && "canShowGenerator" in s ? (s.canShowPrestigeTree as boolean) : true;
+    });
+
+    const [generatorDuration, setGeneratorDuration] = useState<number>(() => {
+        const s = loadSaved();
+        return s?.generatorDuration ? Number(s.generatorDuration as string) : 30000;
+    });
+
+    const [peMulti, setPeMulti] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.peMulti ? new Decimal(s.peMulti as string) : new Decimal(1);
+    });
+
+    const [peBoostToP, setPeBoostToP] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.peBoostToP ? new Decimal(s.peBoostToP as string) : new Decimal(1);
+    });
+
+    const [peBoostToPP, setPeBoostToPP] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.peBoostToPP ? new Decimal(s.peBoostToPP as string) : new Decimal(1);
+    });
+
+    const [prestigeEnergy, setPrestigeEnergy] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.prestigeEnergy ? new Decimal(s.prestigeEnergy as string) : new Decimal(1);
+    })
 
     const game = new Game(
         point, setPoint,
@@ -76,6 +106,12 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         prestigePointMulti, setPrestigePointMulti,
         pp102DynamicMulti, setPp102DynamicMulti,
         automationInterval, setAutomationInterval,
+        canShowGenerator, setCanShowGenerator,
+        prestigeEnergy, setPrestigeEnergy,
+        generatorDuration, setGeneratorDuration,
+        peMulti, setPeMulti,
+        peBoostToP, setPeBoostToP,
+        peBoostToPP, setPeBoostToPP,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
@@ -86,6 +122,11 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     const pointRef = useRef(point);
     const prestigePointRef = useRef(prestigePoint);
     const pp102AmountRef = useRef(pp102Amount);
+    const generatorDurationRef = useRef(generatorDuration);
+    const peMultiRef = useRef(peMulti);
+    const canShowGeneratorRef = useRef(canShowGenerator);
+    const prestigeEnergyRef = useRef(prestigeEnergy);
+    const peBoostToPRef = useRef(peBoostToP);
 
     useEffect(() => {
         globalPointAdditionRef.current = bonusPoints;
@@ -96,7 +137,12 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         pointRef.current = point;
         prestigePointRef.current = prestigePoint;
         pp102AmountRef.current = pp102Amount;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, pp102DynamicMulti, point, pp102Amount]);
+        generatorDurationRef.current = generatorDuration;
+        peMultiRef.current = peMulti;
+        canShowGeneratorRef.current = canShowGenerator;
+        prestigeEnergyRef.current = prestigeEnergy;
+        peBoostToPRef.current = peBoostToP;
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, pp102DynamicMulti, point, pp102Amount, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
@@ -104,8 +150,14 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
             if(pp102AmountRef.current.lte(new Decimal(0)) || newMulti.lte(new Decimal(1))) newMulti = new Decimal(1)
             setPp102DynamicMulti(newMulti);
             pp102DynamicMultiRef.current = newMulti;
-            setPoint(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).pow(globalPointExponentRef.current).dividedBy(25)));
-            stats.setAllPoints(prev => prev.plus(globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).pow(globalPointExponentRef.current).dividedBy(25)))
+            const peBoostFactor = prestigeEnergyRef.current.pow(0.3).times(peBoostToPRef.current);
+            const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
+            setPoint(prev => prev.plus(pointsPerTick));
+            stats.setAllPoints(prev => prev.plus(pointsPerTick));
+            const clampedDuration = Math.max(generatorDurationRef.current, 40);
+            if (canShowGeneratorRef.current && clampedDuration <= 500) {
+                setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration))));
+            }
         }, 40);
         return () => clearInterval(skibidi);
     }, []);

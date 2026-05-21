@@ -36,7 +36,7 @@ interface PointTreeProps {
 
 const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
-    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).floor()
+    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(game.prestigeEnergy.pow(0.1)).times(game.peBoostToPP).floor()
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })

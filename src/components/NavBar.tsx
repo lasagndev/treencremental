@@ -28,9 +28,18 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                         onClick={() => setCurrentTab("Automation")}>
                         Automation
                     </button>
+
+                    {game.canShowGenerator &&
+
+                    <button
+                        className={currentTab === "Generator" ? "navTab--active" : ""}
+                        onClick={ () => setCurrentTab("Generator") }>
+                        Generator
+                    </button>
+
+                    }
+
                 </>
-
-
             }
 
             <button

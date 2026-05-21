@@ -69,7 +69,7 @@
 .prestigeTree .upgradeButton--locked {
     background: #120a18;
     border-color: #221430;
-    color: #3a2050;
+    color: #e5dfec;
     cursor: not-allowed;
     /* display: none*/
 }

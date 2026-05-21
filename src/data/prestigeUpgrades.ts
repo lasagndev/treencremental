@@ -1,4 +1,4 @@
-import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
+import type {IBuyableUpgrade, IOneTimeUpgrade, IUnlockUpgrade} from "../Models/IUpgrade.ts";
 import Decimal from "break_eternity.js";
 // import {useEffect, useState} from "react";
 // import {ppUp102Effect} from "../components/PrestigeTree.tsx";
@@ -23,7 +23,7 @@ export const ppUp1: IOneTimeUpgrade = {
 const ppUp101: IBuyableUpgrade = {
     id: 101,
     parentId: 1,
-    position: { x: -1, y: -0.5 },
+    position: { x: -1, y: 0 },
     description: "+0.01 point exponent",
     price: new Decimal(1),
     priceMultiplier: new Decimal(5),
@@ -54,8 +54,8 @@ const ppUp102: IBuyableUpgrade = {
 
 const ppUp103: IBuyableUpgrade = {
     id: 103,
-    parentId: 1,
-    position: { x: -1, y: 0.5 },
+    parentId: 101,
+    position: { x: -2, y: 0 },
     description: "Automation interval / 1.20",
     price: new Decimal(5),
     priceMultiplier: new Decimal(1.5),
@@ -72,7 +72,7 @@ const ppUp103: IBuyableUpgrade = {
 const ppUp104: IBuyableUpgrade = {
     id: 104,
     parentId: 101,
-    position: { x: -2, y: 0 },
+    position: { x: -2, y: 1 },
     description: "*1.7 Point multi",
     price: new Decimal(8),
     priceMultiplier: new Decimal(1.5),
@@ -90,7 +90,7 @@ const ppUp104: IBuyableUpgrade = {
 const ppUp105: IBuyableUpgrade = {
     id: 105,
     parentId: 104,
-    position: { x: -3, y: 0 },
+    position: { x: -3, y: 1 },
     description: "*1.2 Prestige points",
     price: new Decimal(10),
     priceMultiplier: new Decimal(4),
@@ -143,10 +143,37 @@ const ppUp203: IOneTimeUpgrade = {
     }
 }
 
+const ppUp204: IOneTimeUpgrade = {
+    id: 204,
+    parentId: 203,
+    position: { x: 3, y: -0.5 },
+    description: "+ 0.05 point exponent",
+    price: new Decimal(10),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointExponent(n => n.plus(0.05))
+    }
+}
+
+// Unlocki
+
+const ppUp301 : IUnlockUpgrade = {
+    id: 301,
+    parentId: 1,
+    position: { x: 0, y: 1 },
+    description: "Unlock Generator",
+    price: new Decimal(1000),
+    unlocks: "Generator",
+    isBought: false,
+    effect: (game) => {
+        game.setCanShowGenerator(true)
+    }
+}
+
 // automatyzacj
 
 export const ppUpAuto1to5: IOneTimeUpgrade = {
-    id: 301,
+    id: 3001,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 1-5",
     price: new Decimal(3),
@@ -156,7 +183,7 @@ export const ppUpAuto1to5: IOneTimeUpgrade = {
 }
 
 export const ppUpAuto6to10: IOneTimeUpgrade = {
-    id: 302,
+    id: 3002,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 6-10",
     price: new Decimal(10),
@@ -166,7 +193,7 @@ export const ppUpAuto6to10: IOneTimeUpgrade = {
 }
 
 export const ppUpAuto11to15: IOneTimeUpgrade = {
-    id: 303,
+    id: 3003,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 11-15",
     price: new Decimal(25),
@@ -176,7 +203,7 @@ export const ppUpAuto11to15: IOneTimeUpgrade = {
 }
 
 export const ppUpAuto16to20: IOneTimeUpgrade = {
-    id: 304,
+    id: 3004,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 16-20",
     price: new Decimal(100),
@@ -186,7 +213,7 @@ export const ppUpAuto16to20: IOneTimeUpgrade = {
 }
 
 export const ppUpAuto21to25: IOneTimeUpgrade = {
-    id: 305,
+    id: 3005,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 21-25",
     price: new Decimal(200),
@@ -290,6 +317,7 @@ const ppUp505: IBuyableUpgrade = {
 
 export {
     ppUp101, ppUp102, ppUp103, ppUp104, ppUp105,
-    ppUp201, ppUp202, ppUp203,
+    ppUp201, ppUp202, ppUp203, ppUp204,
+    ppUp301,
     ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

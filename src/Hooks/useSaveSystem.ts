@@ -12,6 +12,7 @@ export function resetSave() {
     localStorage.removeItem("ppUp1");
     localStorage.removeItem("stats");
     localStorage.removeItem("achievements");
+    localStorage.removeItem("generatorUpgrades");
     window.location.reload();
 }
 
@@ -24,6 +25,7 @@ export function useSaveSystem(
     ppUp1: boolean,
     prestigeUnlock: boolean,
     achievements: IAchievement[],
+    generatorUpgrades: IBuyableUpgrade[],
 ) {
     localStorage.setItem("game", JSON.stringify({
         point: game.point.toString(),
@@ -38,6 +40,12 @@ export function useSaveSystem(
         prestigePointMulti: game.prestigePointMulti.toString(),
         pointGainFromPrestige: game.pointGainFromPrestige.toString(),
         automationInterval: game.automationInterval.toString(),
+        canShowGenerator: game.canShowGenerator.toString(),
+        generatorDuration: game.generatorDuration.toString(),
+        prestigeEnergy: game.prestigeEnergy.toString(),
+        peMulti: game.peMulti.toString(),
+        peBoostToP: game.peBoostToP.toString(),
+        peBoostToPP: game.peBoostToPP.toString(),
     }));
 
     localStorage.setItem("stats", JSON.stringify({
@@ -51,13 +59,13 @@ export function useSaveSystem(
     localStorage.setItem("upgrades", JSON.stringify({
         oneTimeUpgrades: upgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: upgrades.buyableUpgrades.map(u => ({
-            id: u.id, price: u.price.toString(), isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
+            id: u.id, price: u.price.toString(), isBought: u.isBought, currentAmount: u.currentAmount.toString()
         })),
     }));
     localStorage.setItem("prestigeUpgrades", JSON.stringify({
         oneTimeUpgrades: pupgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: pupgrades.buyableUpgrades.map(u => ({
-            id: u.id, price: u.price.toString(), isBought: u.isBought, isMaxed: u.isMaxed, currentAmount: u.currentAmount.toString()
+            id: u.id, price: u.price.toString(), isBought: u.isBought, currentAmount: u.currentAmount.toString()
         })),
     }));
     localStorage.setItem("pUp1", JSON.stringify(pUp1 ?? false));
@@ -65,5 +73,8 @@ export function useSaveSystem(
     localStorage.setItem("ppUp1", JSON.stringify(ppUp1 ?? false));
     localStorage.setItem("achievements", JSON.stringify(
         achievements.map(a => ({ id: a.id, isUnlocked: a.isUnlocked }))
+    ));
+    localStorage.setItem("generatorUpgrades", JSON.stringify(
+        generatorUpgrades.map(u => ({ id: u.id, price: u.price.toString(), currentAmount: u.currentAmount.toString() }))
     ));
 }
