@@ -746,11 +746,25 @@ const pUp504: IBuyableUpgrade = {
     effect: (game) => game.setPoint(n => n.plus(new Decimal(1e6)))
 }
 
+const pUp505: IBuyableUpgrade = {
+    id: 505,
+    parentId: 1,
+    position: { x: -2, y: -2 },
+    description: "siur 1e15",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setPoint(n => n.plus(new Decimal(1e15)))
+}
+
 
 
 export {
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123,
     pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221,
     pUp302,
-    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504
+    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 }

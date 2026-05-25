@@ -108,12 +108,12 @@ const ppUp201: IOneTimeUpgrade = {
     id: 201,
     parentId: 1,
     position: { x: 1, y: 0 },
-    description: "+10 base point gain",
+    description: "+50 base point gain",
     price: new Decimal(2),
     isBought: false,
     effect: (game) => {
-        game.setGlobalPointAddition(n => n.plus(10))
-        game.setPointGainFromPrestige(n => n.plus(10))
+        game.setGlobalPointAddition(n => n.plus(50))
+        game.setPointGainFromPrestige(n => n.plus(50))
     }
 }
 
@@ -121,12 +121,12 @@ const ppUp202: IOneTimeUpgrade = {
     id: 202,
     parentId: 201,
     position: { x: 2, y: 0.5 },
-    description: "+90 base point gain",
+    description: "+300 base point gain",
     price: new Decimal(10),
     isBought: false,
     effect: (game) => {
-        game.setGlobalPointAddition(n => n.plus(90))
-        game.setPointGainFromPrestige(n => n.plus(90))
+        game.setGlobalPointAddition(n => n.plus(300))
+        game.setPointGainFromPrestige(n => n.plus(300))
     }
 }
 
@@ -152,6 +152,22 @@ const ppUp204: IOneTimeUpgrade = {
     isBought: false,
     effect: (game) => {
         game.setGlobalPointExponent(n => n.plus(0.05))
+    }
+}
+
+const ppUp205: IOneTimeUpgrade = {
+    id: 205,
+    parentId: 202,
+    position: { x: 3, y: 0.5 },
+    description: "+1 max buyable level",
+    price: new Decimal(10),
+    isBought: false,
+    effect: (_, upgrades) => {
+        upgrades.setPointBuyableUpgrades?.(prev => prev.map(u => u.id >= 302 ? ({ ...u }) : ({
+            ...u,
+            maxAmount: u.maxAmount + 1,
+            isMaxed: false,
+        })))
     }
 }
 
@@ -317,7 +333,7 @@ const ppUp505: IBuyableUpgrade = {
 
 export {
     ppUp101, ppUp102, ppUp103, ppUp104, ppUp105,
-    ppUp201, ppUp202, ppUp203, ppUp204,
+    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205,
     ppUp301,
     ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

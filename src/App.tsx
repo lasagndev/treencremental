@@ -236,7 +236,7 @@ function App() {
 
             <section className="MainTab">
                 {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} stats={stats}/> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
                 {currentTab === "Settings" && <SettingsTab onSave={handleSave} />}

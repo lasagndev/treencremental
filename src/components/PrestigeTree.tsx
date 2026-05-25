@@ -2,6 +2,7 @@ import type {Game} from "../Models/Game.ts";
 import {ppUp1, ppUp301} from "../data/prestigeUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePrestigeUpgrades} from "../Hooks/usePrestigeUpgrades.ts";
+import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PrestigeTree.css"
 import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
@@ -32,10 +33,11 @@ function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: numb
 interface PrestigeTreeProps {
     game: Game
     upgrades: ReturnType<typeof usePrestigeUpgrades>
+    pointUpgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
 }
 
-const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
@@ -209,7 +211,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
 
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setPrestigePoint(n => n.minus(upg.price))
-        upg.effect(game)
+        upg.effect(game, { ...upgrades, setPointBuyableUpgrades: pointUpgrades.setBuyableUpgrades })
         stats.setTotalUpgradesBought(n => n.plus(1))
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }

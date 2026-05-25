@@ -42,7 +42,7 @@ import {
     pUp501,
     pUp502,
     pUp503,
-    pUp504
+    pUp504, pUp505
 
 } from "../data/pointUpgrades.ts";
 import Decimal from "break_eternity.js";
@@ -53,7 +53,7 @@ const defaultOneTime: IOneTimeUpgrade[] = [
 const defaultBuyable: IBuyableUpgrade[] = [
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123,
     pUp302,
-    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504
+    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 ];
 
 export function usePointUpgrades() {
@@ -97,7 +97,7 @@ export function usePointUpgrades() {
             prev.map(u => u.id >= 301 ? u : { ...defaultOneTime.find(d => d.id === u.id)! })
         );
         setBuyableUpgrades(prev =>
-            prev.map(u => u.id >= 301 ? u : { ...defaultBuyable.find(d => d.id === u.id)! })
+            prev.map(u => u.id >= 301 ? u : { ...defaultBuyable.find(d => d.id === u.id)!, maxAmount: u.maxAmount })
         );
     }
 

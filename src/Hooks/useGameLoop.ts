@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Game } from "../Models/Game.ts";
 import Decimal from "break_eternity.js";
 import type {Statistics} from "../Models/Statistics.ts";
+import {generatorUpgrades} from "../components/GeneratorTab.tsx";
 
 function loadSaved() {
     try {
@@ -150,7 +151,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
             if(pp102AmountRef.current.lte(new Decimal(0)) || newMulti.lte(new Decimal(1))) newMulti = new Decimal(1)
             setPp102DynamicMulti(newMulti);
             pp102DynamicMultiRef.current = newMulti;
-            const peBoostFactor = prestigeEnergyRef.current.pow(0.3).times(peBoostToPRef.current);
+            const peBoostFactor = prestigeEnergyRef.current.pow(0.3).times(generatorUpgrades[2].currentAmount.plus(1));
             const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
             setPoint(prev => prev.plus(pointsPerTick));
             stats.setAllPoints(prev => prev.plus(pointsPerTick));

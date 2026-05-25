@@ -15,7 +15,7 @@ export interface IOneTimeUpgrade {
     price: Decimal;
     isBought: boolean ;
     whenCanShow?: string;
-    effect: (game: Game) => void;
+    effect: (game: Game, upgrades: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[]; setOneTimeUpgrades: React.Dispatch<React.SetStateAction<IOneTimeUpgrade[]>>; setBuyableUpgrades: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>>; setPointBuyableUpgrades?: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>> }) => void;
 }
 
 export interface IBuyableUpgrade {
