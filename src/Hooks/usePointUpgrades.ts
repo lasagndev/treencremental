@@ -79,13 +79,14 @@ export function usePointUpgrades() {
         try {
             const saved = JSON.parse(localStorage.getItem("upgrades") || "null");
             if (saved?.buyableUpgrades) {
-                const map = new Map<number, { price: string, isBought: boolean; currentAmount: string }>(
-                    saved.buyableUpgrades.map((u: { id: number; price: string; isBought: boolean; currentAmount: string }) => [u.id, u])
+                const map = new Map<number, { price: string, isBought: boolean; currentAmount: string; maxAmount?: number }>(
+                    saved.buyableUpgrades.map((u: { id: number; price: string; isBought: boolean; currentAmount: string; maxAmount?: number }) => [u.id, u])
                 );
                 return defaultBuyable.map(u => {
                     const s = map.get(u.id);
                     const currentAmount = s !== undefined ? new Decimal(s.currentAmount) : u.currentAmount;
-                    return s !== undefined ? { ...u, price: new Decimal(s.price), isBought: s.isBought, currentAmount, isMaxed: currentAmount.gte(u.maxAmount) } : u;
+                    const maxAmount = s?.maxAmount ?? u.maxAmount;
+                    return s !== undefined ? { ...u, price: new Decimal(s.price), isBought: s.isBought, currentAmount, maxAmount, isMaxed: currentAmount.gte(maxAmount) } : u;
                 });
             }
         } catch {}

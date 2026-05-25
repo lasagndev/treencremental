@@ -24,6 +24,7 @@ export const prestigeUnlock : IUnlockUpgrade = {
     isBought: (() => { try { return JSON.parse(localStorage.getItem("prestigeUnlock") ?? "false"); } catch { return false; } })(),
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
+        game.setPoint(n => n.plus(1e15))
         console.log(game)
     }
 }
@@ -391,7 +392,7 @@ const pUp123: IBuyableUpgrade = {
     parentId: 115,
     position: { x: -7, y: -2 },
     description: "",
-    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(10).times(game.globalMultiplierMultiplier))} point multi`,
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(100).times(game.globalMultiplierMultiplier))} point multi`,
     price: new Decimal(1e19),
     priceMultiplier: new Decimal(1.2),
     calcPrice: (upg) => upg.price.times(((upg.currentAmount.plus(new Decimal(1))).pow(3))),
@@ -399,7 +400,7 @@ const pUp123: IBuyableUpgrade = {
     maxAmount: 40,
     isBought: false,
     isMaxed: false,
-    effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(10).times(game.globalMultiplierMultiplier))),
+    effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(100).times(game.globalMultiplierMultiplier))),
 }
 
 // -------------------------------------
@@ -628,7 +629,7 @@ const pUp221: IOneTimeUpgrade = {
     parentId: 215,
     position: {x: 6, y: 1.5},
     description: "* 5 point multi",
-    price: new Decimal(1e20),
+    price: new Decimal(1e19),
     isBought: false,
     whenCanShow: "prestige",
     effect: (game) => {

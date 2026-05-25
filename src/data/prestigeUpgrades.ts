@@ -24,7 +24,7 @@ const ppUp101: IBuyableUpgrade = {
     id: 101,
     parentId: 1,
     position: { x: -1, y: 0 },
-    description: "+0.01 point exponent",
+    description: "+0.02 point exponent",
     price: new Decimal(1),
     priceMultiplier: new Decimal(5),
     calcPrice: (upg) => upg.price.times(upg.priceMultiplier.pow(upg.currentAmount)),
@@ -33,8 +33,8 @@ const ppUp101: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: (game) => {
-        game.setGlobalPointExponent(n => n.plus(0.01))
-        game.setPointExponentFromPrestige(n => n.plus(0.01))
+        game.setGlobalPointExponent(n => n.plus(0.02))
+        game.setPointExponentFromPrestige(n => n.plus(0.02))
     }
 }
 
@@ -43,7 +43,7 @@ const ppUp102: IBuyableUpgrade = {
     parentId: 101,
     position: { x: -2, y: -1 },
     description: "Boost your points based on PP",
-    price: new Decimal(15),
+    price: new Decimal(10),
     priceMultiplier: new Decimal(4),
     currentAmount: new Decimal(0),
     maxAmount: 10,
@@ -121,12 +121,12 @@ const ppUp202: IOneTimeUpgrade = {
     id: 202,
     parentId: 201,
     position: { x: 2, y: 0.5 },
-    description: "+300 base point gain",
-    price: new Decimal(10),
+    description: "+200 base point gain",
+    price: new Decimal(5),
     isBought: false,
     effect: (game) => {
-        game.setGlobalPointAddition(n => n.plus(300))
-        game.setPointGainFromPrestige(n => n.plus(300))
+        game.setGlobalPointAddition(n => n.plus(200))
+        game.setPointGainFromPrestige(n => n.plus(200))
     }
 }
 
@@ -134,12 +134,12 @@ const ppUp203: IOneTimeUpgrade = {
     id: 203,
     parentId: 201,
     position: { x: 2, y: -0.5 },
-    description: "*2.5 point multi",
+    description: "*6 point multi",
     price: new Decimal(10),
     isBought: false,
     effect: (game) => {
-        game.setGlobalPointMultiplier(n => n.times(2.5))
-        game.setGlobalMultiplierMultiplier(n => n.times(2.5))
+        game.setGlobalPointMultiplier(n => n.times(6))
+        game.setGlobalMultiplierMultiplier(n => n.times(6))
     }
 }
 
@@ -152,6 +152,7 @@ const ppUp204: IOneTimeUpgrade = {
     isBought: false,
     effect: (game) => {
         game.setGlobalPointExponent(n => n.plus(0.05))
+        game.setPointExponentFromPrestige(n => n.plus(0.05))
     }
 }
 
@@ -178,7 +179,7 @@ const ppUp301 : IUnlockUpgrade = {
     parentId: 1,
     position: { x: 0, y: 1 },
     description: "Unlock Generator",
-    price: new Decimal(1000),
+    price: new Decimal(150),
     unlocks: "Generator",
     isBought: false,
     effect: (game) => {
@@ -202,7 +203,7 @@ export const ppUpAuto6to10: IOneTimeUpgrade = {
     id: 3002,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 6-10",
-    price: new Decimal(10),
+    price: new Decimal(5),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
@@ -212,7 +213,7 @@ export const ppUpAuto11to15: IOneTimeUpgrade = {
     id: 3003,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 11-15",
-    price: new Decimal(25),
+    price: new Decimal(10),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
@@ -222,7 +223,7 @@ export const ppUpAuto16to20: IOneTimeUpgrade = {
     id: 3004,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 16-20",
-    price: new Decimal(100),
+    price: new Decimal(15),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
@@ -232,7 +233,7 @@ export const ppUpAuto21to25: IOneTimeUpgrade = {
     id: 3005,
     position: { x: 0, y: 0 },
     description: "Automate upgrades 21-25",
-    price: new Decimal(200),
+    price: new Decimal(20),
     isBought: false,
     whenCanShow: "automation",
     effect: () => {}
