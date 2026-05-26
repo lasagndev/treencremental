@@ -210,8 +210,24 @@ function App() {
     const generatorStartRef = useRef(generatorStart);
     useEffect(() => { generatorStartRef.current = generatorStart; }, [generatorStart]);
 
+    const generatorUnlockMountedRef = useRef(false);
     useEffect(() => {
+        if (!generatorUnlockMountedRef.current) {
+            generatorUnlockMountedRef.current = true;
+            return;
+        }
+        if (game.canShowGenerator) {
+            const now = Date.now();
+            setGeneratorStart(now);
+            generatorStartRef.current = now;
+            localStorage.setItem("generatorStart", String(now));
+        }
+    }, [game.canShowGenerator]);
+
+    useEffect(() => {
+
         const id = setInterval(() => {
+            if (!gameRef.current.canShowGenerator) return;
             const now = Date.now();
             const duration = Math.max(Number(gameRef.current.generatorDuration), 40);
             if (duration <= 500) return; // current mode — PE added continuously by game loop

@@ -193,7 +193,7 @@ const ppUp301 : IUnlockUpgrade = {
     description: "Unlock Generator",
     price: new Decimal(150),
     unlocks: "Generator",
-    isBought: false,
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; } })() || false,
     effect: (game) => {
         game.setCanShowGenerator(true)
     }

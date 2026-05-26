@@ -64,8 +64,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     });
 
     const [canShowGenerator, setCanShowGenerator] = useState<boolean>(() => {
-        const s = loadSaved();
-        return s !== null && "canShowGenerator" in s ? (s.canShowPrestigeTree as boolean) : true;
+        try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; }
     });
 
     const [generatorDuration, setGeneratorDuration] = useState<number>(() => {

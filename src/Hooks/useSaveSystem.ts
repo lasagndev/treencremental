@@ -5,7 +5,7 @@ import type {IAchievement} from "../Models/IAchievement.ts";
 
 const SAVE_KEYS = [
     "game", "upgrades", "prestigeUpgrades",
-    "pUp1", "prestigeUnlock", "ppUp1",
+    "pUp1", "prestigeUnlock", "ppUp1", "ppUp301",
     "stats", "achievements",
     "generatorUpgrades", "generatorStart",
 ] as const;
@@ -102,6 +102,7 @@ export function useSaveSystem(
     localStorage.setItem("pUp1", JSON.stringify(pUp1 ?? false));
     localStorage.setItem("prestigeUnlock", JSON.stringify(prestigeUnlock ?? false));
     localStorage.setItem("ppUp1", JSON.stringify(ppUp1 ?? false));
+    localStorage.setItem("ppUp301", JSON.stringify(game.canShowGenerator ?? false));
     localStorage.setItem("achievements", JSON.stringify(
         achievements.map(a => ({ id: a.id, isUnlocked: a.isUnlocked }))
     ));

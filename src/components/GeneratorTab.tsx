@@ -110,6 +110,7 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     } else {
         isBoostToPSoftcapped = false
     }
+
     let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
     if(peBoostToPP.gte(new Decimal(1e4))) {
         peBoostToPP = new Decimal(1e4).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
@@ -117,6 +118,7 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     } else {
         isBoostToPPSoftcapped = false
     }
+
     function buyUpgrade(upg: IBuyableUpgrade) {
         const price = upg.price;
         if (upg.id === 1 || upg.id === 2) {
