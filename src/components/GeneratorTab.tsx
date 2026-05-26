@@ -17,12 +17,12 @@ interface IGeneratorProps {
 export const generatorUpgrades: IBuyableUpgrade[] = [
     {
         id: 1,
-        description: "Generator interval /1.2",
+        description: "Generator interval /1.3",
         price: new Decimal(1000),
         priceMultiplier: new Decimal(2),
         currentAmount: new Decimal(0),
         effect: (game) => {
-            game.setGeneratorDuration(n => n / (1.2));
+            game.setGeneratorDuration(n => n / (1.3));
         },
         position: {x: 0, y: 0},
         maxAmount: 0,
@@ -79,6 +79,10 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     const isCurrentMode = durationRef.current <= 500;
     // eslint-disable-next-line react-hooks/refs
     const isIntervalMaxed = durationRef.current <= 40;
+    // eslint-disable-next-line no-useless-assignment
+    let isBoostToPSoftcapped = false
+    // eslint-disable-next-line no-useless-assignment
+    let isBoostToPPSoftcapped = false
 
     useEffect(() => {
         let rafId: number;
@@ -98,10 +102,21 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
         return () => cancelAnimationFrame(rafId);
     }, [generatorStart]);
 
-    const peBoostToP  = game.prestigeEnergy.pow(0.3).times((generatorUpgrades[2].currentAmount.plus(new Decimal(1))))
-    const peBoostToPP = game.prestigeEnergy.pow(0.1).times((generatorUpgrades[3].currentAmount.plus(new Decimal(1))))
-
-
+    let peBoostToP  = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6))
+    if(peBoostToP.gte(new Decimal(1e10)))
+    {
+        peBoostToP = new Decimal(1e10).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+        isBoostToPSoftcapped = true
+    } else {
+        isBoostToPSoftcapped = false
+    }
+    let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
+    if(peBoostToPP.gte(new Decimal(1e4))) {
+        peBoostToPP = new Decimal(1e4).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+        isBoostToPPSoftcapped = true
+    } else {
+        isBoostToPPSoftcapped = false
+    }
     function buyUpgrade(upg: IBuyableUpgrade) {
         const price = upg.price;
         if (upg.id === 1 || upg.id === 2) {
@@ -126,10 +141,11 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
             </div>
 
             <section className="generatorCurrencyBar">
-                <p>PE boost to P: x{fmt_upgrade(peBoostToP)}</p>
-                <p>PE boost to PP: x{fmt_upgrade(peBoostToPP)}</p>
+                <p>PE boost to P: x{fmt_upgrade(peBoostToP)} {isBoostToPSoftcapped && "(Soft capped)"}</p>
+                <p>PE boost to PP: x{fmt_upgrade(peBoostToPP)} {isBoostToPPSoftcapped && "(Soft capped)"}</p>
                 {/* eslint-disable-next-line react-hooks/refs */}
                 <p>Interval: {(durationRef.current / 1000).toFixed(3)}s</p>
+                <p>PE per loop: {fmt(new Decimal(2).pow(generatorUpgrades[1].currentAmount))}</p>
             </section>
 
             <div className="generator-bar-wrapper">
@@ -140,7 +156,8 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
                         {isCurrentMode
                             // eslint-disable-next-line react-hooks/refs
                             ? `⚡ CURRENT — ${fmt(game.peMulti.times(new Decimal(1000).dividedBy(durationRef.current)))} PE/s`
-                            : 'Generating…'}
+                            // eslint-disable-next-line react-hooks/refs
+                            : `Generating… ${fmt_upgrade(game.peMulti.times(new Decimal(1000).dividedBy(durationRef.current)))} PE/s`}
                     </div>
                 </div>
                 {!isCurrentMode && <>

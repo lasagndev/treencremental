@@ -216,11 +216,12 @@ function App() {
             const duration = Math.max(Number(gameRef.current.generatorDuration), 40);
             if (duration <= 500) return; // current mode — PE added continuously by game loop
             if (now - generatorStartRef.current >= duration) {
-                const newStart = generatorStartRef.current + duration;
+                const missedTicks = Math.floor((now - generatorStartRef.current) / duration);
+                const newStart = generatorStartRef.current + missedTicks * duration;
                 generatorStartRef.current = newStart;
                 setGeneratorStart(newStart);
                 localStorage.setItem("generatorStart", String(newStart));
-                gameRef.current.setPrestigeEnergy(n => n.plus(gameRef.current.peMulti));
+                gameRef.current.setPrestigeEnergy(n => n.plus(gameRef.current.peMulti.times(missedTicks)));
             }
         }, 16);
         return () => clearInterval(id);

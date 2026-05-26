@@ -1,5 +1,6 @@
 import type {Game} from "../Models/Game.ts";
 import {fmt_upgrade, prestigeUnlock, pUp1} from "../data/pointUpgrades.ts";
+import {generatorUpgrades} from "./GeneratorTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
@@ -36,7 +37,7 @@ interface PointTreeProps {
 
 const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
-    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(game.prestigeEnergy.pow(0.1)).times(game.peBoostToPP).floor()
+    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))).floor()
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })

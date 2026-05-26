@@ -108,19 +108,18 @@ const ppUp201: IOneTimeUpgrade = {
     id: 201,
     parentId: 1,
     position: { x: 1, y: 0 },
-    description: "+50 base point gain",
+    description: "*4 point multi",
     price: new Decimal(2),
     isBought: false,
     effect: (game) => {
-        game.setGlobalPointAddition(n => n.plus(50))
-        game.setPointGainFromPrestige(n => n.plus(50))
+        game.setGlobalPointMultiplier(n => n.times(4))
     }
 }
 
 const ppUp202: IOneTimeUpgrade = {
     id: 202,
     parentId: 201,
-    position: { x: 2, y: 0.5 },
+    position: { x: 2, y: 0 },
     description: "+200 base point gain",
     price: new Decimal(5),
     isBought: false,
@@ -132,8 +131,8 @@ const ppUp202: IOneTimeUpgrade = {
 
 const ppUp203: IOneTimeUpgrade = {
     id: 203,
-    parentId: 201,
-    position: { x: 2, y: -0.5 },
+    parentId: 202,
+    position: { x: 3, y: -0.5 },
     description: "*6 point multi",
     price: new Decimal(10),
     isBought: false,
@@ -146,7 +145,7 @@ const ppUp203: IOneTimeUpgrade = {
 const ppUp204: IOneTimeUpgrade = {
     id: 204,
     parentId: 203,
-    position: { x: 3, y: -0.5 },
+    position: { x: 4, y: -0.5 },
     description: "+ 0.05 point exponent",
     price: new Decimal(10),
     isBought: false,
@@ -163,8 +162,21 @@ const ppUp205: IOneTimeUpgrade = {
     description: "+1 max buyable level",
     price: new Decimal(10),
     isBought: false,
+    effect: (game) => {
+        game.setGlobalPointExponent(n => n.plus(0.05))
+        game.setPointExponentFromPrestige(n => n.plus(0.05))
+    }
+}
+
+const ppUp206: IOneTimeUpgrade = {
+    id: 206,
+    parentId: 205,
+    position: { x: 4, y: 0.5 },
+    description: "+1 max buyable level",
+    price: new Decimal(10),
+    isBought: false,
     effect: (_, upgrades) => {
-        upgrades.setPointBuyableUpgrades?.(prev => prev.map(u => u.id >= 302 ? ({ ...u }) : ({
+        upgrades?.setPointBuyableUpgrades?.(prev => prev.map(u => u.id >= 302 ? ({ ...u }) : ({
             ...u,
             maxAmount: u.maxAmount + 1,
             isMaxed: false,
@@ -334,7 +346,7 @@ const ppUp505: IBuyableUpgrade = {
 
 export {
     ppUp101, ppUp102, ppUp103, ppUp104, ppUp105,
-    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205,
+    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205,ppUp206,
     ppUp301,
     ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }
