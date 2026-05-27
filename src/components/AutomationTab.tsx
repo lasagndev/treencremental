@@ -90,11 +90,6 @@ const AutomationTab = ({ game, stats, prestigeOneTimeUpgrades, setPrestigeOneTim
                                 <span className="automation-card__status">
                                     {!unlocked ? "LOCKED" : enabled ? "● RUNNING" : "⏸ PAUSED"}
                                 </span>
-                                {!unlocked && (
-                                    <span className="automation-card__cost">
-                                        Costs {fmt(upg.price)} PP
-                                    </span>
-                                )}
                             </div>
                         </div>
                     );

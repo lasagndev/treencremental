@@ -152,19 +152,27 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
             lastTickTimeRef.current = now;
             const tickMultiplier = elapsed / 40;
 
+            // upgrade 102 i jego działanie
             let newMulti = new Decimal(2).plus(prestigePointRef.current.log2().pow((pp102AmountRef.current).pow(0.8)));
             if(pp102AmountRef.current.lte(new Decimal(0)) || newMulti.lte(new Decimal(1))) newMulti = new Decimal(1)
             setPp102DynamicMulti(newMulti);
             pp102DynamicMultiRef.current = newMulti;
+
+            // peboostfacator
             let peBoostFactor = prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-            if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10);
+            if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10).times(prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+
+            // dodawanie punktów do punktów i do statystyk (główny game tick)
             const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
             setPoint(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
             stats.setAllPoints(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
+
+            // generator działanie
             const clampedDuration = Math.max(generatorDurationRef.current, 40);
             if (canShowGeneratorRef.current && clampedDuration <= 500) {
                 setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
             }
+
         }, 40);
         return () => clearInterval(skibidi);
     }, []);

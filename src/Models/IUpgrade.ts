@@ -24,6 +24,7 @@ export interface IBuyableUpgrade {
     position: UpgradePosition;
     description: string;
     dynamicDescription?: (game: Game) => string;
+    bulkDescription?: (count: number, game: Game) => string;
     price: Decimal;
     priceMultiplier: Decimal;
     currentAmount: Decimal;

@@ -11,6 +11,7 @@ import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
+const SIURY_IDS = new Set([401, 402, 501, 502, 503, 504, 505])
 
 function getUpgradeStyle(pos: UpgradePosition): CSSProperties {
     return {
@@ -37,7 +38,15 @@ interface PointTreeProps {
 
 const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
-    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))).floor()
+
+    let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
+    if(peBoostToPP.gte(new Decimal(1e4))) {
+        peBoostToPP = new Decimal(1e4).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+    }
+
+    let prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(peBoostToPP).floor()
+
+
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -51,6 +60,58 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         centerX: number; centerY: number;
         panX: number; panY: number;
     } | null>(null)
+
+    const [isBuyMaxMode, setIsBuyMaxMode] = useState(false)
+
+    function handleMaxBuy(upg: IBuyableUpgrade) {
+        if (!isBuyMaxMode || SIURY_IDS.has(upg.id)) {
+            buyBuyable(upg)
+            return
+        }
+
+        const singlePrice  = getPrice(upg)
+        const remaining    = upg.maxAmount - upg.currentAmount.toNumber()
+        let available      = game.point
+        let simulatedAmt   = upg.currentAmount
+        let simulatedPrice = upg.price
+        let totalCost      = new Decimal(0)
+        let count          = 0
+
+        if (singlePrice.lte(0)) {
+            count = Math.min(remaining, MAX_BUY_BATCH)
+        } else {
+            while (simulatedAmt.lt(upg.maxAmount) && count < MAX_BUY_BATCH) {
+                const price = upg.calcPrice
+                    ? upg.calcPrice({ ...upg, currentAmount: simulatedAmt })
+                    : simulatedPrice
+                if (available.lt(price)) break
+                available      = available.minus(price)
+                totalCost      = totalCost.plus(price)
+                simulatedAmt   = simulatedAmt.plus(1)
+                if (!upg.calcPrice) simulatedPrice = simulatedPrice.times(upg.priceMultiplier)
+                count++
+            }
+        }
+
+        if (count === 0) return
+
+
+        for (let i = 0; i < count; i++) upg.effect(game)
+
+        game.setPoint(n => n.minus(totalCost))
+        stats.setTotalUpgradesBought(n => n.plus(count))
+
+        setBuyableUpgrades(prev => prev.map(u => {
+            if (u.id !== upg.id) return u
+            const newAmount = u.currentAmount.plus(count)
+            return {
+                ...u,
+                ...(u.calcPrice ? {} : { price: u.price.times(u.priceMultiplier.pow(count)) }),
+                currentAmount: newAmount,
+                isMaxed: newAmount.gte(u.maxAmount),
+            }
+        }))
+    }
 
     useEffect(() => { viewRef.current = view }, [view])
 
@@ -239,6 +300,39 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
         return upg.calcPrice ? upg.calcPrice(upg) : upg.price
     }
 
+    const MAX_BUY_BATCH = 10_000
+
+    function getBuyMaxInfo(upg: IBuyableUpgrade): { cost: Decimal, count: number } {
+        const singlePrice = getPrice(upg)
+        const remaining   = upg.maxAmount - upg.currentAmount.toNumber()
+
+        // Free upgrades: no loop needed, just cap at batch limit
+        if (singlePrice.lte(0)) {
+            return { cost: new Decimal(0), count: Math.min(remaining, MAX_BUY_BATCH) }
+        }
+
+        let available      = game.point
+        let simulatedAmt   = upg.currentAmount
+        let simulatedPrice = upg.price
+        let totalCost      = new Decimal(0)
+        let count          = 0
+
+        while (simulatedAmt.lt(upg.maxAmount) && count < MAX_BUY_BATCH) {
+            const price = upg.calcPrice
+                ? upg.calcPrice({ ...upg, currentAmount: simulatedAmt })
+                : simulatedPrice
+            if (available.lt(price)) break
+            available      = available.minus(price)
+            totalCost      = totalCost.plus(price)
+            simulatedAmt   = simulatedAmt.plus(1)
+            if (!upg.calcPrice) simulatedPrice = simulatedPrice.times(upg.priceMultiplier)
+            count++
+        }
+
+        // If we can't afford any, fall back to showing the next single price
+        return { cost: count > 0 ? totalCost : singlePrice, count }
+    }
+
     function buyBuyable(upg: IBuyableUpgrade) {
         game.setPoint(n => n.minus(getPrice(upg)))
         upg.effect(game)
@@ -350,6 +444,13 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
             </section>}
 
 
+            { game.canShowPrestigeTree && <button className="bulkBuyButton" onClick={() => { setIsBuyMaxMode(n => !n) }}>
+                { isBuyMaxMode && <span className="bulkBuyButton__label">Buy max</span>}
+                { !isBuyMaxMode && <span className="bulkBuyButton__label">Buy 1</span>}
+            </button>}
+
+
+
 
             <div className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
 
@@ -398,21 +499,28 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
                     </button>
                 }
 
-                {buyableUpgrades.filter(isVisible).map(upg => (
-                    <button
-                        key={upg.id}
-                        className={`upgradeButton ${buyableClass(upg)}`}
-                        style={getUpgradeStyle(upg.position)}
-                        onClick={() => buyBuyable(upg)}
-                        disabled={upg.isMaxed || getPrice(upg).gt(game.point) || isLocked(upg.id)}>
-                        <p className={"upgradeId"}>{upg.id}</p>
-                        {upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description}
-                        <br/>
-                        Price: {fmt(getPrice(upg)) }
-                        <br/>
-                        {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
-                    </button>
-                ))}
+                {buyableUpgrades.filter(isVisible).map(upg => {
+                    const isSiury = SIURY_IDS.has(upg.id)
+                    const { cost, count } = (isBuyMaxMode && !isSiury) ? getBuyMaxInfo(upg) : { cost: getPrice(upg), count: 1 }
+                    const descText = (isBuyMaxMode && !isSiury && count > 1 && upg.bulkDescription)
+                        ? upg.bulkDescription(count, game)
+                        : (upg.dynamicDescription ? upg.dynamicDescription(game) : upg.description)
+                    return (
+                        <button
+                            key={upg.id}
+                            className={`upgradeButton ${buyableClass(upg)}`}
+                            style={getUpgradeStyle(upg.position)}
+                            onClick={() => handleMaxBuy(upg)}
+                            disabled={upg.isMaxed || getPrice(upg).gt(game.point) || isLocked(upg.id)}>
+                            <p className={"upgradeId"}>{upg.id}</p>
+                            {descText}
+                            <br/>
+                            Price: {fmt(cost)}{isBuyMaxMode && !isSiury && count > 1 ? ` ×${count}` : ''}
+                            <br/>
+                            {upg.currentAmount.toFixed(0)}/{upg.maxAmount}
+                        </button>
+                    )
+                })}
 
                 {oneTimeUpgrades.filter(isVisible).map(upg => (
                     <button

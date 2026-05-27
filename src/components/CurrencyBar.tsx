@@ -27,7 +27,7 @@ export function fmt(n: Decimal): string {
 function CurrencyBar( { game }: Props ) {
 
     let peBoostFactor = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10);
+    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
     const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.pp102DynamicMulti).times(peBoostFactor).pow(game.globalPointExponent)
 
     return (

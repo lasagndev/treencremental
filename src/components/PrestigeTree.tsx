@@ -347,7 +347,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
                     <p className={"upgradeId"}>{ppUp301.id}</p>
                     {ppUp301.description}
                     <br/>
-                    Price: {fmt(ppUp301.price)}
+                    Price: {fmt(ppUp301.price)} PP
                 </button>
 
                 {buyableUpgrades.map(upg => (

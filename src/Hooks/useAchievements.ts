@@ -3,6 +3,7 @@ import type { IAchievement } from "../Models/IAchievement.ts";
 import type { Game } from "../Models/Game.ts";
 import type { Statistics } from "../Models/Statistics.ts";
 import { allAchievements } from "../data/Achievements.ts";
+import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 
 function loadSaved(): { id: number; isUnlocked: boolean }[] | null {
     try {
@@ -37,10 +38,10 @@ export function useAchievements() {
         prevUnlockedIds.current = new Set(achievements.filter(a => a.isUnlocked).map(a => a.id));
     }, [achievements]);
 
-    function checkAchievements(game: Game, stats: Statistics) {
+    function checkAchievements(game: Game, stats: Statistics, pointUpgrades: {buyableUpgrades: IBuyableUpgrade[]; oneTimeUpgrades: IOneTimeUpgrade[];}, prestigeUpgrades: {buyableUpgrades: IBuyableUpgrade[]; oneTimeUpgrades: IOneTimeUpgrade[];}) {
         setAchievements(prev => prev.map(a => {
             if (a.isUnlocked) return a;
-            if (a.condition(game, stats)) return { ...a, isUnlocked: true };
+            if (a.condition(game, stats, pointUpgrades, prestigeUpgrades)) return { ...a, isUnlocked: true };
             return a;
         }));
     }

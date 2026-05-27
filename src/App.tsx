@@ -100,7 +100,7 @@ function App() {
 
     useEffect(() => {
         const who_touch_me_bird = setInterval(() => {
-            checkAchievementsRef.current(gameRef.current, statsRef.current);
+            checkAchievementsRef.current(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current);
         }, 1000);
         return () => clearInterval(who_touch_me_bird);
     }, []);
