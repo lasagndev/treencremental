@@ -4,7 +4,7 @@ import {generatorUpgrades} from "./GeneratorTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, type RefObject} from "react";
 import type {CSSProperties} from "react";
 import Decimal from "break_eternity.js";
 import {fmt} from "./CurrencyBar.tsx";
@@ -34,17 +34,18 @@ interface PointTreeProps {
     game: Game
     upgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
+    handlePrestigeRef: RefObject<() => void>
 }
 
-const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
+const PointTree = ( {game, upgrades, stats, handlePrestigeRef} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
 
     let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
     if(peBoostToPP.gte(new Decimal(1e4))) {
-        peBoostToPP = new Decimal(1e4).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+        peBoostToPP = new Decimal(3.34e3).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
     }
-
-    let prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(peBoostToPP).floor()
+    const dynamicPPGain = game.dynamicUpgradeValues[106] ?? new Decimal(1);
+    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(peBoostToPP).times(dynamicPPGain).floor()
 
 
 
@@ -417,6 +418,9 @@ const PointTree = ( {game, upgrades, stats} : PointTreeProps ) => {
     }
 
     const { width, height } = containerSize
+
+    // eslint-disable-next-line react-hooks/refs
+    handlePrestigeRef.current = handlePrestige
 
     return (
         <section

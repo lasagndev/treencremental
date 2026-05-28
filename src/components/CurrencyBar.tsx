@@ -15,6 +15,7 @@ function fmtExp(n: Decimal, d: number): string {
     return mantissa + dot + '0'.repeat(Math.max(0, d - decimals)) + 'e' + exp
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function fmt(n: Decimal): string {
     if (n.gte('1e1000000')) return fmtExp(n, 6)
     if (n.gte('1e100000'))  return fmtExp(n, 5)
@@ -27,8 +28,8 @@ export function fmt(n: Decimal): string {
 function CurrencyBar( { game }: Props ) {
 
     let peBoostFactor = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
-    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.pp102DynamicMulti).times(peBoostFactor).pow(game.globalPointExponent)
+    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+    const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.dynamicUpgradeValues[102] ?? new Decimal(1)).times(peBoostFactor).pow(game.globalPointExponent)
 
     return (
         <section className={"CurrencyBar"}>

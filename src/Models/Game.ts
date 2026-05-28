@@ -1,4 +1,4 @@
-﻿import Decimal from "break_eternity.js";
+import Decimal from "break_eternity.js";
 
 
 export class Game {
@@ -28,8 +28,8 @@ export class Game {
     prestigePointMulti
     setPrestigePointMulti
 
-    pp102DynamicMulti
-    setPp102DynamicMulti
+    dynamicUpgradeValues
+    setDynamicUpgradeValues
 
     automationInterval
     setAutomationInterval
@@ -74,8 +74,8 @@ export class Game {
                 setPointExponentFromPrestige: React.Dispatch<React.SetStateAction<Decimal>>,
                 prestigePointMulti: Decimal,
                 setPrestigePointMulti: React.Dispatch<React.SetStateAction<Decimal>>,
-                pp102DynamicMulti: Decimal,
-                setPp102DynamicMulti: React.Dispatch<React.SetStateAction<Decimal>>,
+                dynamicUpgradeValues: Record<number, Decimal>,
+                setDynamicUpgradeValues: React.Dispatch<React.SetStateAction<Record<number, Decimal>>>,
                 automationInterval: number,
                 setAutomationInterval: React.Dispatch<React.SetStateAction<number>>,
                 canShowGenerator: boolean,
@@ -113,8 +113,8 @@ export class Game {
         this.setPointExponentFromPrestige = setPointExponentFromPrestige;
         this.prestigePointMulti = prestigePointMulti;
         this.setPrestigePointMulti = setPrestigePointMulti;
-        this.pp102DynamicMulti = pp102DynamicMulti;
-        this.setPp102DynamicMulti = setPp102DynamicMulti;
+        this.dynamicUpgradeValues = dynamicUpgradeValues;
+        this.setDynamicUpgradeValues = setDynamicUpgradeValues;
         this.automationInterval = automationInterval;
         this.setAutomationInterval = setAutomationInterval;
         this.canShowGenerator = canShowGenerator;

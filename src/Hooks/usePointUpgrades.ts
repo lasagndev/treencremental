@@ -19,7 +19,7 @@ import {
     pUp116,
     pUp117,
     pUp118,
-    pUp119, pUp120, pUp121, pUp122, pUp123,
+    pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
     pUp201,
     pUp202,
     pUp203,
@@ -36,7 +36,8 @@ import {
     pUp214,
     pUp215,
     pUp216,
-    pUp217, pUp218, pUp219, pUp220, pUp221, pUp302,
+    pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225,
+    pUp302,
     pUp401,
     pUp402,
     pUp501,
@@ -48,10 +49,10 @@ import {
 import Decimal from "break_eternity.js";
 
 const defaultOneTime: IOneTimeUpgrade[] = [
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221,
+    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123,
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
     pUp302,
     pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 ];
@@ -89,7 +90,7 @@ export function usePointUpgrades() {
                     return s !== undefined ? { ...u, price: new Decimal(s.price), isBought: s.isBought, currentAmount, maxAmount, isMaxed: currentAmount.gte(maxAmount) } : u;
                 });
             }
-        } catch {}
+        } catch(e) {console.log(e)}
         return defaultBuyable;
     });
 

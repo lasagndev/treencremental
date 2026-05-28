@@ -105,15 +105,15 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     let peBoostToP  = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6))
     if(peBoostToP.gte(new Decimal(1e10)))
     {
-        peBoostToP = new Decimal(1e10).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+        peBoostToP = new Decimal(7e8).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
         isBoostToPSoftcapped = true
     } else {
         isBoostToPSoftcapped = false
     }
 
     let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
-    if(peBoostToPP.gte(new Decimal(1e4))) {
-        peBoostToPP = new Decimal(1e4).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+    if(peBoostToPP.gte(new Decimal(1e4 ))) {
+        peBoostToPP = new Decimal(3.34e3).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
         isBoostToPPSoftcapped = true
     } else {
         isBoostToPPSoftcapped = false

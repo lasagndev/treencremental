@@ -3,6 +3,7 @@ import { Game } from "../Models/Game.ts";
 import Decimal from "break_eternity.js";
 import type {Statistics} from "../Models/Statistics.ts";
 import {generatorUpgrades} from "../components/GeneratorTab.tsx";
+import type {IBuyableUpgrade} from "../Models/IUpgrade.ts";
 
 function loadSaved() {
     try {
@@ -12,7 +13,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
+export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[]) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -57,7 +58,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         const s = loadSaved();
         return s?.prestigePointMulti ? new Decimal(s.prestigePointMulti as string) : new Decimal(1);
     })
-    const [pp102DynamicMulti, setPp102DynamicMulti] = useState<Decimal>(new Decimal(1));
+    const [dynamicUpgradeValues, setDynamicUpgradeValues] = useState<Record<number, Decimal>>({});
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
         return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
@@ -104,7 +105,7 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         pointMultiFromPrestige, setPointMultiFromPrestige,
         pointExponentFromPrestige, setPointExponentFromPrestige,
         prestigePointMulti, setPrestigePointMulti,
-        pp102DynamicMulti, setPp102DynamicMulti,
+        dynamicUpgradeValues, setDynamicUpgradeValues,
         automationInterval, setAutomationInterval,
         canShowGenerator, setCanShowGenerator,
         prestigeEnergy, setPrestigeEnergy,
@@ -118,15 +119,15 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
     const globalPointMultiplierRef = useRef(globalPointMultiplier);
     const globalPointExponentRef = useRef(globalPointExponent);
     const globalMultiplierMultiplierRef = useRef(globalMultiplierMultiplier);
-    const pp102DynamicMultiRef = useRef(pp102DynamicMulti);
     const pointRef = useRef(point);
     const prestigePointRef = useRef(prestigePoint);
-    const pp102AmountRef = useRef(pp102Amount);
+    const prestigeUpgradesRef = useRef(prestigeBuyableUpgrades);
     const generatorDurationRef = useRef(generatorDuration);
     const peMultiRef = useRef(peMulti);
     const canShowGeneratorRef = useRef(canShowGenerator);
     const prestigeEnergyRef = useRef(prestigeEnergy);
     const peBoostToPRef = useRef(peBoostToP);
+    // eslint-disable-next-line react-hooks/purity
     const lastTickTimeRef = useRef(Date.now());
 
     useEffect(() => {
@@ -134,16 +135,15 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
         globalPointMultiplierRef.current = globalPointMultiplier;
         globalPointExponentRef.current = globalPointExponent;
         globalMultiplierMultiplierRef.current = globalMultiplierMultiplier;
-        pp102DynamicMultiRef.current = pp102DynamicMulti;
         pointRef.current = point;
         prestigePointRef.current = prestigePoint;
-        pp102AmountRef.current = pp102Amount;
+        prestigeUpgradesRef.current = prestigeBuyableUpgrades;
         generatorDurationRef.current = generatorDuration;
         peMultiRef.current = peMulti;
         canShowGeneratorRef.current = canShowGenerator;
         prestigeEnergyRef.current = prestigeEnergy;
         peBoostToPRef.current = peBoostToP;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, pp102DynamicMulti, point, pp102Amount, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP]);
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
@@ -152,18 +152,31 @@ export function useGameLoop(stats: Statistics, pp102Amount: Decimal) {
             lastTickTimeRef.current = now;
             const tickMultiplier = elapsed / 40;
 
-            // upgrade 102 i jego działanie
-            let newMulti = new Decimal(2).plus(prestigePointRef.current.log2().pow((pp102AmountRef.current).pow(0.8)));
-            if(pp102AmountRef.current.lte(new Decimal(0)) || newMulti.lte(new Decimal(1))) newMulti = new Decimal(1)
-            setPp102DynamicMulti(newMulti);
-            pp102DynamicMultiRef.current = newMulti;
+            // compute tickEffects for all prestige buyable upgrades
+            let dynamicPointMulti = new Decimal(1);
+            const newDynamicValues: Record<number, Decimal> = {};
+            for (const u of prestigeUpgradesRef.current) {
+                if (u.tickEffect && u.currentAmount.gt(0)) {
+                    const result = u.tickEffect(u.currentAmount, {
+                        prestigePoint: prestigePointRef.current,
+                        point: pointRef.current,
+                    });
+                    if (result.pointMulti) {
+                        newDynamicValues[u.id] = result.pointMulti;
+                        dynamicPointMulti = dynamicPointMulti.times(result.pointMulti);
+                    } else if(result.ppGain) {
+                        newDynamicValues[u.id] = result.ppGain;
+                    }
+                }
+            }
+            setDynamicUpgradeValues(newDynamicValues);
 
             // peboostfacator
             let peBoostFactor = prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-            if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(1e10).times(prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+            if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
 
             // dodawanie punktów do punktów i do statystyk (główny game tick)
-            const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(pp102DynamicMultiRef.current).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
+            const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(dynamicPointMulti).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
             setPoint(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
             stats.setAllPoints(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
 

@@ -426,6 +426,41 @@ const pUp123: IBuyableUpgrade = {
     effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(100).times(game.globalMultiplierMultiplier))),
 }
 
+const pUp124: IBuyableUpgrade = {
+    id: 124,
+    parentId: 122,
+    position: { x: -9, y: 0.5 },
+    description: "+ 500000 point gain",
+    bulkDescription: (count) => `+${count * 500000} point gain`,
+    price: new Decimal(1e30),
+    priceMultiplier: new Decimal(1.5),
+    currentAmount: new Decimal(0),
+    maxAmount: 20,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setGlobalPointAddition(n => n.plus(500000))
+    }
+}
+
+const pUp125: IBuyableUpgrade = {
+    id: 125,
+    parentId: 122,
+    position: { x: -9, y: 1.5 },
+    description: "+ 1e6 point gain",
+    bulkDescription: (count) => `+${count * 1e6} point gain`,
+    price: new Decimal(1e32),
+    priceMultiplier: new Decimal(1.5),
+    currentAmount: new Decimal(0),
+    maxAmount: 20,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setGlobalPointAddition(n => n.plus(1e6))
+    }
+}
 // -------------------------------------
 // ---------- one-time uprady ----------
 // ---------------- vvv ----------------
@@ -661,7 +696,53 @@ const pUp221: IOneTimeUpgrade = {
     }
 }
 
+const pUp222: IOneTimeUpgrade = {
+    id: 222,
+    parentId: 221,
+    position: {x: 7, y: 1},
+    description: "* 6 point multi",
+    price: new Decimal(1e28),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => {
+        game.setGlobalMultiplierMultiplier(n => n.times(6))
+        game.setGlobalPointMultiplier(n => n.times(6))
+    }
+}
 
+const pUp223: IOneTimeUpgrade = {
+    id: 223,
+    parentId: 212,
+    position: {x: 6, y: -1.5},
+    description: "+ 2e6 point gain",
+    price: new Decimal(1e24),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setGlobalPointAddition(n => n.plus(2e6))
+}
+
+const pUp224: IOneTimeUpgrade = {
+    id: 224,
+    parentId: 217,
+    position: {x: 7, y: 0},
+    description: "+ 1e7 point gain",
+    price: new Decimal(1e28),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setGlobalPointAddition(n => n.plus(1e7))
+}
+
+const pUp225: IOneTimeUpgrade = {
+    id: 225,
+    parentId: 220,
+    position: {x: 7, y: 2},
+    description: "+ 5000 point multi",
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(5000).times(game.globalMultiplierMultiplier))} point multi`,
+    price: new Decimal(1e30),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(5000).times(game.globalMultiplierMultiplier)))
+}
 
 // 300+ UPGARADAS :3:3:3:3:3:3:3
 
@@ -788,8 +869,8 @@ const pUp505: IBuyableUpgrade = {
 
 
 export {
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123,
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221,
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
+    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225,
     pUp302,
     pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 }

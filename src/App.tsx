@@ -20,6 +20,7 @@ import Decimal from "break_eternity.js";
 import AutomationTab from "./components/AutomationTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
 import GeneratorTab, {generatorUpgrades} from "./components/GeneratorTab.tsx";
+import {useKeybinds} from "./Hooks/useKeybinds.ts";
 
 
 
@@ -27,10 +28,10 @@ import GeneratorTab, {generatorUpgrades} from "./components/GeneratorTab.tsx";
 function App() {
     const stats = useStatistics();
     const prestigeUpgrades = usePrestigeUpgrades();
-    const pp102Amount = prestigeUpgrades.buyableUpgrades.find(u => u.id === 102)?.currentAmount ?? new Decimal(0);
-    const game = useGameLoop(stats, pp102Amount);
+    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades);
     const pointUpgrades = usePointUpgrades();
     const achievementsHook = useAchievements();
+    const handlePrestigeRef = useRef<() => void>(() => {});
 
 
     // Restore module-level generator upgrades from localStorage on first mount
@@ -168,11 +169,11 @@ function App() {
 
             if (auto1to5) {
                 buyableUpgrades.filter(u => u.id >= 101 && u.id <= 105).forEach(buyBuyable);
-                oneTimeUpgrades.filter(u => u.id >= 201 && u.id <= 205).forEach(buyOneTime);
+                oneTimeUpgrades.filter(u => u.id >= 201 && u.id <= 205 && u.id != 204).forEach(buyOneTime);
             }
             if (auto6to10) {
                 buyableUpgrades.filter(u => u.id >= 106 && u.id <= 110).forEach(buyBuyable);
-                oneTimeUpgrades.filter(u => u.id >= 206 && u.id <= 210).forEach(buyOneTime);
+                oneTimeUpgrades.filter(u => u.id >= 206 && u.id <= 210 && u.id != 207 && u.id != 208).forEach(buyOneTime);
             }
             if (auto11to15) {
                 buyableUpgrades.filter(u => u.id >= 111 && u.id <= 115).forEach(buyBuyable);
@@ -218,6 +219,7 @@ function App() {
         }
         if (game.canShowGenerator) {
             const now = Date.now();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setGeneratorStart(now);
             generatorStartRef.current = now;
             localStorage.setItem("generatorStart", String(now));
@@ -246,13 +248,15 @@ function App() {
     const [toastKey, setToastKey] = useState<number | null>(null);
     const [currentTab, setCurrentTab] = useState("MainTree");
 
+    useKeybinds(handlePrestigeRef, setCurrentTab);
+
     return (
         <>
             <CurrencyBar game={game}/>
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats}/> }
+                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef}/> }
                 {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}

@@ -34,6 +34,7 @@ export interface IBuyableUpgrade {
     calcPrice?: (upg: IBuyableUpgrade) => Decimal;
     whenCanShow?: string;
     effect: (game: Game) => void;
+    tickEffect?: (amount: Decimal, state: { prestigePoint: Decimal; point: Decimal }) => { pointMulti?: Decimal; ppGain?: Decimal };
 }
 
 export interface IUnlockUpgrade {
