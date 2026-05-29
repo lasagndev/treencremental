@@ -4,6 +4,37 @@ import Decimal from "break_eternity.js";
 import type {Statistics} from "../Models/Statistics.ts";
 import {generatorUpgrades} from "../components/GeneratorTab.tsx";
 import type {IBuyableUpgrade} from "../Models/IUpgrade.ts";
+import {defaultPrestigeBuyable, defaultPrestigeOneTime} from "./usePrestigeUpgrades.ts";
+import {defaultPointBuyable} from "./usePointUpgrades.ts";
+
+function calcPrestigeExponentBonus(): Decimal {
+    let bonus = new Decimal(1);
+    try {
+        const saved = JSON.parse(localStorage.getItem("prestigeUpgrades") || "null");
+        if (saved?.buyableUpgrades) {
+            const amountMap = new Map<number, Decimal>(
+                (saved.buyableUpgrades as Array<{ id: number; currentAmount: string }>)
+                    .map(u => [u.id, new Decimal(u.currentAmount)])
+            );
+            for (const def of defaultPrestigeBuyable) {
+                if (def.exponentBonusPerLevel == null) continue;
+                const amount = amountMap.get(def.id) ?? new Decimal(0);
+                bonus = bonus.plus(new Decimal(def.exponentBonusPerLevel).times(amount));
+            }
+        }
+        if (saved?.oneTimeUpgrades) {
+            const boughtSet = new Set<number>(
+                (saved.oneTimeUpgrades as Array<{ id: number; isBought: boolean }>)
+                    .filter(u => u.isBought).map(u => u.id)
+            );
+            for (const def of defaultPrestigeOneTime) {
+                if (def.exponentBonus == null) continue;
+                if (boughtSet.has(def.id)) bonus = bonus.plus(def.exponentBonus);
+            }
+        }
+    } catch(e) {console.log(e)}
+    return bonus;
+}
 
 function loadSaved() {
     try {
@@ -32,7 +63,14 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
     const [globalPointExponent, setGlobalPointExponent] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.globalPointExponent ? new Decimal(s.globalPointExponent as string) : new Decimal(1);
+        const base = s?.globalPointExponent ? new Decimal(s.globalPointExponent as string) : new Decimal(1);
+        // If old save has pointExponentFromPrestige, adjust globalPointExponent by the correction delta
+        if (s?.pointExponentFromPrestige) {
+            const oldPEFP = new Decimal(s.pointExponentFromPrestige as string);
+            const newPEFP = calcPrestigeExponentBonus();
+            return base.plus(newPEFP.minus(oldPEFP));
+        }
+        return base;
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
@@ -51,12 +89,31 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         return s?.pointMultiFromPrestige ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(1);
     })
     const [pointExponentFromPrestige, setPointExponentFromPrestige] = useState<Decimal>(() => {
-        const s = loadSaved();
-        return s?.pointExponentFromPrestige ? new Decimal(s.pointExponentFromPrestige as string) : new Decimal(1);
+        return calcPrestigeExponentBonus();
     })
     const [prestigePointMulti, setPrestigePointMulti] = useState<Decimal>(() => {
-        const s = loadSaved();
-        return s?.prestigePointMulti ? new Decimal(s.prestigePointMulti as string) : new Decimal(1);
+        try {
+            let multi = new Decimal(1);
+            const sources: Array<{ saveKey: string; defs: IBuyableUpgrade[] }> = [
+                { saveKey: "prestigeUpgrades", defs: defaultPrestigeBuyable },
+                { saveKey: "upgrades", defs: defaultPointBuyable },
+            ];
+            for (const { saveKey, defs } of sources) {
+                const saved = JSON.parse(localStorage.getItem(saveKey) || "null");
+                if (!saved?.buyableUpgrades) continue;
+                const amountMap = new Map<number, Decimal>(
+                    (saved.buyableUpgrades as Array<{ id: number; currentAmount: string }>)
+                        .map(u => [u.id, new Decimal(u.currentAmount)])
+                );
+                for (const def of defs) {
+                    if (def.prestigeMultiPerLevel == null) continue;
+                    const amount = amountMap.get(def.id) ?? new Decimal(0);
+                    if (amount.gt(0)) multi = multi.times(new Decimal(def.prestigeMultiPerLevel).pow(amount));
+                }
+            }
+            return multi;
+        } catch(e) {console.log(e)}
+        return new Decimal(1);
     })
     const [dynamicUpgradeValues, setDynamicUpgradeValues] = useState<Record<number, Decimal>>({});
     const [automationInterval, setAutomationInterval] = useState<number>(() => {

@@ -66,9 +66,7 @@ export function useSaveSystem(
         globalMultiplierMultiplier: game.globalMultiplierMultiplier.toString(),
         canShowPrestigeTree: game.canShowPrestigeTree,
         pointMultiFromPrestige: game.pointMultiFromPrestige.toString(),
-        pointExponentFromPrestige: game.pointExponentFromPrestige.toString(),
         prestigePoint: game.prestigePoint.toString(),
-        prestigePointMulti: game.prestigePointMulti.toString(),
         pointGainFromPrestige: game.pointGainFromPrestige.toString(),
         automationInterval: game.automationInterval.toString(),
         canShowGenerator: game.canShowGenerator.toString(),
@@ -92,13 +90,13 @@ export function useSaveSystem(
     localStorage.setItem("upgrades", JSON.stringify({
         oneTimeUpgrades: upgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: upgrades.buyableUpgrades.map(u => ({
-            id: u.id, price: u.price.toString(), isBought: u.isBought, currentAmount: u.currentAmount.toString(), maxAmount: u.maxAmount
+            id: u.id, isBought: u.isBought, currentAmount: u.currentAmount.toString(), maxAmount: u.maxAmount
         })),
     }));
     localStorage.setItem("prestigeUpgrades", JSON.stringify({
         oneTimeUpgrades: pupgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
         buyableUpgrades: pupgrades.buyableUpgrades.map(u => ({
-            id: u.id, price: u.price.toString(), isBought: u.isBought, currentAmount: u.currentAmount.toString()
+            id: u.id, isBought: u.isBought, currentAmount: u.currentAmount.toString()
         })),
     }));
     localStorage.setItem("pUp1", JSON.stringify(pUp1 ?? false));
@@ -109,6 +107,6 @@ export function useSaveSystem(
         achievements.map(a => ({ id: a.id, isUnlocked: a.isUnlocked }))
     ));
     localStorage.setItem("generatorUpgrades", JSON.stringify(
-        generatorUpgrades.map(u => ({ id: u.id, price: u.price.toString(), currentAmount: u.currentAmount.toString() }))
+        generatorUpgrades.map(u => ({ id: u.id, currentAmount: u.currentAmount.toString() }))
     ));
 }

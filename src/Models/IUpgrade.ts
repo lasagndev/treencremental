@@ -15,6 +15,7 @@ export interface IOneTimeUpgrade {
     price: Decimal;
     isBought: boolean ;
     whenCanShow?: string;
+    exponentBonus?: number;
     effect: (game: Game, upgrades?: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[]; setOneTimeUpgrades: React.Dispatch<React.SetStateAction<IOneTimeUpgrade[]>>; setBuyableUpgrades: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>>; setPointBuyableUpgrades?: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>> }) => void;
 }
 
@@ -35,6 +36,8 @@ export interface IBuyableUpgrade {
     whenCanShow?: string;
     effect: (game: Game) => void;
     tickEffect?: (amount: Decimal, state: { prestigePoint: Decimal; point: Decimal }) => { pointMulti?: Decimal; ppGain?: Decimal };
+    prestigeMultiPerLevel?: number;
+    exponentBonusPerLevel?: number;
 }
 
 export interface IUnlockUpgrade {

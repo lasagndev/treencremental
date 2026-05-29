@@ -69,6 +69,12 @@ export const generatorUpgrades: IBuyableUpgrade[] = [
     },
 ]
 
+// Snapshot base prices at module load time, before any session mutations
+// eslint-disable-next-line react-refresh/only-export-components
+export const generatorBasePrices = new Map<number, Decimal>(
+    generatorUpgrades.map(u => [u.id, u.price])
+);
+
 const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     const fillRef = useRef<HTMLDivElement>(null);
     const durationRef = useRef(Math.max(game.generatorDuration, 40));

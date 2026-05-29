@@ -27,11 +27,12 @@ const ppUp101: IBuyableUpgrade = {
     description: "+0.02 point exponent",
     price: new Decimal(1),
     priceMultiplier: new Decimal(5),
-    calcPrice: (upg) => upg.price.times(upg.priceMultiplier.pow(upg.currentAmount)),
+    //calcPrice: (upg) => upg.price.times(upg.priceMultiplier.pow(upg.currentAmount)),
     currentAmount: new Decimal(0),
     maxAmount: 10,
     isBought: false,
     isMaxed: false,
+    exponentBonusPerLevel: 0.02,
     effect: (game) => {
         game.setGlobalPointExponent(n => n.plus(0.02))
         game.setPointExponentFromPrestige(n => n.plus(0.02))
@@ -107,6 +108,7 @@ const ppUp105: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     whenCanShow: "Automation",
+    prestigeMultiPerLevel: 1.2,
     effect: (game) => {
         game.setPrestigePointMulti(n => n.times(1.2))
     }
@@ -191,6 +193,7 @@ const ppUp205: IOneTimeUpgrade = {
     description: "+0.05 point exponent",
     price: new Decimal(15),
     isBought: false,
+    exponentBonus: 0.05,
     effect: (game) => {
         game.setGlobalPointExponent(n => n.plus(0.05))
         game.setPointExponentFromPrestige(n => n.plus(0.05))

@@ -46,7 +46,7 @@ import Decimal from "break_eternity.js";
 const defaultOneTime: IOneTimeUpgrade[] = [
     pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225
 ];
-const defaultBuyable: IBuyableUpgrade[] = [
+export const defaultPointBuyable: IBuyableUpgrade[] = [
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
     pUp302
 ];
@@ -74,18 +74,21 @@ export function usePointUpgrades() {
         try {
             const saved = JSON.parse(localStorage.getItem("upgrades") || "null");
             if (saved?.buyableUpgrades) {
-                const map = new Map<number, { price: string, isBought: boolean; currentAmount: string; maxAmount?: number }>(
-                    saved.buyableUpgrades.map((u: { id: number; price: string; isBought: boolean; currentAmount: string; maxAmount?: number }) => [u.id, u])
+                const map = new Map<number, { isBought: boolean; currentAmount: string; maxAmount?: number }>(
+                    saved.buyableUpgrades.map((u: { id: number; isBought: boolean; currentAmount: string; maxAmount?: number }) => [u.id, u])
                 );
-                return defaultBuyable.map(u => {
+                return defaultPointBuyable.map(u => {
                     const s = map.get(u.id);
                     const currentAmount = s !== undefined ? new Decimal(s.currentAmount) : u.currentAmount;
                     const maxAmount = s?.maxAmount ?? u.maxAmount;
-                    return s !== undefined ? { ...u, price: new Decimal(s.price), isBought: s.isBought, currentAmount, maxAmount, isMaxed: currentAmount.gte(maxAmount) } : u;
+                    const price = u.calcPrice
+                        ? u.calcPrice({ ...u, currentAmount })
+                        : u.price.times(u.priceMultiplier.pow(currentAmount));
+                    return s !== undefined ? { ...u, price, isBought: s.isBought, currentAmount, maxAmount, isMaxed: currentAmount.gte(maxAmount) } : u;
                 });
             }
         } catch(e) {console.log(e)}
-        return defaultBuyable;
+        return defaultPointBuyable;
     });
 
     function resetUpgrades() {
@@ -93,7 +96,7 @@ export function usePointUpgrades() {
             prev.map(u => u.id >= 301 ? u : { ...defaultOneTime.find(d => d.id === u.id)! })
         );
         setBuyableUpgrades(prev =>
-            prev.map(u => u.id >= 301 ? u : { ...defaultBuyable.find(d => d.id === u.id)!, maxAmount: u.maxAmount })
+            prev.map(u => u.id >= 301 ? u : { ...defaultPointBuyable.find(d => d.id === u.id)!, maxAmount: u.maxAmount })
         );
     }
 

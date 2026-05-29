@@ -758,6 +758,7 @@ const pUp302: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     whenCanShow: "prestige",
+    prestigeMultiPerLevel: 2,
     effect: (game) => game.setPrestigePointMulti(n => n.times(2))
 }
 

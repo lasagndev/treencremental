@@ -19,7 +19,7 @@ import AchievementPopup from "./components/AchievementPopup.tsx";
 import Decimal from "break_eternity.js";
 import AutomationTab from "./components/AutomationTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
-import GeneratorTab, {generatorUpgrades} from "./components/GeneratorTab.tsx";
+import GeneratorTab, {generatorUpgrades, generatorBasePrices} from "./components/GeneratorTab.tsx";
 import {useKeybinds} from "./Hooks/useKeybinds.ts";
 
 
@@ -37,13 +37,16 @@ function App() {
     // Restore module-level generator upgrades from localStorage on first mount
     useEffect(() => {
         try {
-            const saved = JSON.parse(localStorage.getItem("generatorUpgrades") ?? "null") as Array<{ id: number; price: string; currentAmount: string }> | null;
+            const saved = JSON.parse(localStorage.getItem("generatorUpgrades") ?? "null") as Array<{ id: number; currentAmount: string }> | null;
             if (saved) {
                 saved.forEach(s => {
                     const upg = generatorUpgrades.find(u => u.id === s.id);
                     if (upg) {
-                        upg.price = new Decimal(s.price);
                         upg.currentAmount = new Decimal(s.currentAmount);
+                        const basePrice = generatorBasePrices.get(upg.id) ?? upg.price;
+                        upg.price = upg.calcPrice
+                            ? upg.calcPrice(upg)
+                            : basePrice.times(upg.priceMultiplier.pow(upg.currentAmount));
                     }
                 });
             }
@@ -187,7 +190,6 @@ function App() {
                 buyableUpgrades.filter(u => u.id >= 121 && u.id <= 125).forEach(buyBuyable);
                 oneTimeUpgrades.filter(u => u.id >= 221 && u.id <= 225).forEach(buyOneTime);
             }
-            console.log(automationInterval)
         }, automationInterval);
         return () => clearInterval(automation);
     }, [automationInterval]);
@@ -258,7 +260,7 @@ function App() {
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} /> }
+                {currentTab === "MainTree" && <PointTree game={game} gameRef={gameRef} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} /> }
                 {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
