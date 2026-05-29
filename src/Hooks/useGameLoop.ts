@@ -36,11 +36,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
     });
     const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
@@ -61,7 +61,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     const [dynamicUpgradeValues, setDynamicUpgradeValues] = useState<Record<number, Decimal>>({});
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
-        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
+        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 1000;
     });
 
     const [canShowGenerator, setCanShowGenerator] = useState<boolean>(() => {
@@ -184,6 +184,8 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
             const clampedDuration = Math.max(generatorDurationRef.current, 40);
             if (canShowGeneratorRef.current && clampedDuration <= 500) {
                 setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
+                stats.setTotalGeneratorLoops(n => n+1)
+                stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
             }
 
         }, 40);

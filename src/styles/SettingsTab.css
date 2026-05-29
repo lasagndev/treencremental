@@ -46,3 +46,34 @@
     border-color: #502020 !important;
     background: #200a0a !important;
 }
+
+.settingsTab__keybinds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settingsTab__keybind {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: #8080b8;
+}
+
+.settingsTab__key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 24px;
+    padding: 0 7px;
+    background: #141430;
+    border: 1px solid #2a2a50;
+    border-bottom: 2px solid #3a3a70;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    color: #c0c0e8;
+    user-select: none;
+}

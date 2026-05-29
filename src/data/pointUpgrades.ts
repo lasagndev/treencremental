@@ -24,7 +24,6 @@ export const prestigeUnlock : IUnlockUpgrade = {
     isBought: (() => { try { return JSON.parse(localStorage.getItem("prestigeUnlock") ?? "false"); } catch { return false; } })(),
     unlocks: "PrestigeTree",
     effect: (game: Game) => {
-        game.setPoint(n => n.plus(1e15))
         console.log(game)
     }
 }

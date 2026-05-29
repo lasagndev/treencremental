@@ -269,7 +269,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
         const connections = [...buyableUpgrades, ...visibleOneTime]
             .filter(upg => upg.parentId !== undefined)
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
-        connections.push({ from: ppUp1.id, to: ppUp301.id })
+        if (ppUp1.isBought) connections.push({ from: ppUp1.id, to: ppUp301.id })
         return connections
     }
 
@@ -339,7 +339,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
                     Price: {fmt(ppUp1.price)} PP
                 </button>
 
-                <button
+                {ppUp1.isBought && <button
                     id={"prestigeUnlock"}
                     className={`upgradeButton ${oneTimeClass(ppUp301)}`}
                     style={getUpgradeStyle(prestigeUnlock.position)}
@@ -349,7 +349,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
                     {ppUp301.description}
                     <br/>
                     Price: {fmt(ppUp301.price)} PP
-                </button>
+                </button>}
 
                 {buyableUpgrades.map(upg => (
                     <button

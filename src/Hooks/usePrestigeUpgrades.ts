@@ -9,11 +9,6 @@ import {
     ppUpAuto6to10,
     ppUpAuto11to15,
     ppUpAuto16to20,
-    ppUp501,
-    ppUp504,
-    ppUp503,
-    ppUp502,
-    ppUp505,
     ppUp105,
     ppUp104,
     ppUp202,
@@ -32,8 +27,7 @@ const defaultOneTime: IOneTimeUpgrade[] = [
     ppUpAuto1to5, ppUpAuto6to10, ppUpAuto11to15, ppUpAuto16to20, ppUpAuto21to25
 ];
 const defaultBuyable: IBuyableUpgrade[] = [
-    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106,
-    ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106
 ];
 
 export function usePrestigeUpgrades() {

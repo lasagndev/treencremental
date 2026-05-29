@@ -85,6 +85,8 @@ export function useSaveSystem(
         totalPrestiges: stats.totalPrestiges.toString(),
         allPrestigePoints: stats.allPrestigePoints.toString(),
         timePlayed: stats.timePlayed.toString(),
+        totalPrestigeEnergy: stats.totalPrestigeEnergy.toString(),
+        totalGeneratorLoops: stats.totalGeneratorLoops.toString(),
     }))
 
     localStorage.setItem("upgrades", JSON.stringify({

@@ -9,6 +9,7 @@ import type {CSSProperties} from "react";
 import Decimal from "break_eternity.js";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
+import * as React from "react";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 const SIURY_IDS = new Set([401, 402, 501, 502, 503, 504, 505])
@@ -35,9 +36,11 @@ interface PointTreeProps {
     upgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
     handlePrestigeRef: RefObject<() => void>
+    isBuyMaxMode: boolean
+    setIsBuyMaxMode: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const PointTree = ( {game, upgrades, stats, handlePrestigeRef} : PointTreeProps ) => {
+const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
 
     let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
@@ -62,7 +65,6 @@ const PointTree = ( {game, upgrades, stats, handlePrestigeRef} : PointTreeProps 
         panX: number; panY: number;
     } | null>(null)
 
-    const [isBuyMaxMode, setIsBuyMaxMode] = useState(false)
 
     function handleMaxBuy(upg: IBuyableUpgrade) {
         if (!isBuyMaxMode || SIURY_IDS.has(upg.id)) {
@@ -265,9 +267,10 @@ const PointTree = ( {game, upgrades, stats, handlePrestigeRef} : PointTreeProps 
     }
 
     function buyPrestigeUnlock() {
-        game.setPoint(n => n.minus(prestigeUnlock.price))
         prestigeUnlock.effect(game)
+        // eslint-disable-next-line react-hooks/immutability
         prestigeUnlock.isBought = true
+        handlePrestige()
     }
 
     function handlePrestige() {

@@ -192,7 +192,7 @@ function App() {
         return () => clearInterval(automation);
     }, [automationInterval]);
 
-
+    const [isBuyMaxMode, setIsBuyMaxMode] = useState(false)
     const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 3001: true, 3002: true, 3003: true, 3004: true, 3005: true })
     const autoEnabledRef = useRef(autoEnabled)
     // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
@@ -226,7 +226,7 @@ function App() {
         }
     }, [game.canShowGenerator]);
 
-    useEffect(() => {
+    useEffect(() => { // ZNÓW ZROBIŁEM KOMUŚ GENERATOR
 
         const id = setInterval(() => {
             if (!gameRef.current.canShowGenerator) return;
@@ -240,6 +240,8 @@ function App() {
                 setGeneratorStart(newStart);
                 localStorage.setItem("generatorStart", String(newStart));
                 gameRef.current.setPrestigeEnergy(n => n.plus(gameRef.current.peMulti.times(missedTicks)));
+                statsRef.current.setTotalPrestigeEnergy(n => n.plus(gameRef.current.peMulti.times(missedTicks)));
+                statsRef.current.setTotalGeneratorLoops(n => n+1)
             }
         }, 16);
         return () => clearInterval(id);
@@ -248,7 +250,7 @@ function App() {
     const [toastKey, setToastKey] = useState<number | null>(null);
     const [currentTab, setCurrentTab] = useState("MainTree");
 
-    useKeybinds(handlePrestigeRef, setCurrentTab);
+    useKeybinds(handlePrestigeRef, setCurrentTab, gameRef);
 
     return (
         <>
@@ -256,11 +258,11 @@ function App() {
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef}/> }
+                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} /> }
                 {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
-                {currentTab === "Settings" && <SettingsTab onSave={handleSave} />}
+                {currentTab === "Settings" && <SettingsTab onSave={handleSave} game={game} />}
                 {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
                 {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart}/>}
             </section>

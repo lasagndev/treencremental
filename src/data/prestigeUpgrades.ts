@@ -131,10 +131,10 @@ const ppUp106: IBuyableUpgrade = {
     }
 }
 
-const ppUp201: IOneTimeUpgrade = {
-    id: 201,
+const ppUp202: IOneTimeUpgrade = {
+    id: 202,
     parentId: 1,
-    position: { x: 1, y: 0 },
+    position: { x: 1, y: -1 },
     description: "*4 point multi",
     price: new Decimal(2),
     isBought: false,
@@ -145,10 +145,10 @@ const ppUp201: IOneTimeUpgrade = {
     }
 }
 
-const ppUp202: IOneTimeUpgrade = {
-    id: 202,
-    parentId: 201,
-    position: { x: 2, y: 0 },
+const ppUp201: IOneTimeUpgrade = {
+    id: 201,
+    parentId: 1,
+    position: { x: 1, y: 0 },
     description: "+50 base point gain",
     price: new Decimal(2),
     isBought: false,
@@ -160,8 +160,8 @@ const ppUp202: IOneTimeUpgrade = {
 
 const ppUp203: IOneTimeUpgrade = {
     id: 203,
-    parentId: 202,
-    position: { x: 3, y: -0.5 },
+    parentId: 201,
+    position: { x: 2, y: -0.5 },
     description: "*6 point multi",
     price: new Decimal(8),
     isBought: false,
@@ -173,8 +173,8 @@ const ppUp203: IOneTimeUpgrade = {
 
 const ppUp204: IOneTimeUpgrade = {
     id: 204,
-    parentId: 202,
-    position: { x: 3, y: 0.5 },
+    parentId: 201,
+    position: { x: 2, y: 0.5 },
     description: "+ 200 point gain",
     price: new Decimal(10),
     isBought: false,
@@ -187,7 +187,7 @@ const ppUp204: IOneTimeUpgrade = {
 const ppUp205: IOneTimeUpgrade = {
     id: 205,
     parentId: 203,
-    position: { x: 4, y: -0.5 },
+    position: { x: 3, y: -0.5 },
     description: "+0.05 point exponent",
     price: new Decimal(15),
     isBought: false,
@@ -200,7 +200,7 @@ const ppUp205: IOneTimeUpgrade = {
 const ppUp206: IOneTimeUpgrade = {
     id: 206,
     parentId: 204,
-    position: { x: 4, y: 0.5 },
+    position: { x: 3, y: 0.5 },
     description: "*8 point multi",
     price: new Decimal(2000),
     isBought: false,
@@ -214,7 +214,7 @@ const ppUp206: IOneTimeUpgrade = {
 const ppUp207: IOneTimeUpgrade = {
     id: 207,
     parentId: 206,
-    position: { x: 5, y: 0 },
+    position: { x: 4, y: 0 },
     description: "+1 max buyable level",
     price: new Decimal(1e6),
     isBought: false,
@@ -230,7 +230,7 @@ const ppUp207: IOneTimeUpgrade = {
 const ppUp208: IOneTimeUpgrade = {
     id: 208,
     parentId: 207,
-    position: { x: 6, y: 0.5 },
+    position: { x: 5, y: 0.5 },
     description: "+2 max buyable level",
     price: new Decimal(1e7),
     isBought: false,
@@ -246,7 +246,7 @@ const ppUp208: IOneTimeUpgrade = {
 const ppUp209: IOneTimeUpgrade = {
     id: 209,
     parentId: 206,
-    position: { x: 5, y: 1 },
+    position: { x: 4, y: 1 },
     description: "+20000 base point gain",
     price: new Decimal(1000),
     isBought: false,

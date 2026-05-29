@@ -12,6 +12,10 @@ export class Statistics {
     setAllPrestigePoints
     timePlayed
     setTimePlayed
+    totalPrestigeEnergy
+    setTotalPrestigeEnergy
+    totalGeneratorLoops
+    setTotalGeneratorLoops
 
     constructor(
         allPoints: Decimal,
@@ -28,6 +32,12 @@ export class Statistics {
 
         timePlayed: Decimal,
         setTimePlayed: React.Dispatch<React.SetStateAction<Decimal>>,
+
+        totalPrestigeEnergy: Decimal,
+        setTotalPrestigeEnergy: React.Dispatch<React.SetStateAction<Decimal>>,
+
+        totalGeneratorLoops: number,
+        setTotalGeneratorLoops: React.Dispatch<React.SetStateAction<number>>,
     ) {
         this.allPoints = allPoints
         this.setAllPoints = setAllPoints
@@ -39,6 +49,10 @@ export class Statistics {
         this.setAllPrestigePoints = setAllPrestigePoints
         this.timePlayed = timePlayed
         this.setTimePlayed = setTimePlayed
+        this.totalPrestigeEnergy = totalPrestigeEnergy
+        this.setTotalPrestigeEnergy = setTotalPrestigeEnergy
+        this.totalGeneratorLoops = totalGeneratorLoops
+        this.setTotalGeneratorLoops = setTotalGeneratorLoops
     }
 
 }
