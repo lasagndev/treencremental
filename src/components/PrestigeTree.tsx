@@ -1,14 +1,15 @@
 import type {Game} from "../Models/Game.ts";
-import {ppUp1} from "../data/prestigeUpgrades.ts";
+import {ppUp1, ppUp301} from "../data/prestigeUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePrestigeUpgrades} from "../Hooks/usePrestigeUpgrades.ts";
+import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PrestigeTree.css"
 import {useState, useRef, useEffect} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 import Decimal from "break_eternity.js";
-import {fmt_upgrade} from "../data/pointUpgrades.ts";
+import {fmt_upgrade, prestigeUnlock} from "../data/pointUpgrades.ts";
 
 const UPGRADE_GAP = 160
 
@@ -32,10 +33,11 @@ function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: numb
 interface PrestigeTreeProps {
     game: Game
     upgrades: ReturnType<typeof usePrestigeUpgrades>
+    pointUpgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
 }
 
-const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
@@ -52,7 +54,11 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     } | null>(null)
 
 
-
+    function buyGeneratorUnlock() {
+        game.setPrestigePoint(n => n.minus(ppUp301.price))
+        ppUp301.effect(game)
+        ppUp301.isBought = true
+    }
 
 
     useEffect(() => { viewRef.current = view }, [view])
@@ -194,6 +200,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     const posById: Record<number, UpgradePosition> = { [ppUp1.id]: ppUp1.position }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
     visibleOneTime.forEach(u => { posById[u.id] = u.position })
+    posById[ppUp301.id] = ppUp301.position
 
     function buyRoot() {
         game.setPrestigePoint(n => n.minus(ppUp1.price))
@@ -204,7 +211,7 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
 
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setPrestigePoint(n => n.minus(upg.price))
-        upg.effect(game)
+        upg.effect(game, { ...upgrades, setPointBuyableUpgrades: pointUpgrades.setBuyableUpgrades })
         stats.setTotalUpgradesBought(n => n.plus(1))
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }
@@ -259,13 +266,16 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
     }
 
     function getConnections(): Array<{ from: number, to: number }> {
-        return [...buyableUpgrades, ...visibleOneTime]
+        const connections = [...buyableUpgrades, ...visibleOneTime]
             .filter(upg => upg.parentId !== undefined)
             .map(upg => ({ from: upg.parentId!, to: upg.id }))
+        if (ppUp1.isBought) connections.push({ from: ppUp1.id, to: ppUp301.id })
+        return connections
     }
 
     function isNodeActive(id: number): boolean {
         if (id === ppUp1.id) return ppUp1.isBought
+        if (id === ppUp301.id) return ppUp301.isBought
         const buyable = buyableUpgrades.find(u => u.id === id)
         if (buyable) return buyable.currentAmount.gt(0)
         const oneTime = oneTimeUpgrades.find(u => u.id === id)
@@ -292,7 +302,8 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
         >
             <section className="prestigeTreeCurrencyBar">
                 <p>Prestige Points: {fmt(game.prestigePoint)}</p>
-                { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.pp102DynamicMulti)}</p>}
+                { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.dynamicUpgradeValues[102] ?? new Decimal(1))}</p>}
+                { upgrades.buyableUpgrades.find((upg) => upg.id === 106)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 106 effect: x{fmt_upgrade(game.dynamicUpgradeValues[106] ?? new Decimal(1))}</p>}
             </section>
 
             <div  className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>
@@ -327,6 +338,18 @@ const PrestigeTree = ({ game, upgrades, stats }: PrestigeTreeProps) => {
                     <br/>
                     Price: {fmt(ppUp1.price)} PP
                 </button>
+
+                {ppUp1.isBought && <button
+                    id={"prestigeUnlock"}
+                    className={`upgradeButton ${oneTimeClass(ppUp301)}`}
+                    style={getUpgradeStyle(prestigeUnlock.position)}
+                    onClick={() => buyGeneratorUnlock()}
+                    disabled={ppUp301.isBought || ppUp301.price.gt(game.prestigePoint)}>
+                    <p className={"upgradeId"}>{ppUp301.id}</p>
+                    {ppUp301.description}
+                    <br/>
+                    Price: {fmt(ppUp301.price)} PP
+                </button>}
 
                 {buyableUpgrades.map(upg => (
                     <button

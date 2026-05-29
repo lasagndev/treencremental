@@ -17,11 +17,14 @@ function fmtTime(totalSeconds: number): string {
     if (totalSeconds < 86400) {
         const h = Math.floor(totalSeconds / 3600)
         const m = Math.floor((totalSeconds % 3600) / 60)
-        return m > 0 ? `${h}h ${m}m` : `${h}h`
+        const s = totalSeconds % 60
+        return m > 0 ? `${h}h ${m}m ${s}s` : `${h}h ${s}s`
     }
     const d = Math.floor(totalSeconds / 86400)
     const h = Math.floor((totalSeconds % 86400) / 3600)
-    return h > 0 ? `${d}d ${h}h` : `${d}d`
+    const m = Math.floor((totalSeconds % 3600) / 60)
+    const s = totalSeconds % 60
+    return h > 0 ? `${d}d ${h}h ${m}m ${s}s` : `${d}d ${m}m ${s}s`
 }
 
 function StatisticsTab({ stats }: StatisticsTabProps) {
@@ -40,6 +43,7 @@ function StatisticsTab({ stats }: StatisticsTabProps) {
                 </div>
             </div>
 
+            { stats.totalPrestiges.gte(1) &&
             <div className="statisticsTab__section">
                 <div className="statisticsTab__row">
                     <span className="statisticsTab__label">Total prestiges</span>
@@ -50,6 +54,20 @@ function StatisticsTab({ stats }: StatisticsTabProps) {
                     <span className="statisticsTab__value statisticsTab__value--prestige">{fmt(stats.allPrestigePoints)}</span>
                 </div>
             </div>
+            }
+
+            { stats.totalPrestigeEnergy.gte(1) &&
+            <div className="statisticsTab__section">
+                <div className="statisticsTab__row">
+                    <span className="statisticsTab__label">Total Prestige energy</span>
+                    <span className="statisticsTab__value statisticsTab__value--prestige">{fmt(stats.totalPrestigeEnergy)}</span>
+                </div>
+                <div className="statisticsTab__row">
+                    <span className="statisticsTab__label">Total generator loops</span>
+                    <span className="statisticsTab__value statisticsTab__value--prestige">{stats.totalGeneratorLoops}</span>
+                </div>
+            </div>
+            }
 
             <div className="statisticsTab__section">
                 <div className="statisticsTab__row">

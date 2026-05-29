@@ -37,12 +37,24 @@ export function useStatistics() {
         return s?.timePlayed ? new Decimal(s.timePlayed as string) : new Decimal(0);
     })
 
+    const [totalPrestigeEnergy, setTotalPrestigeEnergy] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.totalPrestigeEnergy ? new Decimal(s.totalPrestigeEnergy as string) : new Decimal(0);
+    })
+
+    const [totalGeneratorLoops, setTotalGeneratorLoops] = useState<number>(() => {
+        const s = loadSaved();
+        return s?.totalGeneratorLoops ? Number(s.totalGeneratorLoops as string) : 0;
+    })
+
     const stats = new Statistics(
         allPoints, setAllPoints,
         totalUpgradesBought, setTotalUpgradesBought,
         totalPrestiges, setTotalPrestiges,
         allPrestigePoints, setAllPrestigePoints,
-        timePlayed, setTimesPlayed
+        timePlayed, setTimesPlayed,
+        totalPrestigeEnergy, setTotalPrestigeEnergy,
+        totalGeneratorLoops, setTotalGeneratorLoops,
     )
 
     return stats

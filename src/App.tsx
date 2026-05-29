@@ -19,6 +19,8 @@ import AchievementPopup from "./components/AchievementPopup.tsx";
 import Decimal from "break_eternity.js";
 import AutomationTab from "./components/AutomationTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
+import GeneratorTab, {generatorUpgrades} from "./components/GeneratorTab.tsx";
+import {useKeybinds} from "./Hooks/useKeybinds.ts";
 
 
 
@@ -26,11 +28,27 @@ import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
 function App() {
     const stats = useStatistics();
     const prestigeUpgrades = usePrestigeUpgrades();
-    const pp102Amount = prestigeUpgrades.buyableUpgrades.find(u => u.id === 102)?.currentAmount ?? new Decimal(0);
-    const game = useGameLoop(stats, pp102Amount);
+    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades);
     const pointUpgrades = usePointUpgrades();
     const achievementsHook = useAchievements();
+    const handlePrestigeRef = useRef<() => void>(() => {});
 
+
+    // Restore module-level generator upgrades from localStorage on first mount
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem("generatorUpgrades") ?? "null") as Array<{ id: number; price: string; currentAmount: string }> | null;
+            if (saved) {
+                saved.forEach(s => {
+                    const upg = generatorUpgrades.find(u => u.id === s.id);
+                    if (upg) {
+                        upg.price = new Decimal(s.price);
+                        upg.currentAmount = new Decimal(s.currentAmount);
+                    }
+                });
+            }
+        } catch { /* ignore corrupt saves */ }
+    }, []);
 
     const gameRef = useRef(game);
     const statsRef = useRef(stats);
@@ -64,7 +82,7 @@ function App() {
 
     function handleSave() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current)
+        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgrades)
         // eslint-disable-next-line react-hooks/immutability
         setToastKey(Date.now())
     }
@@ -82,10 +100,10 @@ function App() {
     }, []);
 
     useEffect(() => {
-        const ach = setInterval(() => {
-            checkAchievementsRef.current(gameRef.current, statsRef.current);
+        const who_touch_me_bird = setInterval(() => {
+            checkAchievementsRef.current(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current);
         }, 1000);
-        return () => clearInterval(ach);
+        return () => clearInterval(who_touch_me_bird);
     }, []);
 
     let automationInterval = game.automationInterval;
@@ -99,12 +117,13 @@ function App() {
             const prestigeOneTime = prestigeUpgradesRef.current.oneTimeUpgrades;
 
             const tog = autoEnabledRef.current;
-            const auto1to5   = (prestigeOneTime.find(u => u.id === 301)?.isBought ?? false) && (tog[301] ?? true);
-            const auto6to10  = (prestigeOneTime.find(u => u.id === 302)?.isBought ?? false) && (tog[302] ?? true);
-            const auto11to15 = (prestigeOneTime.find(u => u.id === 303)?.isBought ?? false) && (tog[303] ?? true);
-            const auto16to20 = (prestigeOneTime.find(u => u.id === 304)?.isBought ?? false) && (tog[304] ?? true);
+            const auto1to5   = (prestigeOneTime.find(u => u.id === 3001)?.isBought ?? false) && (tog[3001] ?? true);
+            const auto6to10  = (prestigeOneTime.find(u => u.id === 3002)?.isBought ?? false) && (tog[3002] ?? true);
+            const auto11to15 = (prestigeOneTime.find(u => u.id === 3003)?.isBought ?? false) && (tog[3003] ?? true);
+            const auto16to20 = (prestigeOneTime.find(u => u.id === 3004)?.isBought ?? false) && (tog[3004] ?? true);
+            const auto21to25 = (prestigeOneTime.find(u => u.id === 3005)?.isBought ?? false) && (tog[3005] ?? true);
 
-            if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20) return;
+            if (!auto1to5 && !auto6to10 && !auto11to15 && !auto16to20 && !auto21to25) return;
 
             // Track spend within this tick so multiple purchases don't overdraw the same balance
             let available = game.point;
@@ -150,11 +169,11 @@ function App() {
 
             if (auto1to5) {
                 buyableUpgrades.filter(u => u.id >= 101 && u.id <= 105).forEach(buyBuyable);
-                oneTimeUpgrades.filter(u => u.id >= 201 && u.id <= 205).forEach(buyOneTime);
+                oneTimeUpgrades.filter(u => u.id >= 201 && u.id <= 205 && u.id != 204).forEach(buyOneTime);
             }
             if (auto6to10) {
                 buyableUpgrades.filter(u => u.id >= 106 && u.id <= 110).forEach(buyBuyable);
-                oneTimeUpgrades.filter(u => u.id >= 206 && u.id <= 210).forEach(buyOneTime);
+                oneTimeUpgrades.filter(u => u.id >= 206 && u.id <= 210 && u.id != 207 && u.id != 208).forEach(buyOneTime);
             }
             if (auto11to15) {
                 buyableUpgrades.filter(u => u.id >= 111 && u.id <= 115).forEach(buyBuyable);
@@ -164,13 +183,17 @@ function App() {
                 buyableUpgrades.filter(u => u.id >= 116 && u.id <= 120).forEach(buyBuyable);
                 oneTimeUpgrades.filter(u => u.id >= 216 && u.id <= 220).forEach(buyOneTime);
             }
+            if(auto21to25) {
+                buyableUpgrades.filter(u => u.id >= 121 && u.id <= 125).forEach(buyBuyable);
+                oneTimeUpgrades.filter(u => u.id >= 221 && u.id <= 225).forEach(buyOneTime);
+            }
             console.log(automationInterval)
         }, automationInterval);
         return () => clearInterval(automation);
     }, [automationInterval]);
 
-
-    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 301: true, 302: true, 303: true, 304: true })
+    const [isBuyMaxMode, setIsBuyMaxMode] = useState(false)
+    const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 3001: true, 3002: true, 3003: true, 3004: true, 3005: true })
     const autoEnabledRef = useRef(autoEnabled)
     // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
     autoEnabledRef.current = autoEnabled
@@ -179,8 +202,55 @@ function App() {
         setAutoEnabled(prev => ({ ...prev, [id]: enabled }))
     }
 
+    const [generatorStart, setGeneratorStart] = useState<number>(() => {
+        const saved = parseInt(localStorage.getItem("generatorStart") ?? "");
+        const now = Date.now();
+        if (isNaN(saved) || saved > now || saved < 1_000_000_000_000) return now;
+        return saved;
+    });
+    const generatorStartRef = useRef(generatorStart);
+    useEffect(() => { generatorStartRef.current = generatorStart; }, [generatorStart]);
+
+    const generatorUnlockMountedRef = useRef(false);
+    useEffect(() => {
+        if (!generatorUnlockMountedRef.current) {
+            generatorUnlockMountedRef.current = true;
+            return;
+        }
+        if (game.canShowGenerator) {
+            const now = Date.now();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setGeneratorStart(now);
+            generatorStartRef.current = now;
+            localStorage.setItem("generatorStart", String(now));
+        }
+    }, [game.canShowGenerator]);
+
+    useEffect(() => { // ZNÓW ZROBIŁEM KOMUŚ GENERATOR
+
+        const id = setInterval(() => {
+            if (!gameRef.current.canShowGenerator) return;
+            const now = Date.now();
+            const duration = Math.max(Number(gameRef.current.generatorDuration), 40);
+            if (duration <= 500) return; // current mode — PE added continuously by game loop
+            if (now - generatorStartRef.current >= duration) {
+                const missedTicks = Math.floor((now - generatorStartRef.current) / duration);
+                const newStart = generatorStartRef.current + missedTicks * duration;
+                generatorStartRef.current = newStart;
+                setGeneratorStart(newStart);
+                localStorage.setItem("generatorStart", String(newStart));
+                gameRef.current.setPrestigeEnergy(n => n.plus(gameRef.current.peMulti.times(missedTicks)));
+                statsRef.current.setTotalPrestigeEnergy(n => n.plus(gameRef.current.peMulti.times(missedTicks)));
+                statsRef.current.setTotalGeneratorLoops(n => n+1)
+            }
+        }, 16);
+        return () => clearInterval(id);
+    }, []);
+
     const [toastKey, setToastKey] = useState<number | null>(null);
     const [currentTab, setCurrentTab] = useState("MainTree");
+
+    useKeybinds(handlePrestigeRef, setCurrentTab, gameRef);
 
     return (
         <>
@@ -188,12 +258,13 @@ function App() {
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} stats={stats}/> }
+                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} /> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
-                {currentTab === "Settings" && <SettingsTab onSave={handleSave} />}
+                {currentTab === "Settings" && <SettingsTab onSave={handleSave} game={game} />}
                 {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
+                {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart}/>}
             </section>
 
             {toastKey !== null && <div key={toastKey} className="save-toast">Game saved...</div>}

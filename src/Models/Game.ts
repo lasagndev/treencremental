@@ -1,4 +1,3 @@
-﻿import type {Dispatch, SetStateAction} from "react";
 import Decimal from "break_eternity.js";
 
 
@@ -29,38 +28,68 @@ export class Game {
     prestigePointMulti
     setPrestigePointMulti
 
-    pp102DynamicMulti
-    setPp102DynamicMulti
+    dynamicUpgradeValues
+    setDynamicUpgradeValues
 
     automationInterval
     setAutomationInterval
 
+    canShowGenerator
+    setCanShowGenerator
+
+    prestigeEnergy
+    setPrestigeEnergy
+
+    generatorDuration
+    setGeneratorDuration
+
+    peMulti
+    setPeMulti
+
+    peBoostToP
+    setPeBoostToP
+
+    peBoostToPP
+    setPeBoostToPP
+
     constructor(point: Decimal,
-                setPoint: Dispatch<SetStateAction<Decimal>>,
+                setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
-                setGlobalPointAddition: Dispatch<SetStateAction<Decimal>>,
+                setGlobalPointAddition: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointMultiplier: Decimal,
-                setGlobalPointMultiplier: Dispatch<SetStateAction<Decimal>>,
+                setGlobalPointMultiplier: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointExponent: Decimal,
-                setGlobalPointExponent: Dispatch<SetStateAction<Decimal>>,
+                setGlobalPointExponent: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalMultiplierMultiplier: Decimal,
-                setGlobalMultiplierMultiplier: Dispatch<SetStateAction<Decimal>>,
+                setGlobalMultiplierMultiplier: React.Dispatch<React.SetStateAction<Decimal>>,
                 canShowPrestigeTree: boolean,
-                setCanShowPrestigeTree: Dispatch<SetStateAction<boolean>>,
+                setCanShowPrestigeTree: React.Dispatch<React.SetStateAction<boolean>>,
                 prestigePoint: Decimal,
-                setPrestigePoint: Dispatch<SetStateAction<Decimal>>,
+                setPrestigePoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 pointGainFromPrestige: Decimal,
-                setPointGainFromPrestige: Dispatch<SetStateAction<Decimal>>,
+                setPointGainFromPrestige: React.Dispatch<React.SetStateAction<Decimal>>,
                 pointMultiFromPrestige: Decimal,
-                setPointMultiFromPrestige: Dispatch<SetStateAction<Decimal>>,
+                setPointMultiFromPrestige: React.Dispatch<React.SetStateAction<Decimal>>,
                 pointExponentFromPrestige: Decimal,
-                setPointExponentFromPrestige: Dispatch<SetStateAction<Decimal>>,
+                setPointExponentFromPrestige: React.Dispatch<React.SetStateAction<Decimal>>,
                 prestigePointMulti: Decimal,
-                setPrestigePointMulti: Dispatch<SetStateAction<Decimal>>,
-                pp102DynamicMulti: Decimal,
-                setPp102DynamicMulti: Dispatch<SetStateAction<Decimal>>,
+                setPrestigePointMulti: React.Dispatch<React.SetStateAction<Decimal>>,
+                dynamicUpgradeValues: Record<number, Decimal>,
+                setDynamicUpgradeValues: React.Dispatch<React.SetStateAction<Record<number, Decimal>>>,
                 automationInterval: number,
-                setAutomationInterval: Dispatch<SetStateAction<number>>,) {
+                setAutomationInterval: React.Dispatch<React.SetStateAction<number>>,
+                canShowGenerator: boolean,
+                setCanShowGenerator: React.Dispatch<React.SetStateAction<boolean>>,
+                prestigeEnergy: Decimal,
+                setPrestigeEnergy: React.Dispatch<React.SetStateAction<Decimal>>,
+                generatorDuration: number,
+                setGeneratorDuration: React.Dispatch<React.SetStateAction<number>>,
+                peMulti: Decimal,
+                setPeMulti: React.Dispatch<React.SetStateAction<Decimal>>,
+                peBoostToP: Decimal,
+                setPeBoostToP: React.Dispatch<React.SetStateAction<Decimal>>,
+                peBoostToPP: Decimal,
+                setPeBoostToPP: React.Dispatch<React.SetStateAction<Decimal>>) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -84,9 +113,21 @@ export class Game {
         this.setPointExponentFromPrestige = setPointExponentFromPrestige;
         this.prestigePointMulti = prestigePointMulti;
         this.setPrestigePointMulti = setPrestigePointMulti;
-        this.pp102DynamicMulti = pp102DynamicMulti;
-        this.setPp102DynamicMulti = setPp102DynamicMulti;
+        this.dynamicUpgradeValues = dynamicUpgradeValues;
+        this.setDynamicUpgradeValues = setDynamicUpgradeValues;
         this.automationInterval = automationInterval;
         this.setAutomationInterval = setAutomationInterval;
+        this.canShowGenerator = canShowGenerator;
+        this.setCanShowGenerator = setCanShowGenerator;
+        this.prestigeEnergy = prestigeEnergy;
+        this.setPrestigeEnergy = setPrestigeEnergy;
+        this.generatorDuration = generatorDuration;
+        this.setGeneratorDuration = setGeneratorDuration;
+        this.peMulti = peMulti;
+        this.setPeMulti = setPeMulti;
+        this.peBoostToP = peBoostToP;
+        this.setPeBoostToP = setPeBoostToP;
+        this.peBoostToPP = peBoostToPP;
+        this.setPeBoostToPP = setPeBoostToPP;
     }
 }

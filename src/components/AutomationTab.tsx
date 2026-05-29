@@ -14,10 +14,11 @@ interface IAutomationTab {
 }
 
 const GROUPS = [
-    { id: 301, label: "Upgrades 1–5",   desc: "Automatically purchase point upgrades 1 through 5"  },
-    { id: 302, label: "Upgrades 6–10",  desc: "Automatically purchase point upgrades 6 through 10" },
-    { id: 303, label: "Upgrades 11–15", desc: "Automatically purchase point upgrades 11 through 15" },
-    { id: 304, label: "Upgrades 16–20", desc: "Automatically purchase point upgrades 16 through 20" },
+    { id: 3001, label: "Upgrades 1–5",   desc: "Automatically purchase point upgrades 1 through 5"  },
+    { id: 3002, label: "Upgrades 6–10",  desc: "Automatically purchase point upgrades 6 through 10" },
+    { id: 3003, label: "Upgrades 11–15", desc: "Automatically purchase point upgrades 11 through 15" },
+    { id: 3004, label: "Upgrades 16–20", desc: "Automatically purchase point upgrades 16 through 20" },
+    { id: 3005, label: "Upgrades 21–25", desc: "Automatically purchase point upgrades 21 through 25" },
 ]
 
 const AutomationTab = ({ game, stats, prestigeOneTimeUpgrades, setPrestigeOneTimeUpgrades, autoEnabled, setAutoGroup }: IAutomationTab) => {
@@ -89,11 +90,6 @@ const AutomationTab = ({ game, stats, prestigeOneTimeUpgrades, setPrestigeOneTim
                                 <span className="automation-card__status">
                                     {!unlocked ? "LOCKED" : enabled ? "● RUNNING" : "⏸ PAUSED"}
                                 </span>
-                                {!unlocked && (
-                                    <span className="automation-card__cost">
-                                        Costs {fmt(upg.price)} PP
-                                    </span>
-                                )}
                             </div>
                         </div>
                     );
