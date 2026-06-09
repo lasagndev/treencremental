@@ -52,6 +52,9 @@ export class Game {
     peBoostToPP
     setPeBoostToPP
 
+    pointUpgradesBonusMaxAmount
+    setPointUpgradesBonusMaxAmount
+
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
@@ -89,7 +92,9 @@ export class Game {
                 peBoostToP: Decimal,
                 setPeBoostToP: React.Dispatch<React.SetStateAction<Decimal>>,
                 peBoostToPP: Decimal,
-                setPeBoostToPP: React.Dispatch<React.SetStateAction<Decimal>>) {
+                setPeBoostToPP: React.Dispatch<React.SetStateAction<Decimal>>,
+                pointUpgradesBonusMaxAmount: number,
+                setPointUpgradesBonusMaxAmount: React.Dispatch<React.SetStateAction<number>>,) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -129,5 +134,7 @@ export class Game {
         this.setPeBoostToP = setPeBoostToP;
         this.peBoostToPP = peBoostToPP;
         this.setPeBoostToPP = setPeBoostToPP;
+        this.pointUpgradesBonusMaxAmount = pointUpgradesBonusMaxAmount;
+        this.setPointUpgradesBonusMaxAmount = setPointUpgradesBonusMaxAmount;
     }
 }

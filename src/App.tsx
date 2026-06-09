@@ -29,7 +29,7 @@ function App() {
     const stats = useStatistics();
     const prestigeUpgrades = usePrestigeUpgrades();
     const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades);
-    const pointUpgrades = usePointUpgrades();
+    const pointUpgrades = usePointUpgrades(game);
     const achievementsHook = useAchievements();
     const handlePrestigeRef = useRef<() => void>(() => {});
 

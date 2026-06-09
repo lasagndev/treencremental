@@ -60,8 +60,8 @@
 }
 
 /* locked */
-.upgradeLine--locked .upgradeLine__tube { stroke: #111122; stroke-opacity: 0.8;  display: none; }
-.upgradeLine--locked .upgradeLine__core { stroke: #1c1c34;  display: none;}
+.upgradeLine--locked .upgradeLine__tube { stroke: #111122; stroke-opacity: 0.8; }
+.upgradeLine--locked .upgradeLine__core { stroke: #1c1c34; }
 
 /* default (unlocked, not yet active) */
 .upgradeLine--default .upgradeLine__tube { stroke: #252550; stroke-opacity: 0.4; }
@@ -134,7 +134,6 @@
     border-color: #181830;
     color: #ffffff;
     cursor: not-allowed;
-    display: none;
 }
 
 /* ── 2. unaffordable (unlocked but can't afford) ── */
