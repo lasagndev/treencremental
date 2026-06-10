@@ -60,8 +60,8 @@
 }
 
 /* locked */
-.upgradeLine--locked .upgradeLine__tube { stroke: #111122; stroke-opacity: 0.8;  display: none; }
-.upgradeLine--locked .upgradeLine__core { stroke: #1c1c34;  display: none;}
+.upgradeLine--locked .upgradeLine__tube { stroke: #111122; stroke-opacity: 0.8; display: none }
+.upgradeLine--locked .upgradeLine__core { stroke: #1c1c34; display: none}
 
 /* default (unlocked, not yet active) */
 .upgradeLine--default .upgradeLine__tube { stroke: #252550; stroke-opacity: 0.4; }

@@ -19,7 +19,7 @@ import {
     pUp116,
     pUp117,
     pUp118,
-    pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
+    pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128, pUp129, pUp130,
     pUp201,
     pUp202,
     pUp203,
@@ -36,22 +36,25 @@ import {
     pUp214,
     pUp215,
     pUp216,
-    pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225,
-    pUp302
+    pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227, pUp228, pUp229, pUp230,
+    pUp302,
+    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 
 
 } from "../data/pointUpgrades.ts";
 import Decimal from "break_eternity.js";
+import type {Game} from "../Models/Game.ts";
 
 const defaultOneTime: IOneTimeUpgrade[] = [
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225
+    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227, pUp228, pUp229, pUp230,
 ];
 export const defaultPointBuyable: IBuyableUpgrade[] = [
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125,
-    pUp302
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128, pUp129, pUp130,
+    pUp302,
+    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 ];
 
-export function usePointUpgrades() {
+export function usePointUpgrades(game: Game) {
     const [oneTimeUpgrades, setOneTimeUpgrades] = useState<IOneTimeUpgrade[]>(() => {
         try {
             const saved = JSON.parse(localStorage.getItem("upgrades") || "null");
@@ -80,7 +83,7 @@ export function usePointUpgrades() {
                 return defaultPointBuyable.map(u => {
                     const s = map.get(u.id);
                     const currentAmount = s !== undefined ? new Decimal(s.currentAmount) : u.currentAmount;
-                    const maxAmount = s?.maxAmount ?? u.maxAmount;
+                    const maxAmount = s?.maxAmount ?? u.maxAmount + game.pointUpgradesBonusMaxAmount ;
                     const price = u.calcPrice
                         ? u.calcPrice({ ...u, currentAmount })
                         : u.price.times(u.priceMultiplier.pow(currentAmount));
@@ -96,7 +99,15 @@ export function usePointUpgrades() {
             prev.map(u => u.id >= 301 ? u : { ...defaultOneTime.find(d => d.id === u.id)! })
         );
         setBuyableUpgrades(prev =>
-            prev.map(u => u.id >= 301 ? u : { ...defaultPointBuyable.find(d => d.id === u.id)!, maxAmount: u.maxAmount })
+            prev.map(u => {
+                if (u.id >= 301) return u;
+
+                const defaultUpgrade = defaultPointBuyable.find(d => d.id === u.id)!;
+                return {
+                    ...defaultUpgrade,
+                    maxAmount: defaultUpgrade.maxAmount + game.pointUpgradesBonusMaxAmount
+                };
+            })
         );
     }
 

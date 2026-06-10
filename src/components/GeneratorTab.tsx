@@ -89,6 +89,7 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
     let isBoostToPSoftcapped = false
     // eslint-disable-next-line no-useless-assignment
     let isBoostToPPSoftcapped = false
+    const ppUp108Boost = game.dynamicUpgradeValues[108] ?? new Decimal(1);
 
     useEffect(() => {
         let rafId: number;
@@ -153,7 +154,7 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
                 <p>PE boost to PP: x{fmt_upgrade(peBoostToPP)} {isBoostToPPSoftcapped && "(Soft capped)"}</p>
                 {/* eslint-disable-next-line react-hooks/refs */}
                 <p>Interval: {(durationRef.current / 1000).toFixed(3)}s</p>
-                <p>PE per loop: {fmt(new Decimal(2).pow(generatorUpgrades[1].currentAmount))}</p>
+                <p>PE per loop: {fmt(new Decimal(2).pow(generatorUpgrades[1].currentAmount).times(ppUp108Boost))}</p>
             </section>
 
             <div className="generator-bar-wrapper">
@@ -163,9 +164,9 @@ const GeneratorTab = ({game, stats, generatorStart}: IGeneratorProps) => {
                     <div className="generator-bar__label">
                         {isCurrentMode
                             // eslint-disable-next-line react-hooks/refs
-                            ? `⚡ CURRENT — ${fmt(game.peMulti.times(new Decimal(1000).dividedBy(durationRef.current)))} PE/s`
+                            ? `⚡ CURRENT — ${fmt(game.peMulti.times(new Decimal(1000).times(ppUp108Boost).dividedBy(durationRef.current)))} PE/s`
                             // eslint-disable-next-line react-hooks/refs
-                            : `Generating… ${fmt_upgrade(game.peMulti.times(new Decimal(1000).dividedBy(durationRef.current)))} PE/s`}
+                            : `Generating… ${fmt_upgrade(game.peMulti.times(new Decimal(1000).times(ppUp108Boost).dividedBy(durationRef.current)))} PE/s`}
                     </div>
                 </div>
                 {!isCurrentMode && <>

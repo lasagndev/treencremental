@@ -17,17 +17,17 @@ import {
     ppUp204,
     ppUp205,
     ppUp206,
-    ppUp207, ppUp208, ppUp209, ppUp106
+    ppUp207, ppUp208, ppUp209, ppUp106, ppUp107, ppUp210, ppUp108, ppUp109, ppUp110
 } from "../data/prestigeUpgrades.ts";
 import Decimal from "break_eternity.js";
 
 
 export const defaultPrestigeOneTime: IOneTimeUpgrade[] = [
-    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205, ppUp206, ppUp207, ppUp208, ppUp209,
+    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205, ppUp206, ppUp207, ppUp208, ppUp209, ppUp210,
     ppUpAuto1to5, ppUpAuto6to10, ppUpAuto11to15, ppUpAuto16to20, ppUpAuto21to25
 ];
 export const defaultPrestigeBuyable: IBuyableUpgrade[] = [
-    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106
+    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106, ppUp107, ppUp108, ppUp109, ppUp110,
 ];
 
 export function usePrestigeUpgrades() {

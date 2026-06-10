@@ -35,7 +35,7 @@ export interface IBuyableUpgrade {
     calcPrice?: (upg: IBuyableUpgrade) => Decimal;
     whenCanShow?: string;
     effect: (game: Game) => void;
-    tickEffect?: (amount: Decimal, state: { prestigePoint: Decimal; point: Decimal }) => { pointMulti?: Decimal; ppGain?: Decimal };
+    tickEffect?: (amount: Decimal, state: { prestigePoint: Decimal; point: Decimal, prestigeEnergy: Decimal }) => { pointMulti?: Decimal; ppGain?: Decimal, peGain?: Decimal };
     prestigeMultiPerLevel?: number;
     exponentBonusPerLevel?: number;
 }

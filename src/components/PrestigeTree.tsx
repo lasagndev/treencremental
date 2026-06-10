@@ -304,6 +304,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
                 <p>Prestige Points: {fmt(game.prestigePoint)}</p>
                 { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.dynamicUpgradeValues[102] ?? new Decimal(1))}</p>}
                 { upgrades.buyableUpgrades.find((upg) => upg.id === 106)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 106 effect: x{fmt_upgrade(game.dynamicUpgradeValues[106] ?? new Decimal(1))}</p>}
+                { upgrades.buyableUpgrades.find((upg) => upg.id === 108)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 108 effect: x{fmt_upgrade(game.dynamicUpgradeValues[108] ?? new Decimal(1))}</p>}
             </section>
 
             <div  className="upgradeCanvas" style={{ transform: `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})` }}>

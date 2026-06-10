@@ -133,6 +133,79 @@ const ppUp106: IBuyableUpgrade = {
     }
 }
 
+const ppUp107: IBuyableUpgrade = {
+    id: 107,
+    parentId: 105,
+    position: { x: -4, y: 1 },
+    description: "*2 Point multi",
+    price: new Decimal(1e14),
+    priceMultiplier: new Decimal(2.5),
+    currentAmount: new Decimal(0),
+    maxAmount: 10,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(2))
+        game.setGlobalMultiplierMultiplier(n => n.times(2))
+        game.setPointMultiFromPrestige(n => n.times(2))
+    }
+}
+
+const ppUp108: IBuyableUpgrade = {
+    id: 108,
+    parentId: 106,
+    position: { x: -4, y: -1 },
+    description: "Boost your PE based on points",
+    price: new Decimal(5e16),
+    priceMultiplier: new Decimal(2),
+    currentAmount: new Decimal(0),
+    maxAmount: 10,
+    isBought: false,
+    isMaxed: false,
+    effect: () => {},
+    tickEffect: (amount, { point }) => {
+        if (amount.lte(0)) return {};
+        const multi = new Decimal(0.1).plus(point.pow(0.03).times(new Decimal(5).pow(amount)));
+        return { peGain: multi.lte(new Decimal(1)) ? new Decimal(1) : multi };
+    }
+}
+
+const ppUp109: IBuyableUpgrade = {
+    id: 109,
+    parentId: 107,
+    position: { x: -5, y: 0.5 },
+    description: "*5 Point multi",
+    price: new Decimal(1e18),
+    priceMultiplier: new Decimal(7),
+    currentAmount: new Decimal(0),
+    maxAmount: 3,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(5))
+        game.setGlobalMultiplierMultiplier(n => n.times(5))
+        game.setPointMultiFromPrestige(n => n.times(5))
+    }
+}
+
+const ppUp110: IBuyableUpgrade = {
+    id: 110,
+    parentId: 107,
+    position: { x: -5, y: 1.5 },
+    description: "*1.5 Point multi",
+    price: new Decimal(5e16),
+    priceMultiplier: new Decimal(1.4),
+    currentAmount: new Decimal(0),
+    maxAmount: 5,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(1.5))
+        game.setGlobalMultiplierMultiplier(n => n.times(1.5))
+        game.setPointMultiFromPrestige(n => n.times(1.5))
+    }
+}
+
 const ppUp202: IOneTimeUpgrade = {
     id: 202,
     parentId: 1,
@@ -221,11 +294,10 @@ const ppUp207: IOneTimeUpgrade = {
     description: "+1 max buyable level",
     price: new Decimal(1e6),
     isBought: false,
-    effect: (_, upgrades) => {
+    effect: (game, upgrades) => {
+        game.setPointUpgradesBonusMaxAmount(n => n + 1)
         upgrades?.setPointBuyableUpgrades?.(prev => prev.map(u => u.id >= 302 ? ({ ...u }) : ({
-            ...u,
-            maxAmount: u.maxAmount + 1,
-            isMaxed: false,
+            ...u
         })))
     }
 }
@@ -237,11 +309,10 @@ const ppUp208: IOneTimeUpgrade = {
     description: "+2 max buyable level",
     price: new Decimal(1e7),
     isBought: false,
-    effect: (_, upgrades) => {
+    effect: (game, upgrades) => {
+        game.setPointUpgradesBonusMaxAmount(n => n + 2)
         upgrades?.setPointBuyableUpgrades?.(prev => prev.map(u => u.id >= 302 ? ({ ...u }) : ({
-            ...u,
-            maxAmount: u.maxAmount + 2,
-            isMaxed: false,
+            ...u
         })))
     }
 }
@@ -259,7 +330,19 @@ const ppUp209: IOneTimeUpgrade = {
     }
 }
 
-
+const ppUp210: IOneTimeUpgrade = {
+    id: 210,
+    parentId: 209,
+    position: { x: 5, y: 1.5 },
+    description: "*10 point multi",
+    price: new Decimal(1e16),
+    isBought: false,
+    effect: (game) => {
+        game.setGlobalPointMultiplier(n => n.times(10))
+        game.setGlobalMultiplierMultiplier(n => n.times(10))
+        game.setPointMultiFromPrestige(n => n.times(10))
+    }
+}
 
 
 // Unlocki
@@ -348,7 +431,7 @@ export const ppUpAuto21to25: IOneTimeUpgrade = {
 
 //NASZE SIURKI!!!!!!!!!!!!!!!!!!!
 
-const ppUp501: IBuyableUpgrade = {
+/*const ppUp501: IBuyableUpgrade = {
     id: 501,
     parentId: 1,
     position: { x: -1, y: -2 },
@@ -417,14 +500,14 @@ const ppUp505: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: (game) => game.setPrestigePoint(n => n.times(new Decimal(2)))
-}
+}*/
 
 
 
 
 export {
-    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106,
-    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205, ppUp206, ppUp207, ppUp208, ppUp209,
+    ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106, ppUp107, ppUp108, ppUp109, ppUp110,
+    ppUp201, ppUp202, ppUp203, ppUp204, ppUp205, ppUp206, ppUp207, ppUp208, ppUp209, ppUp210,
     ppUp301,
-    ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    //ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }
