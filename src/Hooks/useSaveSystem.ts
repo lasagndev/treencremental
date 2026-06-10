@@ -75,7 +75,7 @@ export function useSaveSystem(
         peMulti: game.peMulti.toString(),
         peBoostToP: game.peBoostToP.toString(),
         peBoostToPP: game.peBoostToPP.toString(),
-        pointUpgradesBonusMaxAmount: game.pointUpgradesBonusMaxAmount.toString(),
+        //pointUpgradesBonusMaxAmount: game.pointUpgradesBonusMaxAmount.toString(),
     }));
 
     localStorage.setItem("stats", JSON.stringify({

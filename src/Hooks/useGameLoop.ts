@@ -3,7 +3,7 @@ import { Game } from "../Models/Game.ts";
 import Decimal from "break_eternity.js";
 import type {Statistics} from "../Models/Statistics.ts";
 import {generatorUpgrades} from "../components/GeneratorTab.tsx";
-import type {IBuyableUpgrade} from "../Models/IUpgrade.ts";
+import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {defaultPrestigeBuyable, defaultPrestigeOneTime} from "./usePrestigeUpgrades.ts";
 import {defaultPointBuyable} from "./usePointUpgrades.ts";
 
@@ -44,7 +44,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[]) {
+export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[], prestigeOneTimeUpgrades: IOneTimeUpgrade[]) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -74,15 +74,27 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
     });
     const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.pointMultiFromPrestige ? new Decimal(s.pointMultiFromPrestige as string) : new Decimal(0);
+        let pgfp = s?.pointGainFromPrestige ? new Decimal(s.pointGainFromPrestige as string) : new Decimal(0);
+
+        const up209bght = prestigeOneTimeUpgrades.find(u => u.id == 209)?.isBought
+        const up204bght = prestigeOneTimeUpgrades.find(u => u.id == 204)?.isBought
+        const up201bght = prestigeOneTimeUpgrades.find(u => u.id == 201)?.isBought
+
+            // i do pieca
+        if(!pgfp.eq(20250) && up209bght) pgfp = new Decimal(20250)
+        else if(!pgfp.eq(250) && up204bght) pgfp = new Decimal(250)
+        else if(!pgfp.eq(50) && up201bght) pgfp = new Decimal(50)
+        else if(!pgfp.eq(0) && !up201bght) pgfp = new Decimal(0)
+
+        return pgfp;
     })
     const [pointMultiFromPrestige, setPointMultiFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
@@ -118,11 +130,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     const [dynamicUpgradeValues, setDynamicUpgradeValues] = useState<Record<number, Decimal>>({});
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
-        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
+        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 1000;
     });
 
     const [canShowGenerator, setCanShowGenerator] = useState<boolean>(() => {
-        try { return JSON.parse(localStorage.getItem("ppUp301") ?? "true"); } catch { return true; }
+        try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; }
     });
 
     const [generatorDuration, setGeneratorDuration] = useState<number>(() => {
@@ -152,7 +164,14 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
 
     const [pointUpgradesBonusMaxAmount, setPointUpgradesBonusMaxAmount] = useState<number>(() => {
         const s = loadSaved();
-        return s?.pointUpgradesBonusMaxAmount ? Number(s.pointUpgradesBonusMaxAmount as string) : 0;
+
+        let bonusMaxAmount = 0;
+        const ppUp207 = prestigeOneTimeUpgrades.find(u => u.id == 207)
+        const ppUp208 = prestigeOneTimeUpgrades.find(u => u.id == 208)
+        if(ppUp207?.isBought) bonusMaxAmount += 1
+        if(ppUp208?.isBought) bonusMaxAmount += 2
+
+        return s?.pointUpgradesBonusMaxAmount ? Number(s.pointUpgradesBonusMaxAmount as string) : bonusMaxAmount;
     })
 
     const game = new Game(
@@ -206,7 +225,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         canShowGeneratorRef.current = canShowGenerator;
         prestigeEnergyRef.current = prestigeEnergy;
         peBoostToPRef.current = peBoostToP;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP]);
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP, prestigePoint]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
@@ -217,18 +236,23 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
 
             // compute tickEffects for all prestige buyable upgrades
             let dynamicPointMulti = new Decimal(1);
+            let dynamicPEMulti = new Decimal(1);
             const newDynamicValues: Record<number, Decimal> = {};
             for (const u of prestigeUpgradesRef.current) {
                 if (u.tickEffect && u.currentAmount.gt(0)) {
                     const result = u.tickEffect(u.currentAmount, {
                         prestigePoint: prestigePointRef.current,
                         point: pointRef.current,
+                        prestigeEnergy: prestigeEnergyRef.current,
                     });
                     if (result.pointMulti) {
                         newDynamicValues[u.id] = result.pointMulti;
                         dynamicPointMulti = dynamicPointMulti.times(result.pointMulti);
                     } else if(result.ppGain) {
                         newDynamicValues[u.id] = result.ppGain;
+                    } else if(result.peGain) {
+                        newDynamicValues[u.id] = result.peGain;
+                        dynamicPEMulti = dynamicPEMulti.times(result.peGain);
                     }
                 }
             }
@@ -246,7 +270,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
             // generator działanie
             const clampedDuration = Math.max(generatorDurationRef.current, 40);
             if (canShowGeneratorRef.current && clampedDuration <= 500) {
-                setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
+                setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
                 stats.setTotalGeneratorLoops(n => n+1)
                 stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
             }

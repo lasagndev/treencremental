@@ -487,9 +487,9 @@ const pUp127: IBuyableUpgrade = {
     description: "* 1.4  point multi",
     bulkDescription: (count) => `*${fmt_upgrade(new Decimal(1.4).pow(count))} point multi`,
     price: new Decimal(1e77),
-    priceMultiplier: new Decimal(12),
+    priceMultiplier: new Decimal(11),
     currentAmount: new Decimal(0),
-    maxAmount: 20,
+    maxAmount: 15,
     isBought: false,
     isMaxed: false,
     whenCanShow: "prestige",
@@ -508,13 +508,49 @@ const pUp128: IBuyableUpgrade = {
     price: new Decimal(1e80),
     priceMultiplier: new Decimal(1.1),
     currentAmount: new Decimal(0),
-    maxAmount: 200,
+    maxAmount: 100,
     isBought: false,
     isMaxed: false,
     whenCanShow: "prestige",
     effect: (game) =>{
         game.setGlobalMultiplierMultiplier(n => n.times(1.03))
         game.setGlobalPointMultiplier(n => n.times(1.03))
+    }
+}
+
+const pUp129: IBuyableUpgrade = {
+    id: 129,
+    parentId: 124,
+    position: { x: -10, y: 0 },
+    description: "+ 1e9 point gain",
+    bulkDescription: (count) => `+${count * 1e9} point gain`,
+    price: new Decimal(1e96),
+    priceMultiplier: new Decimal(1.2),
+    currentAmount: new Decimal(0),
+    maxAmount: 20,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setGlobalPointAddition(n => n.plus(1e9))
+    }
+}
+
+const pUp130: IBuyableUpgrade = {
+    id: 130,
+    parentId: 124,
+    position: { x: -10, y: 1 },
+    description: "+ 2e9 point gain",
+    bulkDescription: (count) => `+${count * 2e9} point gain`,
+    price: new Decimal(1e97),
+    priceMultiplier: new Decimal(1.5),
+    currentAmount: new Decimal(0),
+    maxAmount: 10,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setGlobalPointAddition(n => n.plus(2e9))
     }
 }
 // -------------------------------------
@@ -815,12 +851,50 @@ const pUp227: IOneTimeUpgrade = {
     id: 227,
     parentId: 224,
     position: {x: 8, y: 0.5},
-    description: "+ 2e9 point gain",
+    description: "+ 5e8 point gain",
     price: new Decimal(1e80),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setGlobalPointAddition(n => n.plus(5e8))
+}
+
+const pUp228: IOneTimeUpgrade = {
+    id: 228,
+    parentId: 225,
+    position: {x: 8, y: 2.5},
+    description: "+ 25000 point multi",
+    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(25000).times(game.globalMultiplierMultiplier))} point multi`,
+    price: new Decimal(1e93),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(25000).times(game.globalMultiplierMultiplier)))
+}
+
+const pUp229: IOneTimeUpgrade = {
+    id: 229,
+    parentId: 218,
+    position: {x: 8, y: -1.5},
+    description: "+ 2e9 point gain",
+    price: new Decimal(1e95),
     isBought: false,
     whenCanShow: "prestige",
     effect: (game) => game.setGlobalPointAddition(n => n.plus(2e9))
 }
+
+const pUp230: IOneTimeUpgrade = {
+    id: 230,
+    parentId: 222,
+    position: {x: 8, y: 1.5},
+    description: "* 7 point multi",
+    price: new Decimal(1e98),
+    isBought: false,
+    whenCanShow: "prestige",
+    effect: (game) => {
+        game.setGlobalMultiplierMultiplier(n => n.times(7))
+        game.setGlobalPointMultiplier(n => n.times(7))
+    }
+}
+
 
 // 300+ UPGARADAS :3:3:3:3:3:3:3
 
@@ -846,7 +920,7 @@ const pUp302: IBuyableUpgrade = {
 // ---------- upgrady dla nas ----------
 // ---------------- vvv ----------------
 
-const pUp401: IBuyableUpgrade = {
+/*const pUp401: IBuyableUpgrade = {
     id: 401,
     parentId: 1,
     position: { x: 1, y: -3 },
@@ -943,13 +1017,13 @@ const pUp505: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: (game) => game.setPoint(n => n.plus(new Decimal(1e15)))
-}
+}*/
 
 
 
 export {
-    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128,
-    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227,
+    pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128, pUp129, pUp130,
+    pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227, pUp228, pUp229, pUp230,
     pUp302,
-    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
+    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 }

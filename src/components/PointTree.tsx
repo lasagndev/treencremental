@@ -355,6 +355,7 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
             currentAmount: u.currentAmount.plus(1),
             isMaxed: u.currentAmount.plus(1).eq(u.maxAmount)
         } : u))
+        console.log(game.pointUpgradesBonusMaxAmount)
     }
 
     function isLocked(id: number): boolean {
