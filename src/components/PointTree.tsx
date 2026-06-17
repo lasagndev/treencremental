@@ -39,9 +39,16 @@ interface PointTreeProps {
     handlePrestigeRef: RefObject<() => void>
     isBuyMaxMode: boolean
     setIsBuyMaxMode: React.Dispatch<React.SetStateAction<boolean>>
+    pointTreePosZoom: number
+    setPointTreePosZoom: React.Dispatch<React.SetStateAction<number>>
+    pointTreePosX: number
+    setPointTreePosX: React.Dispatch<React.SetStateAction<number>>
+    pointTreePosY: number
+    setPointTreePosY: React.Dispatch<React.SetStateAction<number>>
+
 }
 
-const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode} : PointTreeProps ) => {
+const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
 
     let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
@@ -56,7 +63,15 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
-    const [view, setView] = useState({ panX: 0, panY: 0, zoom: 1 })
+    const [view, setView] = useState({ panX: pointTreePosX, panY: pointTreePosY, zoom: pointTreePosZoom })
+    useEffect(() => { viewRef.current = view }, [view])
+
+    useEffect(() => {
+        setPointTreePosX(view.panX)
+        setPointTreePosY(view.panY)
+        setPointTreePosZoom(view.zoom)
+    }, [view, setPointTreePosX, setPointTreePosY, setPointTreePosZoom])
+
     const viewRef = useRef(view)
     const isDragging = useRef(false)
     const dragOrigin = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })

@@ -431,7 +431,7 @@ export const ppUpAuto21to25: IOneTimeUpgrade = {
 
 //NASZE SIURKI!!!!!!!!!!!!!!!!!!!
 
-/*const ppUp501: IBuyableUpgrade = {
+const ppUp501: IBuyableUpgrade = {
     id: 501,
     parentId: 1,
     position: { x: -1, y: -2 },
@@ -500,7 +500,7 @@ const ppUp505: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: (game) => game.setPrestigePoint(n => n.times(new Decimal(2)))
-}*/
+}
 
 
 
@@ -509,5 +509,5 @@ export {
     ppUp101, ppUp102, ppUp103, ppUp104, ppUp105, ppUp106, ppUp107, ppUp108, ppUp109, ppUp110,
     ppUp201, ppUp202, ppUp203, ppUp204, ppUp205, ppUp206, ppUp207, ppUp208, ppUp209, ppUp210,
     ppUp301,
-    //ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
+    ppUp501, ppUp502, ppUp503, ppUp504, ppUp505
 }

@@ -4,7 +4,7 @@ import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/
 import type {usePrestigeUpgrades} from "../Hooks/usePrestigeUpgrades.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PrestigeTree.css"
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, type Dispatch, type SetStateAction} from "react";
 import type {CSSProperties} from "react";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
@@ -35,15 +35,30 @@ interface PrestigeTreeProps {
     upgrades: ReturnType<typeof usePrestigeUpgrades>
     pointUpgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
+
+    presTreePosZoom: number
+    setPresTreePosZoom: Dispatch<SetStateAction<number>>
+    presTreePosX: number
+    setPresTreePosX: Dispatch<SetStateAction<number>>
+    presTreePosY: number
+    setPresTreePosY: Dispatch<SetStateAction<number>>
 }
 
-const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-    const [view, setView] = useState({ panX: 0, panY: 0, zoom: 1 })
+
+    const [view, setView] = useState({ panX: presTreePosX, panY: presTreePosY, zoom: presTreePosZoom })
+
+    useEffect(() => {
+        setPresTreePosX(view.panX)
+        setPresTreePosY(view.panY)
+        setPresTreePosZoom(view.zoom)
+    }, [view, setPresTreePosX, setPresTreePosY, setPresTreePosZoom])
+
     const viewRef = useRef(view)
     const isDragging = useRef(false)
     const dragOrigin = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
@@ -86,6 +101,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats }: PrestigeTreeProp
                 const factor = e.deltaY < 0 ? 1.1 : 0.9
                 const newZoom = Math.max(0.3, Math.min(3, prev.zoom * factor))
                 const ratio = newZoom / prev.zoom
+
                 return {
                     panX: mouseX - ratio * (mouseX - prev.panX),
                     panY: mouseY - ratio * (mouseY - prev.panY),

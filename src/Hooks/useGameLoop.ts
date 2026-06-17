@@ -74,11 +74,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
     const [canShowPrestigeTree, setCanShowPrestigeTree] = useState<boolean>(() => {
         const s = loadSaved();
-        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : false;
+        return s !== null && "canShowPrestigeTree" in s ? (s.canShowPrestigeTree as boolean) : true;
     });
     const [prestigePoint, setPrestigePoint] = useState<Decimal>(() => {
         const s = loadSaved();
-        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(0);
+        return s?.prestigePoint ? new Decimal(s.prestigePoint as string) : new Decimal(3);
     });
     const [pointGainFromPrestige, setPointGainFromPrestige] = useState<Decimal>(() => {
         const s = loadSaved();
@@ -130,11 +130,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     const [dynamicUpgradeValues, setDynamicUpgradeValues] = useState<Record<number, Decimal>>({});
     const [automationInterval, setAutomationInterval] = useState<number>(() => {
         const s = loadSaved()
-        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 1000;
+        return s?.automationInterval ? (s.automationInterval as string) as unknown as number: 100;
     });
 
     const [canShowGenerator, setCanShowGenerator] = useState<boolean>(() => {
-        try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; }
+        try { return JSON.parse(localStorage.getItem("ppUp301") ?? "true"); } catch { return true; }
     });
 
     const [generatorDuration, setGeneratorDuration] = useState<number>(() => {
@@ -272,7 +272,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
             if (canShowGeneratorRef.current && clampedDuration <= 500) {
                 setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
                 stats.setTotalGeneratorLoops(n => n+1)
-                stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier)));
+                stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
             }
         }, 40);
         return () => clearInterval(skibidi);

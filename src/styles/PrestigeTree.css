@@ -32,8 +32,8 @@
 }
 
 /* locked */
-.prestigeTree .upgradeLine--locked .upgradeLine__tube { stroke: #160812; stroke-opacity: 0.8; display: none  }
-.prestigeTree .upgradeLine--locked .upgradeLine__core { stroke: #2a1028; display: none}
+.prestigeTree .upgradeLine--locked .upgradeLine__tube { stroke: #160812; stroke-opacity: 0.8; /*display: none*/  }
+.prestigeTree .upgradeLine--locked .upgradeLine__core { stroke: #2a1028; /*display: none*/}
 
 /* default */
 .prestigeTree .upgradeLine--default .upgradeLine__tube { stroke: #3a1850; stroke-opacity: 0.4; }
@@ -71,7 +71,7 @@
     border-color: #221430;
     color: #e5dfec;
     cursor: not-allowed;
-    display: none;
+    /*display: none;*/
 }
 
 /* ── 2. unaffordable ── */

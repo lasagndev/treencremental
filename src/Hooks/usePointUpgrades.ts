@@ -37,8 +37,7 @@ import {
     pUp215,
     pUp216,
     pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227, pUp228, pUp229, pUp230,
-    pUp302,
-    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
+    pUp302, pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505,
 
 
 } from "../data/pointUpgrades.ts";
@@ -51,7 +50,7 @@ const defaultOneTime: IOneTimeUpgrade[] = [
 export const defaultPointBuyable: IBuyableUpgrade[] = [
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128, pUp129, pUp130,
     pUp302,
-    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
+    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 ];
 
 export function usePointUpgrades(game: Game) {

@@ -33,6 +33,13 @@ function App() {
     const achievementsHook = useAchievements();
     const handlePrestigeRef = useRef<() => void>(() => {});
 
+    const [pointTreePosZoom, setPointTreePosZoom] = useState<number>(1)
+    const [pointTreePosX, setPointTreePosX] = useState<number>(0)
+    const [pointTreePosY, setPointTreePosY] = useState<number>(0)
+
+    const [presTreePosZoom, setPresTreePosZoom] = useState<number>(1)
+    const [presTreePosX, setPresTreePosX] = useState<number>(0)
+    const [presTreePosY, setPresTreePosY] = useState<number>(0)
 
     // Restore module-level generator upgrades from localStorage on first mount
     useEffect(() => {
@@ -260,8 +267,8 @@ function App() {
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} gameRef={gameRef} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} /> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}/> }
+                {currentTab === "MainTree" && <PointTree game={game} gameRef={gameRef} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom} pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX} pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY}/> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats} presTreePosZoom={presTreePosZoom} setPresTreePosZoom={setPresTreePosZoom} presTreePosX={presTreePosX} setPresTreePosX={setPresTreePosX} presTreePosY={presTreePosY} setPresTreePosY={setPresTreePosY}/> }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
                 {currentTab === "Settings" && <SettingsTab onSave={handleSave} game={game} />}

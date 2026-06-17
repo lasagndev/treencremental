@@ -1,6 +1,7 @@
 import type {IBuyableUpgrade, IOneTimeUpgrade, IUnlockUpgrade} from "../Models/IUpgrade.ts";
 import Decimal from "break_eternity.js";
 import type {Game} from "../Models/Game.ts";
+import {fmt} from "../components/CurrencyBar.tsx";
 
 
 export const pUp1: IOneTimeUpgrade = {
@@ -28,12 +29,20 @@ export const prestigeUnlock : IUnlockUpgrade = {
     }
 }
 
+function fmtExp(n: Decimal, d: number): string {
+    const s = n.toExponential(d).replace('e+', 'e')
+    const [mantissa, exp] = s.split('e')
+    const decimals = mantissa.includes('.') ? mantissa.split('.')[1].length : 0
+    const dot = decimals === 0 && d > 0 ? '.' : ''
+    return mantissa + dot + '0'.repeat(Math.max(0, d - decimals)) + 'e' + exp
+}
+
 export function fmt_upgrade(n: Decimal): string {
-    if (n.gte('1e1000000')) return n.toExponential(6).replace('e+', 'e')
-    if (n.gte('1e100000'))  return n.toExponential(5).replace('e+', 'e')
-    if (n.gte('1e10000'))   return n.toExponential(4).replace('e+', 'e')
-    if (n.gte('1e1000'))    return n.toExponential(3).replace('e+', 'e')
-    if (n.gte(1e6))         return n.toExponential(2).replace('e+', 'e')
+    if (n.gte('1e1000000')) return fmtExp(n, 6)
+    if (n.gte('1e100000'))  return fmtExp(n, 5)
+    if (n.gte('1e10000'))   return fmtExp(n, 4)
+    if (n.gte('1e1000'))    return fmtExp(n, 3)
+    if (n.gte(1e6))         return fmtExp(n, 2)
     return n.toFixed(2)
 }
 
@@ -377,7 +386,7 @@ const pUp121: IBuyableUpgrade = {
     parentId: 117,
     position: { x: -8, y: 0 },
     description: "+ 20000 point gain",
-    bulkDescription: (count) => `+${count * 20000} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(20000).times(count))} point gain`,
     price: new Decimal(1e17),
     priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
@@ -395,7 +404,7 @@ const pUp122: IBuyableUpgrade = {
     parentId: 117,
     position: { x: -8, y: 1 },
     description: "+ 50000 point gain",
-    bulkDescription: (count) => `+${count * 50000} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(50000).times(count))} point gain`,
     price: new Decimal(1e18),
     priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
@@ -430,7 +439,7 @@ const pUp124: IBuyableUpgrade = {
     parentId: 122,
     position: { x: -9, y: 0.5 },
     description: "+ 500000 point gain",
-    bulkDescription: (count) => `+${count * 500000} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(500000).times(count))} point gain`,
     price: new Decimal(1e30),
     priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
@@ -448,7 +457,7 @@ const pUp125: IBuyableUpgrade = {
     parentId: 122,
     position: { x: -9, y: 1.5 },
     description: "+ 1e6 point gain",
-    bulkDescription: (count) => `+${count * 1e6} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(1e6).times(count))} point gain`,
     price: new Decimal(1e32),
     priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
@@ -523,7 +532,7 @@ const pUp129: IBuyableUpgrade = {
     parentId: 124,
     position: { x: -10, y: 0 },
     description: "+ 1e9 point gain",
-    bulkDescription: (count) => `+${count * 1e9} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(1e9).times(count))} point gain`,
     price: new Decimal(1e96),
     priceMultiplier: new Decimal(1.2),
     currentAmount: new Decimal(0),
@@ -541,7 +550,7 @@ const pUp130: IBuyableUpgrade = {
     parentId: 124,
     position: { x: -10, y: 1 },
     description: "+ 2e9 point gain",
-    bulkDescription: (count) => `+${count * 2e9} point gain`,
+    bulkDescription: (count) => `+${fmt(new Decimal(2e9).times(count))} point gain`,
     price: new Decimal(1e97),
     priceMultiplier: new Decimal(1.5),
     currentAmount: new Decimal(0),
@@ -920,7 +929,7 @@ const pUp302: IBuyableUpgrade = {
 // ---------- upgrady dla nas ----------
 // ---------------- vvv ----------------
 
-/*const pUp401: IBuyableUpgrade = {
+const pUp401: IBuyableUpgrade = {
     id: 401,
     parentId: 1,
     position: { x: 1, y: -3 },
@@ -959,7 +968,6 @@ const pUp501: IBuyableUpgrade = {
     maxAmount: 1000000,
     isBought: false,
     isMaxed: false,
-    whenCanShow: "prestige",
     effect: (game) => game.setPoint(n => n.plus(new Decimal(1e8)))
 }
 
@@ -1017,7 +1025,7 @@ const pUp505: IBuyableUpgrade = {
     isBought: false,
     isMaxed: false,
     effect: (game) => game.setPoint(n => n.plus(new Decimal(1e15)))
-}*/
+}
 
 
 
@@ -1025,5 +1033,5 @@ export {
     pUp101, pUp102, pUp103, pUp104, pUp105, pUp106, pUp107, pUp108, pUp109, pUp110, pUp111, pUp112, pUp113, pUp114, pUp115, pUp116, pUp117, pUp118, pUp119, pUp120, pUp121, pUp122, pUp123, pUp124, pUp125, pUp126, pUp127, pUp128, pUp129, pUp130,
     pUp201, pUp202, pUp203, pUp204, pUp205, pUp206, pUp207, pUp208, pUp209, pUp210, pUp211, pUp212, pUp213, pUp214, pUp215, pUp216, pUp217, pUp218, pUp219, pUp220, pUp221, pUp222, pUp223, pUp224, pUp225, pUp226, pUp227, pUp228, pUp229, pUp230,
     pUp302,
-    //pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
+    pUp401, pUp402, pUp501, pUp502, pUp503, pUp504, pUp505
 }
