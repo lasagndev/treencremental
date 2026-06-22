@@ -70,5 +70,21 @@ export function usePrestigeUpgrades() {
         return defaultPrestigeBuyable;
     });
 
-    return { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades }
+    function resetUpgrades() {
+        setOneTimeUpgrades(prev =>
+            prev.map(u => u.id == 302 ? u : { ...defaultPrestigeOneTime.find(d => d.id === u.id)! })
+        );
+        setBuyableUpgrades(prev =>
+            prev.map(u => {
+                if (u.id == 302) return u;
+
+                const defaultUpgrade = defaultPrestigeBuyable.find(d => d.id === u.id)!;
+                return {
+                    ...defaultUpgrade
+                };
+            })
+        );
+    }
+
+    return { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades }
 }

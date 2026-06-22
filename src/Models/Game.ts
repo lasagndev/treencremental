@@ -55,6 +55,19 @@ export class Game {
     pointUpgradesBonusMaxAmount
     setPointUpgradesBonusMaxAmount
 
+    antyPoint
+    setAntyPoint
+    isNegated
+    setIsNegated
+
+    voidPoint
+    setVoidPoint
+    canShowVoidTree
+    setCanShowVoidTree
+
+    purePoint
+    setPurePoint
+
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
@@ -95,7 +108,20 @@ export class Game {
                 setPeBoostToPP: React.Dispatch<React.SetStateAction<Decimal>>,
                 pointUpgradesBonusMaxAmount: number,
                 setPointUpgradesBonusMaxAmount: React.Dispatch<React.SetStateAction<number>>,
-                 ) {
+
+                antyPoint: Decimal,
+                setAntyPoint: React.Dispatch<React.SetStateAction<Decimal>>,
+                isNegated: boolean,
+                setIsNegated: React.Dispatch<React.SetStateAction<boolean>>,
+
+                voidPoint: Decimal,
+                setVoidPoint: React.Dispatch<React.SetStateAction<Decimal>>,
+                canShowVoidTree: boolean,
+                setCanShowVoidTree: React.Dispatch<React.SetStateAction<boolean>>,
+
+                purePoint: Decimal,
+                setPurePoint: React.Dispatch<React.SetStateAction<Decimal>>,
+        ) {
 
         this.point = point;
         this.setPoint  = setPoint;
@@ -137,5 +163,16 @@ export class Game {
         this.setPeBoostToPP = setPeBoostToPP;
         this.pointUpgradesBonusMaxAmount = pointUpgradesBonusMaxAmount;
         this.setPointUpgradesBonusMaxAmount = setPointUpgradesBonusMaxAmount;
+        this.antyPoint = antyPoint;
+        this.setAntyPoint = setAntyPoint;
+        this.isNegated = isNegated;
+        this.setIsNegated = setIsNegated;
+        this.voidPoint = voidPoint;
+        this.setVoidPoint = setVoidPoint;
+        this.canShowVoidTree = canShowVoidTree;
+        this.setCanShowVoidTree = setCanShowVoidTree;
+        this.purePoint = purePoint;
+        this.setPurePoint = setPurePoint;
+
     }
 }

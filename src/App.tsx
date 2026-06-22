@@ -9,7 +9,7 @@ import {useEffect, useRef, useState} from "react";
 import PrestigeTree from "./components/PrestigeTree.tsx";
 import {useSaveSystem} from "./Hooks/useSaveSystem.ts";
 import {prestigeUnlock, pUp1} from "./data/pointUpgrades.ts";
-import {ppUp1} from "./data/prestigeUpgrades.ts";
+import {ppUp1, voidUnlock} from "./data/prestigeUpgrades.ts";
 import SettingsTab from "./components/SettingsTab.tsx";
 import AchievementsTab from "./components/AchievementsTab.tsx";
 import StatisticsTab from "./components/StatisticsTab.tsx";
@@ -19,8 +19,10 @@ import AchievementPopup from "./components/AchievementPopup.tsx";
 import Decimal from "break_eternity.js";
 import AutomationTab from "./components/AutomationTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "./Models/IUpgrade.ts";
-import GeneratorTab, {generatorUpgrades, generatorBasePrices} from "./components/GeneratorTab.tsx";
+import GeneratorTab from "./components/GeneratorTab.tsx";
 import {useKeybinds} from "./Hooks/useKeybinds.ts";
+import {useGeneratorUpgrades} from "./Hooks/useGeneratorUpgrades.ts";
+import {generatorBasePrices} from "./data/generatorUpgrades.ts";
 
 
 
@@ -28,10 +30,12 @@ import {useKeybinds} from "./Hooks/useKeybinds.ts";
 function App() {
     const stats = useStatistics();
     const prestigeUpgrades = usePrestigeUpgrades();
-    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades, prestigeUpgrades.oneTimeUpgrades);
+    const generatorUpgrades = useGeneratorUpgrades()
+    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades, prestigeUpgrades.oneTimeUpgrades, generatorUpgrades.generatorUpgrades);
     const pointUpgrades = usePointUpgrades(game);
     const achievementsHook = useAchievements();
     const handlePrestigeRef = useRef<() => void>(() => {});
+
 
     const [pointTreePosZoom, setPointTreePosZoom] = useState<number>(1)
     const [pointTreePosX, setPointTreePosX] = useState<number>(0)
@@ -47,7 +51,7 @@ function App() {
             const saved = JSON.parse(localStorage.getItem("generatorUpgrades") ?? "null") as Array<{ id: number; currentAmount: string }> | null;
             if (saved) {
                 saved.forEach(s => {
-                    const upg = generatorUpgrades.find(u => u.id === s.id);
+                    const upg = generatorUpgrades.generatorUpgrades.find(u => u.id === s.id);
                     if (upg) {
                         upg.currentAmount = new Decimal(s.currentAmount);
                         const basePrice = generatorBasePrices.get(upg.id) ?? upg.price;
@@ -69,6 +73,8 @@ function App() {
     const prestigeUnlockRef = useRef(prestigeUnlock.isBought);
     const achievementsRef = useRef(achievementsHook.achievements);
     const checkAchievementsRef = useRef(achievementsHook.checkAchievements);
+    const voidUnlockRef = useRef(voidUnlock.isBought)
+    const generatorUpgradesRef = useRef(generatorUpgrades)
 
     // eslint-disable-next-line react-hooks/refs
     gameRef.current = game;
@@ -86,13 +92,18 @@ function App() {
     // eslint-disable-next-line react-hooks/refs
     prestigeUnlockRef.current = prestigeUnlock.isBought;
     // eslint-disable-next-line react-hooks/refs
+    voidUnlockRef.current = voidUnlock.isBought
+    // eslint-disable-next-line react-hooks/refs
     achievementsRef.current = achievementsHook.achievements;
     // eslint-disable-next-line react-hooks/refs
     checkAchievementsRef.current = achievementsHook.checkAchievements;
+    // eslint-disable-next-line react-hooks/refs
+    generatorUpgradesRef.current = generatorUpgrades;
+
 
     function handleSave() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgrades)
+        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgradesRef.current.generatorUpgrades, voidUnlockRef.current)
         // eslint-disable-next-line react-hooks/immutability
         setToastKey(Date.now())
     }
@@ -263,17 +274,17 @@ function App() {
 
     return (
         <>
-            <CurrencyBar game={game}/>
+            <CurrencyBar game={game} generatorUpgrades={generatorUpgrades}/>
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} gameRef={gameRef} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom} pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX} pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats} presTreePosZoom={presTreePosZoom} setPresTreePosZoom={setPresTreePosZoom} presTreePosX={presTreePosX} setPresTreePosX={setPresTreePosX} presTreePosY={presTreePosY} setPresTreePosY={setPresTreePosY}/> }
+                {currentTab === "MainTree" && <PointTree game={game} gameRef={gameRef} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom} pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX} pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY} generatorUpgrades={generatorUpgrades}/> }
+                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats} presTreePosZoom={presTreePosZoom} setPresTreePosZoom={setPresTreePosZoom} presTreePosX={presTreePosX} setPresTreePosX={setPresTreePosX} presTreePosY={presTreePosY} setPresTreePosY={setPresTreePosY} handlePrestigeRef={handlePrestigeRef} generatorUpgrades={generatorUpgrades}/>  }
                 {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
                 {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
                 {currentTab === "Settings" && <SettingsTab onSave={handleSave} game={game} />}
                 {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
-                {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart}/>}
+                {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart} generatorUpgrades={generatorUpgrades}/>}
             </section>
 
             {toastKey !== null && <div key={toastKey} className="save-toast">Game saved...</div>}

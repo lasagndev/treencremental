@@ -1,10 +1,11 @@
 ﻿import type {Game} from "../Models/Game.ts";
 import "../styles/CurrencyBar.css";
 import Decimal from "break_eternity.js";
-import {generatorUpgrades} from "./GeneratorTab.tsx";
+import type {useGeneratorUpgrades} from "../Hooks/useGeneratorUpgrades.ts";
 
 interface Props {
     game: Game;
+    generatorUpgrades: ReturnType<typeof useGeneratorUpgrades>
 }
 
 function fmtExp(n: Decimal, d: number): string {
@@ -25,10 +26,10 @@ export function fmt(n: Decimal): string {
     return n.toFixed(0)
 }
 
-function CurrencyBar( { game }: Props ) {
+function CurrencyBar( { game, generatorUpgrades }: Props ) {
 
-    let peBoostFactor = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+    let peBoostFactor = game.prestigeEnergy.pow(0.3).pow(generatorUpgrades.generatorUpgrades[2].currentAmount.plus(4).div(6));
+    if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(game.prestigeEnergy.pow(0.3).pow(generatorUpgrades.generatorUpgrades[2].currentAmount.plus(4).div(50)));
     const pointsPerSecond = game.globalPointAddition.times(game.globalPointMultiplier).times(game.dynamicUpgradeValues[102] ?? new Decimal(1)).times(peBoostFactor).pow(game.globalPointExponent)
 
     return (

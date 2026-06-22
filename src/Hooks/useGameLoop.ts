@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Game } from "../Models/Game.ts";
 import Decimal from "break_eternity.js";
 import type {Statistics} from "../Models/Statistics.ts";
-import {generatorUpgrades} from "../components/GeneratorTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {defaultPrestigeBuyable, defaultPrestigeOneTime} from "./usePrestigeUpgrades.ts";
 import {defaultPointBuyable} from "./usePointUpgrades.ts";
@@ -44,7 +43,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[], prestigeOneTimeUpgrades: IOneTimeUpgrade[]) {
+export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[], prestigeOneTimeUpgrades: IOneTimeUpgrade[], generatorUpgrades: IBuyableUpgrade[]) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -174,6 +173,29 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         return s?.pointUpgradesBonusMaxAmount ? Number(s.pointUpgradesBonusMaxAmount as string) : bonusMaxAmount;
     })
 
+    const [antyPoint, setAntyPoint] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.antyPoint ? new Decimal(s.antyPoint as string) : new Decimal(0);
+    });
+
+    const [isNegated, setIsNegated] = useState<boolean>(() => {
+        try { return JSON.parse(localStorage.getItem("isNegated") ?? "false"); } catch { return false; }
+    });
+
+    const [voidPoint, setVoidPoint] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.voidPoint ? new Decimal(s.voidPoint as string) : new Decimal(0);
+    });
+
+    const [canShowVoidTree, setCanShowVoidTree] = useState<boolean>(() => {
+        try { return JSON.parse(localStorage.getItem("canShowVoidTree") ?? "false"); } catch { return false; }
+    });
+
+    const [purePoint, setPurePoint] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.purePoint ? new Decimal(s.purePoint as string) : new Decimal(0);
+    });
+
     const game = new Game(
         point, setPoint,
         bonusPoints, setBonusPoints,
@@ -195,6 +217,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         peBoostToP, setPeBoostToP,
         peBoostToPP, setPeBoostToPP,
         pointUpgradesBonusMaxAmount, setPointUpgradesBonusMaxAmount,
+        antyPoint, setAntyPoint,
+        isNegated, setIsNegated,
+        voidPoint, setVoidPoint,
+        canShowVoidTree, setCanShowVoidTree,
+        purePoint, setPurePoint
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);

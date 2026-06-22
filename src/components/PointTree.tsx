@@ -1,6 +1,5 @@
 import type {Game} from "../Models/Game.ts";
 import {fmt_upgrade, prestigeUnlock, pUp1} from "../data/pointUpgrades.ts";
-import {generatorUpgrades} from "./GeneratorTab.tsx";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import type {usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PointTree.css"
@@ -10,6 +9,7 @@ import Decimal from "break_eternity.js";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 import * as React from "react";
+import type {useGeneratorUpgrades} from "../Hooks/useGeneratorUpgrades.ts";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 const SIURY_IDS = new Set([401, 402, 501, 502, 503, 504, 505])
@@ -45,15 +45,15 @@ interface PointTreeProps {
     setPointTreePosX: React.Dispatch<React.SetStateAction<number>>
     pointTreePosY: number
     setPointTreePosY: React.Dispatch<React.SetStateAction<number>>
-
+    generatorUpgrades: ReturnType<typeof useGeneratorUpgrades>
 }
 
-const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY} : PointTreeProps ) => {
+const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY, generatorUpgrades} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
 
-    let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
+    let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(6))
     if(peBoostToPP.gte(new Decimal(1e4))) {
-        peBoostToPP = new Decimal(3.34e3).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+        peBoostToPP = new Decimal(3.34e3).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(50)));
     }
     const dynamicPPGain = game.dynamicUpgradeValues[106] ?? new Decimal(1);
     const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(peBoostToPP).times(dynamicPPGain).floor()
@@ -292,9 +292,9 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
     function handlePrestige() {
         const g = gameRef.current;
         // Compute formula from live values so it's correct even when called from another tab
-        let livePeBoostToPP = g.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(6))
+        let livePeBoostToPP = g.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(6))
         if (livePeBoostToPP.gte(new Decimal(1e4))) {
-            livePeBoostToPP = new Decimal(3.34e3).times(g.prestigeEnergy.pow(0.1).pow(generatorUpgrades[3].currentAmount.plus(4).div(50)));
+            livePeBoostToPP = new Decimal(3.34e3).times(g.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(50)));
         }
         const liveDynamicPPGain = g.dynamicUpgradeValues[106] ?? new Decimal(1);
         const liveFormula = g.point.log10().dividedBy(15).pow(7).times(g.prestigePointMulti).times(livePeBoostToPP).times(liveDynamicPPGain).floor();
@@ -370,7 +370,6 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
             currentAmount: u.currentAmount.plus(1),
             isMaxed: u.currentAmount.plus(1).eq(u.maxAmount)
         } : u))
-        console.log(game.pointUpgradesBonusMaxAmount)
     }
 
     function isLocked(id: number): boolean {

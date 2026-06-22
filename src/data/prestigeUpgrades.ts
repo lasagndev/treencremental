@@ -16,6 +16,19 @@ export const ppUp1: IOneTimeUpgrade = {
     }
 }
 
+export const voidUnlock: IUnlockUpgrade = {
+    id: 302,
+    parentId: 301,
+    position: { x: 0, y: 2 },
+    description: "Void everything for new content",
+    price: new Decimal(1e20),
+    unlocks: "Void",
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("voidUnlock") ?? "false"); } catch { return false; } })() || false,
+    effect: (game) => {
+        console.log(game)
+    },
+}
+
 // -------------------------------------
 // ---------- buyable upgrady ----------
 // ---------------- vvv ----------------
@@ -359,6 +372,8 @@ const ppUp301 : IUnlockUpgrade = {
         game.setCanShowGenerator(true)
     }
 }
+
+
 
 // automatyzacj
 
