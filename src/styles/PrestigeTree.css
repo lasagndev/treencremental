@@ -103,3 +103,44 @@
     color: #a89828;
     cursor: default;
 }
+
+.voidButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    padding: 10px 24px;
+    background: #070707;
+    border: 1px solid #303030;
+    border-radius: 8px;
+    color: #cccccc;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 0 16px rgb(34 34 34 / 0.3);
+}
+
+.voidButton:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+    box-shadow: 0 0 28px rgb(57 57 57 / 0.55);
+}
+
+.voidButton:active {
+    transform: translateY(0px);
+}
+
+.voidButton:disabled {
+    background: #303030;
+    border-color: #737373;
+    color: #a8a8a8;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.voidButton:disabled:hover {
+    filter: none;
+    transform: none;
+}

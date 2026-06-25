@@ -11,25 +11,28 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
 
     return (
         <section className="navBar">
-            <button
+            {!game.isNegated &&
+            <>
+                <button
                 className={currentTab === "MainTree" ? "navTab--active" : ""}
                 onClick={ () => setCurrentTab("MainTree") }>
                 Main Tree
-            </button>
-            {game.canShowPrestigeTree &&
-                <>
-                    <button
-                        className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
-                        onClick={ () => setCurrentTab("PrestigeTree") }>
-                        Prestige Tree
-                    </button>
-                    <button
-                        className={currentTab === "Automation" ? "navTab--active" : ""}
-                        onClick={() => setCurrentTab("Automation")}>
-                        Automation
-                    </button>
+                </button>
 
-                    {game.canShowGenerator &&
+                {game.canShowPrestigeTree &&
+                    <>
+                        <button
+                            className={currentTab === "PrestigeTree" ? "navTab--active" : ""}
+                            onClick={ () => setCurrentTab("PrestigeTree") }>
+                            Prestige Tree
+                        </button>
+                        <button
+                            className={currentTab === "Automation" ? "navTab--active" : ""}
+                            onClick={() => setCurrentTab("Automation")}>
+                            Automation
+                        </button>
+
+                {game.canShowGenerator &&
 
                     <button
                         className={currentTab === "Generator" ? "navTab--active" : ""}
@@ -37,10 +40,30 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                         Generator
                     </button>
 
-                    }
+                }
+                    </>
+                }
 
-                </>
+                {game.canShowVoidTree &&
+                <>
+                    <button className={currentTab === "VoidTree" ? "navTab--active" : ""}
+                            onClick={() => setCurrentTab("VoidTree")}>
+                        Void Tree</button>
+
+                    <button className={currentTab === "PureTree" ? "navTab--active" : ""}
+                            onClick={() => setCurrentTab("PureTree")}>
+                        Pure Tree</button>
+                </>}
+            </>   }
+
+            {game.isNegated &&
+                <button
+                    className={currentTab === "NegationTree" ? "navTab--active" : ""}
+                    onClick={() => setCurrentTab("NegationTree")}>
+                    Negation Tree
+                </button>
             }
+
 
             <button
                 style={{ marginLeft: "auto" }}

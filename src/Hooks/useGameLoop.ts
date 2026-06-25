@@ -179,7 +179,9 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
 
     const [isNegated, setIsNegated] = useState<boolean>(() => {
-        try { return JSON.parse(localStorage.getItem("isNegated") ?? "false"); } catch { return false; }
+        const s = loadSaved();
+        if (s === null || !("isNegated" in s)) return false;
+        return s.isNegated === true || s.isNegated === "true";
     });
 
     const [voidPoint, setVoidPoint] = useState<Decimal>(() => {
@@ -188,12 +190,19 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     });
 
     const [canShowVoidTree, setCanShowVoidTree] = useState<boolean>(() => {
-        try { return JSON.parse(localStorage.getItem("canShowVoidTree") ?? "false"); } catch { return false; }
+        const s = loadSaved();
+        if (s === null || !("canShowVoidTree" in s)) return false;
+        return s.canShowVoidTree === true || s.canShowVoidTree === "true";
     });
 
     const [purePoint, setPurePoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.purePoint ? new Decimal(s.purePoint as string) : new Decimal(0);
+    });
+
+    const [voidPointMulti, setVoidPointMulti] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.voidPointMulti ? new Decimal(s.voidPointMulti as string) : new Decimal(1);
     });
 
     const game = new Game(
@@ -221,7 +230,8 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         isNegated, setIsNegated,
         voidPoint, setVoidPoint,
         canShowVoidTree, setCanShowVoidTree,
-        purePoint, setPurePoint
+        purePoint, setPurePoint,
+        voidPointMulti, setVoidPointMulti,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
@@ -238,6 +248,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     const peBoostToPRef = useRef(peBoostToP);
     // eslint-disable-next-line react-hooks/purity
     const lastTickTimeRef = useRef(Date.now());
+    const isNegatedRef = useRef(isNegated);
 
     useEffect(() => {
         globalPointAdditionRef.current = bonusPoints;
@@ -252,7 +263,8 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         canShowGeneratorRef.current = canShowGenerator;
         prestigeEnergyRef.current = prestigeEnergy;
         peBoostToPRef.current = peBoostToP;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP, prestigePoint]);
+        isNegatedRef.current = isNegated;
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP, prestigePoint, isNegated]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
@@ -286,21 +298,28 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
             setDynamicUpgradeValues(newDynamicValues);
 
             // peboostfacator
-            let peBoostFactor = prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
-            if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
+            if(!isNegatedRef.current) {
+                let peBoostFactor = prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(6));
+                if (peBoostFactor.gte(new Decimal(1e10))) peBoostFactor = new Decimal(7e8).times(prestigeEnergyRef.current.pow(0.3).pow(generatorUpgrades[2].currentAmount.plus(4).div(50)));
 
-            // dodawanie punktów do punktów i do statystyk (główny game tick)
-            const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(dynamicPointMulti).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
-            setPoint(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
-            stats.setAllPoints(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
+                // dodawanie punktów do punktów i do statystyk (główny game tick)
+                const pointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(dynamicPointMulti).times(peBoostFactor).pow(globalPointExponentRef.current).dividedBy(25);
+                setPoint(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
+                stats.setAllPoints(prev => prev.plus(pointsPerTick.times(tickMultiplier)));
 
-            // generator działanie
-            const clampedDuration = Math.max(generatorDurationRef.current, 40);
-            if (canShowGeneratorRef.current && clampedDuration <= 500) {
-                setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
-                stats.setTotalGeneratorLoops(n => n+1)
-                stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
+                // generator działanie
+                const clampedDuration = Math.max(generatorDurationRef.current, 40);
+                if (canShowGeneratorRef.current && clampedDuration <= 500) {
+                    setPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
+                    stats.setTotalGeneratorLoops(n => n + 1)
+                    stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
+                }
+            } else {
+                const antyPointsPerTick = new Decimal(1).dividedBy(25);
+                setAntyPoint(prev => prev.plus(antyPointsPerTick.times(tickMultiplier)));
             }
+
+
         }, 40);
         return () => clearInterval(skibidi);
     }, []);

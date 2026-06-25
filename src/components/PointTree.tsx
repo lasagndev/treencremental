@@ -9,7 +9,6 @@ import Decimal from "break_eternity.js";
 import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 import * as React from "react";
-import type {useGeneratorUpgrades} from "../Hooks/useGeneratorUpgrades.ts";
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 const SIURY_IDS = new Set([401, 402, 501, 502, 503, 504, 505])
@@ -33,7 +32,6 @@ function getUpgradeCenter(pos: UpgradePosition, w: number, h: number): { x: numb
 
 interface PointTreeProps {
     game: Game
-    gameRef: RefObject<Game>
     upgrades: ReturnType<typeof usePointUpgrades>
     stats: Statistics
     handlePrestigeRef: RefObject<() => void>
@@ -45,20 +43,11 @@ interface PointTreeProps {
     setPointTreePosX: React.Dispatch<React.SetStateAction<number>>
     pointTreePosY: number
     setPointTreePosY: React.Dispatch<React.SetStateAction<number>>
-    generatorUpgrades: ReturnType<typeof useGeneratorUpgrades>
+    handlePrestigeCalcRef: RefObject<() => Decimal>
 }
 
-const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY, generatorUpgrades} : PointTreeProps ) => {
-    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
-
-    let peBoostToPP = game.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(6))
-    if(peBoostToPP.gte(new Decimal(1e4))) {
-        peBoostToPP = new Decimal(3.34e3).times(game.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(50)));
-    }
-    const dynamicPPGain = game.dynamicUpgradeValues[106] ?? new Decimal(1);
-    const prestigePointFormula = game.point.log10().dividedBy(15).pow(7).times(game.prestigePointMulti).times(peBoostToPP).times(dynamicPPGain).floor()
-
-
+const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY, handlePrestigeCalcRef} : PointTreeProps ) => {
+    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -132,6 +121,7 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
         }))
     }
 
+    // eslint-disable-next-line react-hooks/immutability
     useEffect(() => { viewRef.current = view }, [view])
 
     useEffect(() => {
@@ -286,35 +276,10 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
         prestigeUnlock.effect(game)
         // eslint-disable-next-line react-hooks/immutability
         prestigeUnlock.isBought = true
-        handlePrestige()
+        handlePrestigeRef.current()
     }
 
-    function handlePrestige() {
-        const g = gameRef.current;
-        // Compute formula from live values so it's correct even when called from another tab
-        let livePeBoostToPP = g.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(6))
-        if (livePeBoostToPP.gte(new Decimal(1e4))) {
-            livePeBoostToPP = new Decimal(3.34e3).times(g.prestigeEnergy.pow(0.1).pow(generatorUpgrades.generatorUpgrades[3].currentAmount.plus(4).div(50)));
-        }
-        const liveDynamicPPGain = g.dynamicUpgradeValues[106] ?? new Decimal(1);
-        const liveFormula = g.point.log10().dividedBy(15).pow(7).times(g.prestigePointMulti).times(livePeBoostToPP).times(liveDynamicPPGain).floor();
 
-        g.setPrestigePoint(n => n.plus(liveFormula))
-        stats.setAllPrestigePoints(n => n.plus(liveFormula))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        g.setPoint(_ => new Decimal(10))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        g.setGlobalPointAddition(_ => new Decimal(1).plus(g.pointGainFromPrestige))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        g.setGlobalPointMultiplier(_ => new Decimal(1).times(g.pointMultiFromPrestige))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        g.setGlobalPointExponent(_ => new Decimal(1).times(g.pointExponentFromPrestige))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        g.setGlobalMultiplierMultiplier(_ => new Decimal(1).times(g.pointMultiFromPrestige))
-        resetUpgrades()
-        stats.setTotalPrestiges(n => n.plus(1))
-        g.setCanShowPrestigeTree(true)
-    }
 
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setPoint(n => n.minus(upg.price))
@@ -444,10 +409,6 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
     }
 
     const { width, height } = containerSize
-
-    // eslint-disable-next-line react-hooks/refs
-    handlePrestigeRef.current = handlePrestige
-
     return (
         <section
             className="pointTree"
@@ -460,10 +421,14 @@ const PointTree = ( {game, gameRef, upgrades, stats, handlePrestigeRef, isBuyMax
             {prestigeUnlock.isBought && (
                 <button
                     className="prestigeButton"
-                    onClick={handlePrestige}
+                    onClick={ // eslint-disable-next-line react-hooks/refs
+                        handlePrestigeRef.current
+                    }
                     disabled={game.point.lt(1e15)}>
                     PRESTIGE<br/>
-                    for { game.point.gte(1e15) ? fmt(prestigePointFormula) : 0 } PP
+                    for { // eslint-disable-next-line react-hooks/refs
+                        game.point.gte(1e15) ? fmt(handlePrestigeCalcRef.current()) : 0
+                    } PP
                 </button>
             )}
 

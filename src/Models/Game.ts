@@ -68,6 +68,9 @@ export class Game {
     purePoint
     setPurePoint
 
+    voidPointMulti
+    setVoidPointMulti
+
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
@@ -121,6 +124,9 @@ export class Game {
 
                 purePoint: Decimal,
                 setPurePoint: React.Dispatch<React.SetStateAction<Decimal>>,
+
+                voidPointMulti: Decimal,
+                setVoidPointMulti: React.Dispatch<React.SetStateAction<Decimal>>,
         ) {
 
         this.point = point;
@@ -173,6 +179,7 @@ export class Game {
         this.setCanShowVoidTree = setCanShowVoidTree;
         this.purePoint = purePoint;
         this.setPurePoint = setPurePoint;
-
+        this.voidPointMulti = voidPointMulti;
+        this.setVoidPointMulti = setVoidPointMulti;
     }
 }

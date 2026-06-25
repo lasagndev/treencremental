@@ -4,7 +4,7 @@ import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/
 import {
     type usePrestigeUpgrades
 } from "../Hooks/usePrestigeUpgrades.ts";
-import {defaultPointBuyable, type usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
+import {type usePointUpgrades} from "../Hooks/usePointUpgrades.ts";
 import "../styles/PrestigeTree.css"
 import {useState, useRef, useEffect, type Dispatch, type SetStateAction, type RefObject} from "react";
 import type {CSSProperties} from "react";
@@ -14,6 +14,7 @@ import Decimal from "break_eternity.js";
 import {fmt_upgrade, prestigeUnlock} from "../data/pointUpgrades.ts";
 import * as React from "react";
 import type {useGeneratorUpgrades} from "../Hooks/useGeneratorUpgrades.ts";
+import type {useVoidReset} from "../Hooks/useVoidReset.ts";
 
 const UPGRADE_GAP = 160
 
@@ -48,11 +49,16 @@ interface PrestigeTreeProps {
     presTreePosY: number
     setPresTreePosY: Dispatch<SetStateAction<number>>
     handlePrestigeRef: RefObject<() => void>
+    handleVoidRef: RefObject<() => void>
+    setCurrentTab: React.Dispatch<React.SetStateAction<string>>
+    voidReset: ReturnType<typeof useVoidReset>
 }
 
-const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, handlePrestigeRef, generatorUpgrades }: PrestigeTreeProps) => {
-    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades, resetUpgrades } = upgrades
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, setCurrentTab, voidReset }: PrestigeTreeProps) => {
+    const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
+
+    const voidPointFormula = game.prestigePoint.log10().dividedBy(20).pow(7).times(game.voidPointMulti)
 
     const containerRef = useRef<HTMLElement>(null)
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -311,44 +317,12 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, s
         return 'default'
     }
 
-    function handleVoid() {
-        voidUnlock.isBought = true
-        ppUp1.isBought = false
-        prestigeUnlock.isBought = true
-        ppUp301.isBought = false
-        handlePrestigeRef.current()
-        stats.setTotalPrestiges(prev => prev.minus(1))
-        pointUpgrades.setBuyableUpgrades(prev =>
-            prev.map(u => u.id == 1 ? u : { ...defaultPointBuyable.find(d => d.id === u.id)! })
-        );
-
-        game.setGlobalPointMultiplier(new Decimal(1))
-        game.setGlobalMultiplierMultiplier(new Decimal(1))
-        game.setPrestigePoint(new Decimal(0))
-        game.setPointGainFromPrestige(new Decimal(0))
-        game.setPointMultiFromPrestige(new Decimal(1))
-        game.setPointExponentFromPrestige(new Decimal(1))
-        game.setGlobalPointExponent(new Decimal(1))
-        game.setPrestigeEnergy(new Decimal(1))
-        game.setCanShowGenerator(false)
-        game.setAutomationInterval(1000)
-        game.setPrestigePointMulti(new Decimal(1))
-        game.setGeneratorDuration(30000)
-        game.setPeMulti(new Decimal(1))
-        game.setPeBoostToP(new Decimal(1))
-        game.setPeBoostToPP(new Decimal(1))
-        game.setPointUpgradesBonusMaxAmount(0)
-        generatorUpgrades.resetGeneratorUpgrades()
-        resetUpgrades()
-
-
-        if(!game.setCanShowVoidTree) game.setIsNegated(true)
-
-        game.setCanShowVoidTree(true)
+    function buyVoidUnlock() {
+        voidReset.buyVoidUnlock(voidPointFormula, setCurrentTab)
     }
 
-    function buyVoidUnlock() {
-        handleVoid()
+    function handleVoidPoints() {
+        voidReset.handleVoidPoints(voidPointFormula)
     }
 
     const { width, height } = containerSize
@@ -362,6 +336,18 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, s
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
         >
+
+            {voidUnlock.isBought && (
+                <button
+                    className="voidButton"
+                    onClick={handleVoidPoints}
+                    disabled={game.prestigePoint.lt(1e20)}>
+                    VOID<br/>
+                    for {game.prestigePoint.lte(new Decimal(1e20)) ? 0 : fmt(voidPointFormula)} VP
+                </button>
+            )}
+
+
             <section className="prestigeTreeCurrencyBar">
                 <p>Prestige Points: {fmt(game.prestigePoint)}</p>
                 { upgrades.buyableUpgrades.find((upg) => upg.id === 102)?.currentAmount.gte(new Decimal(1)) && <p>Upgrade 102 effect: x{fmt_upgrade(game.dynamicUpgradeValues[102] ?? new Decimal(1))}</p>}

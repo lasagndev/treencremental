@@ -34,7 +34,7 @@ function CurrencyBar( { game, generatorUpgrades }: Props ) {
 
     return (
         <section className={"CurrencyBar"}>
-            <div className={"CurrencyBar__group"}>
+            {!game.isNegated && <div className={"CurrencyBar__group"}>
                 <div className={"CurrencyBar__row"}>
                     <h2 className={"CurrencyBar__points"}>P <span className={"CurrencyBar__value"}>{fmt(game.point)}</span></h2>
                     {game.canShowPrestigeTree && <>
@@ -45,9 +45,19 @@ function CurrencyBar( { game, generatorUpgrades }: Props ) {
                         <div className={"CurrencyBar__divider"} />
                         <h2 className={"CurrencyBar__generator"}>PE <span className={"CurrencyBar__value"}>{fmt(game.prestigeEnergy)}</span></h2>
                     </>}
+                    {game.canShowVoidTree &&  <>
+                        <div className={"CurrencyBar__divider"} />
+                        <h2 className={"CurrencyBar__void"}>VP <span className={"CurrencyBar__value"}>{fmt(game.voidPoint)}</span></h2>
+                    </>}
                 </div>
                 <h3>+ {fmt(pointsPerSecond)} p/s</h3>
-            </div>
+            </div>}
+            {game.isNegated && <div className={"CurrencyBar__group"}>
+                <div className={"CurrencyBar__row"}>
+                    <h2 className={"CurrencyBar__antyPoints"}>AP <span className={"CurrencyBar__value"}>-{fmt(game.antyPoint)}</span></h2>
+                </div>
+                <h3>- {fmt(pointsPerSecond)} ap/s</h3>
+            </div>}
         </section>
 
 

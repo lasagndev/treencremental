@@ -89,6 +89,14 @@ h2.CurrencyBar__prestige {
     flex-shrink: 0;
 }
 
+h2.CurrencyBar__void {
+    color: #000000;
+    text-shadow: 0 0 3px rgb(255 255 255);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+
 .CurrencyBar__value {
     display: inline-block;
     width: 16ch;

@@ -8,7 +8,7 @@ const SAVE_KEYS = [
     "pUp1", "prestigeUnlock", "ppUp1", "ppUp301",
     "stats", "achievements",
     "generatorUpgrades", "generatorStart",
-    "voidUnlock"
+    "voidUnlock", "currentTab"
 ] as const;
 
 export function resetSave() {
@@ -59,6 +59,7 @@ export function useSaveSystem(
     achievements: IAchievement[],
     generatorUpgrades: IBuyableUpgrade[],
     voidUnlock: boolean,
+    currentTab: string
 ) {
     localStorage.setItem("game", JSON.stringify({
         point: game.point.toString(),
@@ -78,10 +79,11 @@ export function useSaveSystem(
         peBoostToP: game.peBoostToP.toString(),
         peBoostToPP: game.peBoostToPP.toString(),
         antyPoint: game.antyPoint.toString(),
-        isNegated: game.isNegated.toString(),
+        isNegated: game.isNegated,
         voidPoint: game.voidPoint.toString(),
-        canShowVoidTree: game.canShowVoidTree.toString(),
+        canShowVoidTree: game.canShowVoidTree,
         purePoint: game.purePoint.toString(),
+        voidPointMulti: game.voidPointMulti.toString(),
         //pointUpgradesBonusMaxAmount: game.pointUpgradesBonusMaxAmount.toString(),
     }));
 
@@ -118,4 +120,5 @@ export function useSaveSystem(
     localStorage.setItem("generatorUpgrades", JSON.stringify(
         generatorUpgrades.map(u => ({ id: u.id, currentAmount: u.currentAmount.toString() }))
     ));
+    localStorage.setItem("currentTab", currentTab);
 }

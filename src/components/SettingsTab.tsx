@@ -45,30 +45,57 @@ function SettingsTab({ onSave, game }: Props) {
 
             <h2 className="settingsTab__title">Keybinds</h2>
             <div className="settingsTab__keybinds">
+
+                <div className="settingsTab__keybind">
+                    <kbd className="settingsTab__key">S</kbd>
+                    <span>Save</span>
+                </div>
+
+                {game.canShowPrestigeTree &&
+                <div className="settingsTab__keybind">
+                    <kbd className="settingsTab__key">P</kbd>
+                    <span>Prestige</span>
+                </div>}
+
+
                 <div className="settingsTab__keybind">
                     <kbd className="settingsTab__key">1</kbd>
-                    <span>Main tree</span>
+                    <span>Main Tree</span>
                 </div>
+
                 {game.canShowPrestigeTree && <>
                     <div className="settingsTab__keybind">
                         <kbd className="settingsTab__key">2</kbd>
-                        <span>Prestige tree</span>
+                        <span>Prestige Tree</span>
                     </div>
                     <div className="settingsTab__keybind">
                         <kbd className="settingsTab__key">3</kbd>
                         <span>Automation</span>
                     </div>
-                    <div className="settingsTab__keybind">
-                        <kbd className="settingsTab__key">P</kbd>
-                        <span>Prestige</span>
-                    </div>
                 </>}
+
                 {game.canShowGenerator &&
                     <div className="settingsTab__keybind">
                         <kbd className="settingsTab__key">4</kbd>
                         <span>Generator</span>
                     </div>
                 }
+
+                {game.canShowVoidTree && <>
+                    <div className="settingsTab__keybind">
+                        <kbd className="settingsTab__key">5</kbd>
+                        <span>Void Tree</span>
+                    </div>
+
+                    <div className="settingsTab__keybind">
+                        <kbd className="settingsTab__key">6</kbd>
+                        <span>Pure Tree</span>
+                    </div>
+                </>
+
+
+                }
+
             </div>
 
         </section>
