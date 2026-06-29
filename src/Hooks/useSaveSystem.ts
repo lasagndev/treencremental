@@ -8,7 +8,7 @@ const SAVE_KEYS = [
     "pUp1", "prestigeUnlock", "ppUp1", "ppUp301",
     "stats", "achievements",
     "generatorUpgrades", "generatorStart",
-    "voidUnlock", "currentTab"
+    "voidUnlock", "currentTab", "negationUpgrades", "apUp1"
 ] as const;
 
 export function resetSave() {
@@ -59,7 +59,9 @@ export function useSaveSystem(
     achievements: IAchievement[],
     generatorUpgrades: IBuyableUpgrade[],
     voidUnlock: boolean,
-    currentTab: string
+    currentTab: string,
+    aupgrades: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[] },
+    apUp1: boolean
 ) {
     localStorage.setItem("game", JSON.stringify({
         point: game.point.toString(),
@@ -121,4 +123,12 @@ export function useSaveSystem(
         generatorUpgrades.map(u => ({ id: u.id, currentAmount: u.currentAmount.toString() }))
     ));
     localStorage.setItem("currentTab", currentTab);
+
+    localStorage.setItem("negationUpgrades", JSON.stringify({
+        oneTimeUpgrades: aupgrades.oneTimeUpgrades.map(u => ({ id: u.id, isBought: u.isBought })),
+        buyableUpgrades: aupgrades.buyableUpgrades.map(u => ({
+            id: u.id, isBought: u.isBought, currentAmount: u.currentAmount.toString(), maxAmount: u.maxAmount
+        })),
+    }));
+    localStorage.setItem("apUp1", JSON.stringify(apUp1 ?? false));
 }

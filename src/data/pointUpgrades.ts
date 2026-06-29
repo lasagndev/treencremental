@@ -562,10 +562,10 @@ const pUp130: IBuyableUpgrade = {
         game.setGlobalPointAddition(n => n.plus(2e9))
     }
 }
+
 // -------------------------------------
 // ---------- one-time uprady ----------
 // ---------------- vvv ----------------
-
 
 const pUp201: IOneTimeUpgrade = {
     id: 201,

@@ -54,9 +54,9 @@ function CurrencyBar( { game, generatorUpgrades }: Props ) {
             </div>}
             {game.isNegated && <div className={"CurrencyBar__group"}>
                 <div className={"CurrencyBar__row"}>
-                    <h2 className={"CurrencyBar__antyPoints"}>AP <span className={"CurrencyBar__value"}>-{fmt(game.antyPoint)}</span></h2>
+                    <h2 className={"CurrencyBar__antyPoints"}>P <span className={"CurrencyBar__value"}>-{fmt(game.antyPoint)}</span></h2>
                 </div>
-                <h3>- {fmt(pointsPerSecond)} ap/s</h3>
+                <h3>- {fmt(pointsPerSecond)} p/s</h3>
             </div>}
         </section>
 

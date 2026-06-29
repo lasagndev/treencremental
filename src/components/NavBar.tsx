@@ -53,6 +53,10 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                     <button className={currentTab === "PureTree" ? "navTab--active" : ""}
                             onClick={() => setCurrentTab("PureTree")}>
                         Pure Tree</button>
+
+                    <button className={currentTab === "VoidMilestones" ? "navTab--active" : ""}
+                            onClick={() => setCurrentTab("VoidMilestones")}>
+                        Void Milestones</button>
                 </>}
             </>   }
 

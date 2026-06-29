@@ -315,7 +315,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
                     stats.setTotalPrestigeEnergy(prev => prev.plus(peMultiRef.current.times(new Decimal(40).dividedBy(clampedDuration)).times(tickMultiplier).times(dynamicPEMulti)));
                 }
             } else {
-                const antyPointsPerTick = new Decimal(1).dividedBy(25);
+                const antyPointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(dynamicPointMulti).pow(globalPointExponentRef.current).dividedBy(25);
                 setAntyPoint(prev => prev.plus(antyPointsPerTick.times(tickMultiplier)));
             }
 

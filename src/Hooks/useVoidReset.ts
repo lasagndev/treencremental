@@ -18,6 +18,7 @@ export function useVoidReset(
     prestigeUpgrades: ReturnType<typeof usePrestigeUpgrades>,
     generatorUpgrades: ReturnType<typeof useGeneratorUpgrades>,
     handlePrestigeRef: RefObject<() => void>,
+    handleNegation: () => void,
 ) {
     const gameRef = useRef(game);
     const statsRef = useRef(stats);
@@ -55,6 +56,7 @@ export function useVoidReset(
 
         game.setGlobalPointMultiplier(new Decimal(1));
         game.setGlobalMultiplierMultiplier(new Decimal(1));
+        game.setGlobalPointExponent(new Decimal(1))
         game.setPrestigePoint(new Decimal(0));
         game.setPointGainFromPrestige(new Decimal(0));
         game.setPointMultiFromPrestige(new Decimal(1));
@@ -80,11 +82,10 @@ export function useVoidReset(
         gameRef.current.setVoidPoint(prev => prev.plus(voidPointFormula));
     }
 
-    function buyVoidUnlock(voidPointFormula: Decimal, setCurrentTab: (tab: string) => void) {
+    function buyVoidUnlock(voidPointFormula: Decimal) {
         handleVoid();
         gameRef.current.setVoidPoint(prev => prev.plus(voidPointFormula));
-        gameRef.current.setIsNegated(true);
-        setCurrentTab("NegationTree");
+        handleNegation();
     }
 
     return { handleVoid, handleVoidPoints, buyVoidUnlock };

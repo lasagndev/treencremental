@@ -28,6 +28,10 @@ import PureTree from "./components/PureTree.tsx";
 import NegationTree from "./components/NegationTree.tsx";
 import { useVoidReset } from "./Hooks/useVoidReset.ts";
 import {usePrestigeReset} from "./Hooks/usePrestigeReset.ts";
+import {useNegationUpgrades} from "./Hooks/useNegationUpgrades.ts";
+import {apUp1} from "./data/negationUpgrades.ts";
+import VoidMilestones from "./components/VoidMilestones.tsx";
+//import negationTree from "./components/NegationTree.tsx";
 
 
 
@@ -41,8 +45,9 @@ function App() {
     const prestigeReset = usePrestigeReset(game, stats, pointUpgrades, generatorUpgrades);
     const handlePrestigeRef = useRef(prestigeReset.handlePrestige);
     const handlePrestigeCalcRef = useRef(prestigeReset.calcPrestigePointGain)
+    const negationUpgrades = useNegationUpgrades(game);
 
-    const voidReset = useVoidReset(game, stats, pointUpgrades, prestigeUpgrades, generatorUpgrades, handlePrestigeRef);
+    const voidReset = useVoidReset(game, stats, pointUpgrades, prestigeUpgrades, generatorUpgrades, handlePrestigeRef, handleNegation);
     const handleVoidRef = useRef<() => void>(() => {});
 
     const [pointTreePosZoom, setPointTreePosZoom] = useState<number>(1)
@@ -52,6 +57,10 @@ function App() {
     const [presTreePosZoom, setPresTreePosZoom] = useState<number>(1)
     const [presTreePosX, setPresTreePosX] = useState<number>(0)
     const [presTreePosY, setPresTreePosY] = useState<number>(0)
+
+    const [negTreePosZoom, setNegTreePosZoom] = useState<number>(1)
+    const [negTreePosX, setNegTreePosX] = useState<number>(0)
+    const [negTreePosY, setNegTreePosY] = useState<number>(0)
 
     // Restore module-level generator upgrades from localStorage on first mount
     useEffect(() => {
@@ -83,6 +92,8 @@ function App() {
     const checkAchievementsRef = useRef(achievementsHook.checkAchievements);
     const voidUnlockRef = useRef(voidUnlock.isBought)
     const generatorUpgradesRef = useRef(generatorUpgrades)
+    const negationUpgradesRef = useRef(negationUpgrades)
+    const apUp1Ref = useRef(apUp1.isBought);
 
     // eslint-disable-next-line react-hooks/refs
     gameRef.current = game;
@@ -113,6 +124,10 @@ function App() {
     handlePrestigeRef.current = prestigeReset.handlePrestige;
     // eslint-disable-next-line react-hooks/refs
     handlePrestigeCalcRef.current = prestigeReset.calcPrestigePointGain;
+    // eslint-disable-next-line react-hooks/refs
+    negationUpgradesRef.current = negationUpgrades;
+    // eslint-disable-next-line react-hooks/refs
+    apUp1Ref.current = apUp1.isBought;
 
     const [currentTab, setCurrentTab] = useState<string>(() => {
         const saved = localStorage.getItem("currentTab");
@@ -124,7 +139,7 @@ function App() {
 
     function handleSave() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgradesRef.current.generatorUpgrades, voidUnlockRef.current, currentTabRef.current)
+        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgradesRef.current.generatorUpgrades, voidUnlockRef.current, currentTabRef.current, negationUpgradesRef.current, apUp1Ref.current)
         // eslint-disable-next-line react-hooks/immutability
         setToastKey(Date.now())
     }
@@ -293,13 +308,19 @@ function App() {
 
     useKeybinds(handlePrestigeRef, setCurrentTab, gameRef, handleSave);
 
-    function handleNegation() {
+     function handleNegation() {
         if(game.isNegated) {
+            //wyjscie z negacji
             setCurrentTab("PureTree");
             handleVoidRef.current()
             game.setIsNegated(false);
+
         } else {
-            game.setAntyPoint(new Decimal(0))
+            // wejscie
+            negationUpgrades.resetUpgrades()
+            apUp1.isBought = false
+            game.setAntyPoint(new Decimal(10))
+            game.setGlobalPointAddition(new Decimal(0))
             game.setIsNegated(true);
             setCurrentTab("NegationTree");
         }
@@ -311,16 +332,63 @@ function App() {
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
             <section className="MainTab">
-                {currentTab === "MainTree" && <PointTree game={game} upgrades={pointUpgrades} stats={stats} handlePrestigeRef={handlePrestigeRef} isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode} pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom} pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX} pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY} handlePrestigeCalcRef={handlePrestigeCalcRef}/> }
-                {currentTab === "PrestigeTree" && <PrestigeTree game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats} presTreePosZoom={presTreePosZoom} setPresTreePosZoom={setPresTreePosZoom} presTreePosX={presTreePosX} setPresTreePosX={setPresTreePosX} presTreePosY={presTreePosY} setPresTreePosY={setPresTreePosY} handlePrestigeRef={handlePrestigeRef} generatorUpgrades={generatorUpgrades} handleVoidRef={handleVoidRef} setCurrentTab={setCurrentTab} voidReset={voidReset}/>  }
-                {currentTab === "Achievements" && <AchievementsTab achievements={achievementsHook.achievements} />}
-                {currentTab === "Statistics" && <StatisticsTab stats={stats} />}
-                {currentTab === "Settings" && <SettingsTab onSave={handleSave} game={game} />}
-                {currentTab === "Automation" && <AutomationTab game={game} stats={stats} prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades} autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
-                {currentTab === "Generator" && <GeneratorTab game={game} stats={stats} generatorStart={generatorStart} generatorUpgrades={generatorUpgrades}/>}
+                {currentTab === "MainTree" && <PointTree
+                    game={game} upgrades={pointUpgrades} stats={stats}
+                    handlePrestigeRef={handlePrestigeRef}
+                    isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode}
+                    pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom}
+                    pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX}
+                    pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY}
+                    handlePrestigeCalcRef={handlePrestigeCalcRef}/> }
+
+                {currentTab === "PrestigeTree" && <PrestigeTree
+                    game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}
+                    presTreePosZoom={presTreePosZoom} setPresTreePosZoom={setPresTreePosZoom}
+                    presTreePosX={presTreePosX} setPresTreePosX={setPresTreePosX}
+                    presTreePosY={presTreePosY} setPresTreePosY={setPresTreePosY}
+                    handlePrestigeRef={handlePrestigeRef}
+                    generatorUpgrades={generatorUpgrades}
+                    handleVoidRef={handleVoidRef}
+                    setCurrentTab={setCurrentTab}
+                    voidReset={voidReset}/>  }
+
+                {currentTab === "Achievements" && <AchievementsTab
+                    achievements={achievementsHook.achievements} />}
+
+                {currentTab === "Statistics" && <StatisticsTab
+                    stats={stats} />}
+
+                {currentTab === "Settings" && <SettingsTab
+                    onSave={handleSave} game={game} />}
+
+                {currentTab === "Automation" && <AutomationTab
+                    game={game} stats={stats}
+                    prestigeOneTimeUpgrades={prestigeUpgrades.oneTimeUpgrades} setPrestigeOneTimeUpgrades={prestigeUpgrades.setOneTimeUpgrades}
+                    autoEnabled={autoEnabled} setAutoGroup={setAutoGroup} />}
+
+                {currentTab === "Generator" && <GeneratorTab
+                    game={game} stats={stats}
+                    generatorStart={generatorStart} generatorUpgrades={generatorUpgrades}/>}
+
                 {currentTab === "VoidTree" && <VoidTree/>}
-                {currentTab === "PureTree" && <PureTree game={game} handleNegation={handleNegation} />}
-                {currentTab === "NegationTree" && <NegationTree game={game} handleNegation={handleNegation} />}
+
+                {currentTab === "PureTree" && <PureTree
+                    game={game} handleNegation={handleNegation} />}
+
+                {currentTab === "NegationTree" && <NegationTree
+                    game={game} upgrades={negationUpgrades} stats={stats}
+                    isBuyMaxMode={isBuyMaxMode} setIsBuyMaxMode={setIsBuyMaxMode}
+                    negationTreePosZoom={negTreePosZoom} setNegationTreePosZoom={setNegTreePosZoom}
+                    negationTreePosX={negTreePosX} setNegationTreePosX={setNegTreePosX}
+                    negationTreePosY={negTreePosY} setNegationTreePosY={setNegTreePosY}
+                    handleNegation={handleNegation}/>}
+
+                {currentTab === "VoidMilestones" && <VoidMilestones
+                    game={game}
+                    voidMilestonesPosZoom={negTreePosZoom} setVoidMilestonesPosZoom={setNegTreePosZoom}
+                    voidMilestonesPosX={negTreePosX} setVoidMilestonesPosX={setNegTreePosX}
+                    voidMilestonesPosY={negTreePosY} setVoidMilestonesPosY={setNegTreePosY}
+                />}
             </section>
 
             {toastKey !== null && <div key={toastKey} className="save-toast">Game saved...</div>}

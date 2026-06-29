@@ -71,6 +71,7 @@ export class Game {
     voidPointMulti
     setVoidPointMulti
 
+
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
                 globalPointAddition: Decimal,
