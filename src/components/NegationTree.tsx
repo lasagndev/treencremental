@@ -1,7 +1,8 @@
 import type {Game} from "../Models/Game.ts";
 import {
     //prestigeUnlock,
-    apUp1} from "../data/negationUpgrades.ts";
+    apUp1, generatorUnlock
+} from "../data/negationUpgrades.ts";
 import {fmt_upgrade} from "../data/pointUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
 import "../styles/NegationTree.css"
@@ -12,6 +13,7 @@ import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 import * as React from "react";
 import type {useNegationUpgrades} from "../Hooks/useNegationUpgrades.ts";
+
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
 const SIURY_IDS = new Set([501, 502])
@@ -263,7 +265,7 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
     }
 
     // Build id → position lookup for SVG line drawing
-    const posById: Record<number, UpgradePosition> = { [apUp1.id]: apUp1.position }
+    const posById: Record<number, UpgradePosition> = { [apUp1.id]: apUp1.position, [generatorUnlock.id]: generatorUnlock.position, }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
     oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
     //posById[prestigeUnlock.id] = prestigeUnlock.position
@@ -413,6 +415,14 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
 
 
     const { width, height } = containerSize
+
+    function buyGeneratorUnlock() {
+        game.setAntyPoint(n => n.minus(generatorUnlock.price))
+        generatorUnlock.effect(game)
+        console.log(game.canShowGenerator)
+        generatorUnlock.isBought = true
+    }
+
     return (
         <section
             className="negationTree"
@@ -435,6 +445,8 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
             {/*    } PP*/}
             {/*    </button>*/}
             {/*)}*/}
+
+
 
             {game.globalPointAddition.gt(0) && <section className={"negationTreeCurrencyBar"}>
                 <p onClick={() => {handleNegation()}}>SKIBIDI</p>
@@ -485,6 +497,18 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
                     {apUp1.description}
                     <br/>
                     Price: {apUp1.price.toFixed(0)}
+                </button>
+
+                <button
+                    id={"generatorUnlock"}
+                    className={`upgradeButton ${oneTimeClass(generatorUnlock)}`}
+                    style={getUpgradeStyle(generatorUnlock.position)}
+                    onClick={() => buyGeneratorUnlock()}
+                    disabled={generatorUnlock.isBought || generatorUnlock.price.gt(game.antyPoint)}>
+                    <p className={"upgradeId"}>{generatorUnlock.id}</p>
+                    {generatorUnlock.description}
+                    <br/>
+                    Price: {fmt(generatorUnlock.price)}
                 </button>
 
                 {/*{(game.point.gte(1e10) || prestigeUnlock.isBought) &&*/}

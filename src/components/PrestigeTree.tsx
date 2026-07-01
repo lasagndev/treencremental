@@ -50,11 +50,10 @@ interface PrestigeTreeProps {
     setPresTreePosY: Dispatch<SetStateAction<number>>
     handlePrestigeRef: RefObject<() => void>
     handleVoidRef: RefObject<() => void>
-    setCurrentTab: React.Dispatch<React.SetStateAction<string>>
     voidReset: ReturnType<typeof useVoidReset>
 }
 
-const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, setCurrentTab, voidReset }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, voidReset }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
@@ -318,7 +317,7 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, s
     }
 
     function buyVoidUnlock() {
-        voidReset.buyVoidUnlock(voidPointFormula, setCurrentTab)
+        voidReset.buyVoidUnlock(voidPointFormula)
     }
 
     function handleVoidPoints() {

@@ -29,8 +29,9 @@ import NegationTree from "./components/NegationTree.tsx";
 import { useVoidReset } from "./Hooks/useVoidReset.ts";
 import {usePrestigeReset} from "./Hooks/usePrestigeReset.ts";
 import {useNegationUpgrades} from "./Hooks/useNegationUpgrades.ts";
-import {apUp1} from "./data/negationUpgrades.ts";
+import {apUp1, generatorUnlock} from "./data/negationUpgrades.ts";
 import VoidMilestones from "./components/VoidMilestones.tsx";
+import Degenerator from "./components/Degenerator.tsx";
 //import negationTree from "./components/NegationTree.tsx";
 
 
@@ -45,7 +46,7 @@ function App() {
     const prestigeReset = usePrestigeReset(game, stats, pointUpgrades, generatorUpgrades);
     const handlePrestigeRef = useRef(prestigeReset.handlePrestige);
     const handlePrestigeCalcRef = useRef(prestigeReset.calcPrestigePointGain)
-    const negationUpgrades = useNegationUpgrades(game);
+    const negationUpgrades = useNegationUpgrades();
 
     const voidReset = useVoidReset(game, stats, pointUpgrades, prestigeUpgrades, generatorUpgrades, handlePrestigeRef, handleNegation);
     const handleVoidRef = useRef<() => void>(() => {});
@@ -317,8 +318,10 @@ function App() {
 
         } else {
             // wejscie
+            handleVoidRef.current()
             negationUpgrades.resetUpgrades()
             apUp1.isBought = false
+            generatorUnlock.isBought = false
             game.setAntyPoint(new Decimal(10))
             game.setGlobalPointAddition(new Decimal(0))
             game.setIsNegated(true);
@@ -349,7 +352,6 @@ function App() {
                     handlePrestigeRef={handlePrestigeRef}
                     generatorUpgrades={generatorUpgrades}
                     handleVoidRef={handleVoidRef}
-                    setCurrentTab={setCurrentTab}
                     voidReset={voidReset}/>  }
 
                 {currentTab === "Achievements" && <AchievementsTab
@@ -383,11 +385,10 @@ function App() {
                     negationTreePosY={negTreePosY} setNegationTreePosY={setNegTreePosY}
                     handleNegation={handleNegation}/>}
 
+                {currentTab === "Degenerator" && <Degenerator/>}
+
                 {currentTab === "VoidMilestones" && <VoidMilestones
                     game={game}
-                    voidMilestonesPosZoom={negTreePosZoom} setVoidMilestonesPosZoom={setNegTreePosZoom}
-                    voidMilestonesPosX={negTreePosX} setVoidMilestonesPosX={setNegTreePosX}
-                    voidMilestonesPosY={negTreePosY} setVoidMilestonesPosY={setNegTreePosY}
                 />}
             </section>
 

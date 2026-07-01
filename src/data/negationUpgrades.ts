@@ -12,6 +12,18 @@ export const apUp1: IOneTimeUpgrade = {
     }
 }
 
+export const generatorUnlock: IOneTimeUpgrade = {
+    id: 301,
+    parentId: 1,
+    position: { x: -0, y: 1 },
+    description: "Unlock generator",
+    price: new Decimal(15),
+    isBought: (() => { try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; } })() || false,
+    effect: (game) => {
+        game.setCanShowGenerator(true)
+    }
+}
+
 function fmtExp(n: Decimal, d: number): string {
     const s = n.toExponential(d).replace('e+', 'e')
     const [mantissa, exp] = s.split('e')

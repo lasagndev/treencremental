@@ -9,16 +9,15 @@ import {
 
 } from "../data/negationUpgrades.ts";
 import Decimal from "break_eternity.js";
-import type {Game} from "../Models/Game.ts";
 
 const defaultNegationOneTime: IOneTimeUpgrade[] = [
-    apUp201,
+    apUp201
 ];
 export const defaultNegationBuyable: IBuyableUpgrade[] = [
-    apUp101,
+    apUp101
 ];
 
-export function useNegationUpgrades(game: Game) {
+export function useNegationUpgrades() {
     const [oneTimeUpgrades, setOneTimeUpgrades] = useState<IOneTimeUpgrade[]>(() => {
         try {
             const saved = JSON.parse(localStorage.getItem("negationUpgrades") || "null");
@@ -47,7 +46,7 @@ export function useNegationUpgrades(game: Game) {
                 return defaultNegationBuyable.map(u => {
                     const s = map.get(u.id);
                     const currentAmount = s !== undefined ? new Decimal(s.currentAmount) : u.currentAmount;
-                    const maxAmount = s?.maxAmount ?? u.maxAmount + game.pointUpgradesBonusMaxAmount ;
+                    const maxAmount = s?.maxAmount ?? u.maxAmount;
                     const price = u.calcPrice
                         ? u.calcPrice({ ...u, currentAmount })
                         : u.price.times(u.priceMultiplier.pow(currentAmount));
@@ -69,7 +68,7 @@ export function useNegationUpgrades(game: Game) {
                 const defaultUpgrade = defaultNegationBuyable.find(d => d.id === u.id)!;
                 return {
                     ...defaultUpgrade,
-                    maxAmount: defaultUpgrade.maxAmount + game.pointUpgradesBonusMaxAmount
+                    maxAmount: defaultUpgrade.maxAmount
                 };
             })
         );
