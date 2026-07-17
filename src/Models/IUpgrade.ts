@@ -1,5 +1,6 @@
 ﻿import type { Game } from "./Game.ts";
 import type Decimal from "break_eternity.js";
+import type {IDegenerator} from "./IDegenerator.ts";
 
 export interface UpgradePosition {
     x: number;
@@ -49,4 +50,13 @@ export interface IUnlockUpgrade {
     isBought: boolean ;
     unlocks: string;
     effect: (game: Game) => void;
+}
+
+export interface IDegeneratorUpgrade {
+    id: number;
+    description: string;
+    price: Decimal;
+    priceMultiplier: Decimal;
+    currentAmount: Decimal;
+    effect: (degenerator: IDegenerator) => Partial<IDegenerator>
 }

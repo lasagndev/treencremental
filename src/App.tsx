@@ -32,6 +32,7 @@ import {useNegationUpgrades} from "./Hooks/useNegationUpgrades.ts";
 import {apUp1, generatorUnlock} from "./data/negationUpgrades.ts";
 import VoidMilestones from "./components/VoidMilestones.tsx";
 import Degenerator from "./components/Degenerator.tsx";
+import {useDegenerators} from "./Hooks/useDegenerators.ts";
 //import negationTree from "./components/NegationTree.tsx";
 
 
@@ -40,7 +41,8 @@ function App() {
     const stats = useStatistics();
     const prestigeUpgrades = usePrestigeUpgrades();
     const generatorUpgrades = useGeneratorUpgrades()
-    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades, prestigeUpgrades.oneTimeUpgrades, generatorUpgrades.generatorUpgrades);
+    const degenerators = useDegenerators()
+    const game = useGameLoop(stats, prestigeUpgrades.buyableUpgrades, prestigeUpgrades.oneTimeUpgrades, generatorUpgrades.generatorUpgrades, degenerators.degenerators, degenerators.setDegenerators);
     const pointUpgrades = usePointUpgrades(game);
     const achievementsHook = useAchievements();
     const prestigeReset = usePrestigeReset(game, stats, pointUpgrades, generatorUpgrades);
@@ -93,6 +95,7 @@ function App() {
     const checkAchievementsRef = useRef(achievementsHook.checkAchievements);
     const voidUnlockRef = useRef(voidUnlock.isBought)
     const generatorUpgradesRef = useRef(generatorUpgrades)
+    const degeneratorsRef = useRef(degenerators)
     const negationUpgradesRef = useRef(negationUpgrades)
     const apUp1Ref = useRef(apUp1.isBought);
 
@@ -120,6 +123,8 @@ function App() {
     // eslint-disable-next-line react-hooks/refs
     generatorUpgradesRef.current = generatorUpgrades;
     // eslint-disable-next-line react-hooks/refs
+    degeneratorsRef.current = degenerators;
+    // eslint-disable-next-line react-hooks/refs
     handleVoidRef.current = voidReset.handleVoid
     // eslint-disable-next-line react-hooks/refs
     handlePrestigeRef.current = prestigeReset.handlePrestige;
@@ -140,7 +145,7 @@ function App() {
 
     function handleSave() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgradesRef.current.generatorUpgrades, voidUnlockRef.current, currentTabRef.current, negationUpgradesRef.current, apUp1Ref.current)
+        useSaveSystem(gameRef.current, statsRef.current, pointUpgradesRef.current, prestigeUpgradesRef.current, pUp1Ref.current, ppUp1Ref.current, prestigeUnlockRef.current, achievementsRef.current, generatorUpgradesRef.current.generatorUpgrades, voidUnlockRef.current, currentTabRef.current, negationUpgradesRef.current, apUp1Ref.current, degeneratorsRef.current.degenerators)
         // eslint-disable-next-line react-hooks/immutability
         setToastKey(Date.now())
     }
@@ -324,6 +329,7 @@ function App() {
             generatorUnlock.isBought = false
             game.setAntyPoint(new Decimal(10))
             game.setGlobalPointAddition(new Decimal(0))
+            degenerators.resetDegenerators()
             game.setIsNegated(true);
             setCurrentTab("NegationTree");
         }
@@ -385,7 +391,8 @@ function App() {
                     negationTreePosY={negTreePosY} setNegationTreePosY={setNegTreePosY}
                     handleNegation={handleNegation}/>}
 
-                {currentTab === "Degenerator" && <Degenerator/>}
+                {currentTab === "Degenerator" && <Degenerator
+                    game={game} degenerator={degenerators}/>}
 
                 {currentTab === "VoidMilestones" && <VoidMilestones
                     game={game}

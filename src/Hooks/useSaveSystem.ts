@@ -2,12 +2,13 @@ import type {Game} from "../Models/Game.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import type {Statistics} from "../Models/Statistics.ts";
 import type {IAchievement} from "../Models/IAchievement.ts";
+import type {IDegenerator} from "../Models/IDegenerator.ts";
 
 const SAVE_KEYS = [
     "game", "upgrades", "prestigeUpgrades",
     "pUp1", "prestigeUnlock", "ppUp1", "ppUp301",
     "stats", "achievements",
-    "generatorUpgrades", "generatorStart",
+    "generatorUpgrades", "generatorStart", "degenerators",
     "voidUnlock", "currentTab", "negationUpgrades", "apUp1"
 ] as const;
 
@@ -61,7 +62,8 @@ export function useSaveSystem(
     voidUnlock: boolean,
     currentTab: string,
     aupgrades: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[] },
-    apUp1: boolean
+    apUp1: boolean,
+    degenerators: IDegenerator[]
 ) {
     localStorage.setItem("game", JSON.stringify({
         point: game.point.toString(),
@@ -86,6 +88,7 @@ export function useSaveSystem(
         canShowVoidTree: game.canShowVoidTree,
         purePoint: game.purePoint.toString(),
         voidPointMulti: game.voidPointMulti.toString(),
+        globalPointLossMultiplier: game.globalPointLossMultiplier.toString(),
         //pointUpgradesBonusMaxAmount: game.pointUpgradesBonusMaxAmount.toString(),
     }));
 
@@ -121,6 +124,18 @@ export function useSaveSystem(
     ));
     localStorage.setItem("generatorUpgrades", JSON.stringify(
         generatorUpgrades.map(u => ({ id: u.id, currentAmount: u.currentAmount.toString() }))
+    ));
+    localStorage.setItem("degenerators", JSON.stringify(
+        degenerators.map(d => ({
+            id: d.id,
+            amount: d.amount.toString(),
+            multiplier: d.multiplier.toString(),
+            start: d.start,
+            interval: d.interval,
+            amountUpgrade: { currentAmount: d.amountUpgrade.currentAmount.toString(), price: d.amountUpgrade.price.toString() },
+            intervalUpgrade: { currentAmount: d.intervalUpgrade.currentAmount.toString(), price: d.intervalUpgrade.price.toString() },
+            multiplierUpgrade: { currentAmount: d.multiplierUpgrade.currentAmount.toString(), price: d.multiplierUpgrade.price.toString() },
+        }))
     ));
     localStorage.setItem("currentTab", currentTab);
 

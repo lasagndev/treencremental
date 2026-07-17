@@ -1,0 +1,336 @@
+/* ── Layout ───────────────────────────────────────────────── */
+
+.degenerator-tab {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+
+.degenerator-tab__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #d0d0d0;
+    text-shadow: 0 0 24px rgba(160, 40, 255, 0.5);
+}
+
+.degenerator-tab__header-icon {
+    font-size: 28px;
+    display: inline-block;
+    animation: degen-flash 2.4s ease-in-out infinite;
+}
+
+@keyframes degen-flash {
+    0%, 100% { opacity: 1;   filter: drop-shadow(0 0 4px rgba(180, 40, 255, 0.6)); }
+    50%       { opacity: 0.6; filter: drop-shadow(0 0 12px rgba(220, 80, 255, 1)); }
+}
+
+/* ── Currency info bar ────────────────────────────────────── */
+
+.degeneratorCurrencyBar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #0e0016;
+    border: 1px solid #22003a;
+    border-radius: 6px;
+    padding: 8px 14px;
+    align-self: flex-start;
+    min-width: 220px;
+    min-height: 20px;
+}
+
+.degeneratorCurrencyBar p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #7030a0;
+}
+
+/* ── Progress bar wrapper ─────────────────────────────────── */
+
+.degenerator-bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ── Bar track ────────────────────────────────────────────── */
+
+.degenerator-bar {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(160, 40, 255, 0.2);
+    overflow: hidden;
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(160, 40, 255, 0.06);
+}
+
+/* ── Fill ─────────────────────────────────────────────────── */
+
+.degenerator-bar__fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(
+        90deg,
+        rgba(100, 0, 200, 0.7) 0%,
+        rgba(160, 20, 255, 0.85) 60%,
+        rgba(220, 80, 255, 0.95) 100%
+    );
+    border-radius: 12px;
+    box-shadow: 4px 0 24px rgba(180, 40, 255, 0.6);
+}
+
+/* ── Current mode ─────────────────────────────────────────── */
+
+.degenerator-bar--current {
+    border-color: rgba(200, 60, 255, 0.35);
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(180, 40, 255, 0.15),
+        0 0 0 1px rgba(180, 40, 255, 0.08);
+}
+
+.degenerator-bar--current .degenerator-bar__fill {
+    width: 100%;
+    border-radius: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(118, 8, 215, 0.82)  0px,
+        rgba(168, 26, 252, 0.91) 90px,
+        rgba(118, 8, 215, 0.82)  180px
+    );
+    box-shadow: none;
+    animation: degen-current-flow 3.5s linear infinite;
+}
+
+@keyframes degen-current-flow {
+    from { background-position: 0     0; }
+    to   { background-position: 180px 0; }
+}
+
+/* ── Shimmer travelling across the fill ──────────────────── */
+
+.degenerator-bar__shimmer {
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 100%
+    );
+    animation: degenerator-shimmer 2s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes degenerator-shimmer {
+    from { left: -40%; }
+    to   { left: 110%; }
+}
+
+/* ── Label centered in the bar ────────────────────────────── */
+
+.degenerator-bar__label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(240, 200, 255, 0.85);
+    text-shadow: 0 0 8px rgba(160, 20, 255, 0.8);
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+/* ── Tick marks ───────────────────────────────────────────── */
+
+.degenerator-bar__ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+}
+
+.degenerator-bar__tick {
+    width: 1px;
+    height: 6px;
+    background: rgba(160, 40, 255, 0.25);
+    border-radius: 1px;
+}
+
+/* ── Time labels ──────────────────────────────────────────── */
+
+.degenerator-bar__time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+    padding: 0 2px;
+}
+
+/* ── Degenerator list ─────────────────────────────────────── */
+
+.degenerator-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.degenerator-card {
+    position: relative;
+    border-radius: 14px;
+    padding: 20px 22px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(160, 40, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.degenerator-card__header {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c080ff;
+}
+
+/* ── Compact per-card bar ─────────────────────────────────── */
+
+.degenerator-bar-wrapper--card {
+    gap: 4px;
+}
+
+.degenerator-bar-wrapper--card .degenerator-bar {
+    height: 30px;
+    border-radius: 8px;
+}
+
+.degenerator-bar-wrapper--card .degenerator-bar__fill {
+    border-radius: 8px;
+}
+
+.degenerator-bar-wrapper--card .degenerator-bar__label {
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.degenerator-card__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px 16px;
+    font-size: 12px;
+    color: #9060c0;
+}
+
+.degenerator-card__stats span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .degenerator-card__stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Per-degenerator upgrades ─────────────────────────────── */
+
+.degenerator-card__upgrades {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 640px) {
+    .degenerator-card__upgrades {
+        grid-template-columns: 1fr;
+    }
+}
+
+.degenerator-upgrade-card--maxed {
+    border-color: rgba(200, 60, 255, 0.4) !important;
+    background: rgba(200, 60, 255, 0.04) !important;
+    box-shadow: 0 0 0 1px rgba(200, 60, 255, 0.1) !important;
+}
+
+.degenerator-upgrade-card__maxed-badge {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: rgba(200, 60, 255, 0.1);
+    border: 1px solid rgba(200, 60, 255, 0.35);
+    color: #d060ff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.degenerator-upgrade-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(160, 40, 255, 0.1);
+}
+
+.degenerator-upgrade-card__desc {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.degenerator-upgrade-card__btn {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(100, 0, 200, 0.25), rgba(160, 20, 255, 0.2));
+    border: 1px solid rgba(160, 40, 255, 0.4);
+    color: #c080ff;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.degenerator-upgrade-card__btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(100, 0, 200, 0.45), rgba(160, 20, 255, 0.4));
+    box-shadow: 0 0 16px rgba(160, 40, 255, 0.4);
+    color: #e0c0ff;
+}
+
+.degenerator-upgrade-card__btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+}

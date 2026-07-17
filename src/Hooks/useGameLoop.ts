@@ -5,6 +5,7 @@ import type {Statistics} from "../Models/Statistics.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {defaultPrestigeBuyable, defaultPrestigeOneTime} from "./usePrestigeUpgrades.ts";
 import {defaultPointBuyable} from "./usePointUpgrades.ts";
+import type {IDegenerator} from "../Models/IDegenerator.ts";
 
 function calcPrestigeExponentBonus(): Decimal {
     let bonus = new Decimal(1);
@@ -43,7 +44,7 @@ function loadSaved() {
     }
 }
 
-export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[], prestigeOneTimeUpgrades: IOneTimeUpgrade[], generatorUpgrades: IBuyableUpgrade[]) {
+export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyableUpgrade[], prestigeOneTimeUpgrades: IOneTimeUpgrade[], generatorUpgrades: IBuyableUpgrade[], degenerators: IDegenerator[], setDegenerators: React.Dispatch<React.SetStateAction<IDegenerator[]>>) {
     const [point, setPoint] = useState<Decimal>(() => {
         const s = loadSaved();
         return s?.point ? new Decimal(s.point as string) : new Decimal(10);
@@ -205,6 +206,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         return s?.voidPointMulti ? new Decimal(s.voidPointMulti as string) : new Decimal(1);
     });
 
+    const [globalPointLossMultiplier, setGlobalPointLossMultiplier] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.globalPointLossMultiplier ? new Decimal(s.globalPointLossMultiplier as string) : new Decimal(1);
+    });
+
     const game = new Game(
         point, setPoint,
         bonusPoints, setBonusPoints,
@@ -232,6 +238,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         canShowVoidTree, setCanShowVoidTree,
         purePoint, setPurePoint,
         voidPointMulti, setVoidPointMulti,
+        globalPointLossMultiplier, setGlobalPointLossMultiplier,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);
@@ -242,6 +249,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
     const prestigePointRef = useRef(prestigePoint);
     const prestigeUpgradesRef = useRef(prestigeBuyableUpgrades);
     const generatorDurationRef = useRef(generatorDuration);
+    const degeneratorsRef = useRef(degenerators);
     const peMultiRef = useRef(peMulti);
     const canShowGeneratorRef = useRef(canShowGenerator);
     const prestigeEnergyRef = useRef(prestigeEnergy);
@@ -259,12 +267,13 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         prestigePointRef.current = prestigePoint;
         prestigeUpgradesRef.current = prestigeBuyableUpgrades;
         generatorDurationRef.current = generatorDuration;
+        degeneratorsRef.current = degenerators;
         peMultiRef.current = peMulti;
         canShowGeneratorRef.current = canShowGenerator;
         prestigeEnergyRef.current = prestigeEnergy;
         peBoostToPRef.current = peBoostToP;
         isNegatedRef.current = isNegated;
-    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, peMulti, canShowGenerator, prestigeEnergy, peBoostToP, prestigePoint, isNegated]);
+    }, [bonusPoints, globalPointMultiplier, globalPointExponent, globalMultiplierMultiplier, point, prestigeBuyableUpgrades, generatorDuration, degenerators, peMulti, canShowGenerator, prestigeEnergy, peBoostToP, prestigePoint, isNegated]);
 
     useEffect(() => {
         const skibidi = setInterval(() => {
@@ -317,6 +326,39 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
             } else {
                 const antyPointsPerTick = globalPointAdditionRef.current.times(globalPointMultiplierRef.current).times(dynamicPointMulti).pow(globalPointExponentRef.current).dividedBy(25);
                 setAntyPoint(prev => prev.plus(antyPointsPerTick.times(tickMultiplier)));
+
+                // degenerator działanie — chain production, like Antimatter Dimensions:
+                // each degenerator feeds the amount of the one below it, the first one feeds bonusPoints.
+                // Below 500ms interval ("current" mode) production trickles in smoothly every tick,
+                // same as the generator; above that it's granted as a lump sum each time the bar fills.
+                const degs = degeneratorsRef.current;
+                if (degs.length > 0) {
+                    const productions: Decimal[] = [];
+                    const newStarts: number[] = [];
+
+                    for (const d of degs) {
+                        const clampedInterval = Math.max(d.interval, 40);
+                        if (clampedInterval <= 500) {
+                            productions.push(d.amount.times(d.multiplier).times(40).dividedBy(clampedInterval).times(tickMultiplier));
+                            newStarts.push(d.start);
+                        } else if (now - d.start >= clampedInterval) {
+                            const missedTicks = Math.floor((now - d.start) / clampedInterval);
+                            productions.push(d.amount.times(d.multiplier).times(missedTicks));
+                            newStarts.push(d.start + missedTicks * clampedInterval);
+                        } else {
+                            productions.push(new Decimal(0));
+                            newStarts.push(d.start);
+                        }
+                    }
+
+                    setBonusPoints(prev => prev.plus(productions[0]));
+
+                    setDegenerators(prev => prev.map((d, idx) => {
+                        const feederIdx = idx + 1;
+                        const gain = feederIdx < productions.length ? productions[feederIdx] : new Decimal(0);
+                        return { ...d, amount: d.amount.plus(gain), start: newStarts[idx] };
+                    }));
+                }
             }
 
 

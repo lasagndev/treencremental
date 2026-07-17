@@ -71,6 +71,9 @@ export class Game {
     voidPointMulti
     setVoidPointMulti
 
+    globalPointLossMultiplier
+    setGlobalPointLossMultiplier
+
 
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
@@ -128,6 +131,9 @@ export class Game {
 
                 voidPointMulti: Decimal,
                 setVoidPointMulti: React.Dispatch<React.SetStateAction<Decimal>>,
+
+                globalPointLossMultiplier: Decimal,
+                setGlobalPointLossMultiplier: React.Dispatch<React.SetStateAction<Decimal>>,
         ) {
 
         this.point = point;
@@ -182,5 +188,7 @@ export class Game {
         this.setPurePoint = setPurePoint;
         this.voidPointMulti = voidPointMulti;
         this.setVoidPointMulti = setVoidPointMulti;
+        this.globalPointLossMultiplier = globalPointLossMultiplier;
+        this.setGlobalPointLossMultiplier = setGlobalPointLossMultiplier;
     }
 }

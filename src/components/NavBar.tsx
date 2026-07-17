@@ -71,7 +71,7 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                 <button
                     className={currentTab === "Degenerator" ? "navTab--active" : ""}
                     onClick={() => setCurrentTab("Degenerator")}>
-                    Generator
+                    Degenerator
                  </button>
                 </>
             }
