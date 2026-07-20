@@ -29,7 +29,7 @@ import NegationTree from "./components/NegationTree.tsx";
 import { useVoidReset } from "./Hooks/useVoidReset.ts";
 import {usePrestigeReset} from "./Hooks/usePrestigeReset.ts";
 import {useNegationUpgrades} from "./Hooks/useNegationUpgrades.ts";
-import {apUp1, generatorUnlock} from "./data/negationUpgrades.ts";
+import {apUp1} from "./data/negationUpgrades.ts";
 import VoidMilestones from "./components/VoidMilestones.tsx";
 import Degenerator from "./components/Degenerator.tsx";
 import {useDegenerators} from "./Hooks/useDegenerators.ts";
@@ -309,6 +309,20 @@ function App() {
         return () => clearInterval(id);
     }, []);
 
+    const canShowDegeneratorsRef = useRef(game.canShowDegenerators);
+    useEffect(() => {
+        game.canShowDegenerators.forEach((show, i) => {
+            if (show && !canShowDegeneratorsRef.current[i]) {
+                degeneratorsRef.current.setDegenerators(prev => prev.map((d, idx) => idx === i ? {
+                    ...d,
+                    amount: d.amount.plus(1),
+                    boughtAmount: d.boughtAmount.plus(1),
+                } : d));
+            }
+        });
+        canShowDegeneratorsRef.current = game.canShowDegenerators;
+    }, [game.canShowDegenerators]);
+
     const [toastKey, setToastKey] = useState<number | null>(null);
 
 
@@ -326,10 +340,11 @@ function App() {
             handleVoidRef.current()
             negationUpgrades.resetUpgrades()
             apUp1.isBought = false
-            generatorUnlock.isBought = false
             game.setAntyPoint(new Decimal(10))
             game.setGlobalPointAddition(new Decimal(0))
             degenerators.resetDegenerators()
+            game.setCanShowDegenerators(prev => prev.map((v, i) => i  ? false : v))
+            game.setCanShowDegenerators(prev => prev.map((v, i) => i === 0 ? false : v))
             game.setIsNegated(true);
             setCurrentTab("NegationTree");
         }

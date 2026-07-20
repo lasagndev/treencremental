@@ -4,6 +4,7 @@ import Decimal from "break_eternity.js";
 const deg1: IDegenerator = {
     id: 1,
     amount: new Decimal(0),
+    boughtAmount: new Decimal(0),
     multiplier: new Decimal(1),
     start: 1,
     interval: 5000,
@@ -13,9 +14,15 @@ const deg1: IDegenerator = {
         price: new Decimal(2),
         priceMultiplier: new Decimal(12),
         currentAmount: new Decimal(0),
-        effect: (deg) => ({
-            amount: deg.amount.plus(1)
-        })
+        effect: (deg) => {
+            const boughtAmount = deg.boughtAmount.plus(1);
+            const multiplier = boughtAmount.mod(10).eq(0) ? deg.multiplier.times(2) : deg.multiplier;
+            return {
+                amount: deg.amount.plus(1),
+                boughtAmount,
+                multiplier,
+            };
+        }
     },
     intervalUpgrade: {
         id: 2,
@@ -43,6 +50,7 @@ const deg1: IDegenerator = {
 const deg2: IDegenerator = {
     id: 2,
     amount: new Decimal(0),
+    boughtAmount: new Decimal(0),
     multiplier: new Decimal(1),
     start: 1,
     interval: 10000,
@@ -52,9 +60,15 @@ const deg2: IDegenerator = {
         price: new Decimal(2),
         priceMultiplier: new Decimal(12),
         currentAmount: new Decimal(0),
-        effect: (deg) => ({
-            amount: deg.amount.plus(1)
-        })
+        effect: (deg) => {
+            const boughtAmount = deg.boughtAmount.plus(1);
+            const multiplier = boughtAmount.mod(10).eq(0) ? deg.multiplier.times(2) : deg.multiplier;
+            return {
+                amount: deg.amount.plus(1),
+                boughtAmount,
+                multiplier,
+            };
+        }
     },
     intervalUpgrade: {
         id: 2,
@@ -82,6 +96,7 @@ const deg2: IDegenerator = {
 const deg3: IDegenerator = {
     id: 3,
     amount: new Decimal(0),
+    boughtAmount: new Decimal(0),
     multiplier: new Decimal(1),
     start: 1,
     interval: 20000,
@@ -91,9 +106,15 @@ const deg3: IDegenerator = {
         price: new Decimal(2),
         priceMultiplier: new Decimal(12),
         currentAmount: new Decimal(0),
-        effect: (deg) => ({
-            amount: deg.amount.plus(1)
-        })
+        effect: (deg) => {
+            const boughtAmount = deg.boughtAmount.plus(1);
+            const multiplier = boughtAmount.mod(10).eq(0) ? deg.multiplier.times(2) : deg.multiplier;
+            return {
+                amount: deg.amount.plus(1),
+                boughtAmount,
+                multiplier,
+            };
+        }
     },
     intervalUpgrade: {
         id: 2,
@@ -121,6 +142,7 @@ const deg3: IDegenerator = {
 const deg4: IDegenerator = {
     id: 4,
     amount: new Decimal(0),
+    boughtAmount: new Decimal(0),
     multiplier: new Decimal(1),
     start: 1,
     interval: 30000,
@@ -130,9 +152,15 @@ const deg4: IDegenerator = {
         price: new Decimal(2),
         priceMultiplier: new Decimal(12),
         currentAmount: new Decimal(0),
-        effect: (deg) => ({
-            amount: deg.amount.plus(1)
-        })
+        effect: (deg) => {
+            const boughtAmount = deg.boughtAmount.plus(1);
+            const multiplier = boughtAmount.mod(10).eq(0) ? deg.multiplier.times(2) : deg.multiplier;
+            return {
+                amount: deg.amount.plus(1),
+                boughtAmount,
+                multiplier,
+            };
+        }
     },
     intervalUpgrade: {
         id: 2,
@@ -165,6 +193,7 @@ export function freshDegenerators(): IDegenerator[] {
     return defaultDegenerators.map(d => ({
         ...d,
         amount: new Decimal(d.amount),
+        boughtAmount: new Decimal(d.boughtAmount),
         multiplier: new Decimal(d.multiplier),
         start: Date.now(),
         amountUpgrade: {

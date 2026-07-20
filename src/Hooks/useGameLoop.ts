@@ -137,6 +137,14 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         try { return JSON.parse(localStorage.getItem("ppUp301") ?? "true"); } catch { return true; }
     });
 
+    const [canShowDegenerators, setCanShowDegenerators] = useState<boolean[]>(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem("canShowDegenerators") ?? "null") as boolean[] | null;
+            if (Array.isArray(saved)) return degenerators.map((_, i) => saved[i] ?? false);
+        } catch { /* ignore corrupt saves */ }
+        return degenerators.map(() => false);
+    });
+
     const [generatorDuration, setGeneratorDuration] = useState<number>(() => {
         const s = loadSaved();
         return s?.generatorDuration ? Number(s.generatorDuration as string) : 30000;
@@ -226,6 +234,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         dynamicUpgradeValues, setDynamicUpgradeValues,
         automationInterval, setAutomationInterval,
         canShowGenerator, setCanShowGenerator,
+        canShowDegenerators, setCanShowDegenerators,
         prestigeEnergy, setPrestigeEnergy,
         generatorDuration, setGeneratorDuration,
         peMulti, setPeMulti,

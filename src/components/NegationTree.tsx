@@ -1,7 +1,7 @@
 import type {Game} from "../Models/Game.ts";
 import {
     //prestigeUnlock,
-    apUp1, generatorUnlock
+    apUp1
 } from "../data/negationUpgrades.ts";
 import {fmt_upgrade} from "../data/pointUpgrades.ts";
 import type {IBuyableUpgrade, IOneTimeUpgrade, UpgradePosition} from "../Models/IUpgrade.ts";
@@ -265,7 +265,7 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
     }
 
     // Build id → position lookup for SVG line drawing
-    const posById: Record<number, UpgradePosition> = { [apUp1.id]: apUp1.position, [generatorUnlock.id]: generatorUnlock.position, }
+    const posById: Record<number, UpgradePosition> = { [apUp1.id]: apUp1.position, }
     buyableUpgrades.forEach(u => { posById[u.id] = u.position })
     oneTimeUpgrades.forEach(u => { posById[u.id] = u.position })
     //posById[prestigeUnlock.id] = prestigeUnlock.position
@@ -346,8 +346,7 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
         const upg = [...buyableUpgrades, ...oneTimeUpgrades].find(u => u.id === id)
         if (!upg || upg.parentId === undefined) return false
         const { parentId } = upg
-        // direct children of root are never locked
-        if (parentId === apUp1.id) return false
+        if (parentId === apUp1.id) return !apUp1.isBought
         const parentBuyable = buyableUpgrades.find(u => u.id === parentId)
         if (parentBuyable) return parentBuyable.currentAmount.eq(0)
         const parentOneTime = oneTimeUpgrades.find(u => u.id === parentId)
@@ -415,13 +414,6 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
 
 
     const { width, height } = containerSize
-
-    function buyGeneratorUnlock() {
-        game.setAntyPoint(n => n.minus(generatorUnlock.price))
-        generatorUnlock.effect(game)
-        console.log(game.canShowGenerator)
-        generatorUnlock.isBought = true
-    }
 
     return (
         <section
@@ -497,18 +489,6 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
                     {apUp1.description}
                     <br/>
                     Price: {apUp1.price.toFixed(0)}
-                </button>
-
-                <button
-                    id={"generatorUnlock"}
-                    className={`upgradeButton ${oneTimeClass(generatorUnlock)}`}
-                    style={getUpgradeStyle(generatorUnlock.position)}
-                    onClick={() => buyGeneratorUnlock()}
-                    disabled={generatorUnlock.isBought || generatorUnlock.price.gt(game.antyPoint)}>
-                    <p className={"upgradeId"}>{generatorUnlock.id}</p>
-                    {generatorUnlock.description}
-                    <br/>
-                    Price: {fmt(generatorUnlock.price)}
                 </button>
 
                 {/*{(game.point.gte(1e10) || prestigeUnlock.isBought) &&*/}

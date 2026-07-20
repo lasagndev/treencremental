@@ -77,6 +77,7 @@ const Degenerator = ({game, degenerator}: IDegeneratorProps) => {
         if (game.antyPoint.lt(upg.price)) return;
         game.setAntyPoint(n => n.minus(upg.price));
 
+
         degenerator.setDegenerators(prev => prev.map(d => {
             if (d.id !== degId) return d;
             return {
@@ -102,14 +103,14 @@ const Degenerator = ({game, degenerator}: IDegeneratorProps) => {
 
 
             <div className="degenerator-list">
-                {degenerator.degenerators.map(d => (
+                {degenerator.degenerators.filter(d => game.canShowDegenerators[d.id - 1]).map(d => (
                     <div key={d.id} className="degenerator-card">
                         <div className="degenerator-card__header">Degenerator #{d.id}</div>
 
                         <DegeneratorBar d={d} />
 
                         <div className="degenerator-card__stats">
-                            <span>Amount: {fmt(d.amount)}</span>
+                            <span>Amount: {fmt(d.amount)} (Bought: {fmt(d.boughtAmount)})</span>
                             <span>Multiplier: x{fmt_upgrade(d.multiplier)}</span>
                             <span>Interval: {(Math.max(d.interval, 40) / 1000).toFixed(2)}s</span>
                         </div>

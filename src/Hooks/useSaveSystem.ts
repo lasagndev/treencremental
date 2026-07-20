@@ -8,7 +8,7 @@ const SAVE_KEYS = [
     "game", "upgrades", "prestigeUpgrades",
     "pUp1", "prestigeUnlock", "ppUp1", "ppUp301",
     "stats", "achievements",
-    "generatorUpgrades", "generatorStart", "degenerators",
+    "generatorUpgrades", "generatorStart", "degenerators", "canShowDegenerators",
     "voidUnlock", "currentTab", "negationUpgrades", "apUp1"
 ] as const;
 
@@ -129,6 +129,7 @@ export function useSaveSystem(
         degenerators.map(d => ({
             id: d.id,
             amount: d.amount.toString(),
+            boughtAmount: d.boughtAmount.toString(),
             multiplier: d.multiplier.toString(),
             start: d.start,
             interval: d.interval,
@@ -137,6 +138,7 @@ export function useSaveSystem(
             multiplierUpgrade: { currentAmount: d.multiplierUpgrade.currentAmount.toString(), price: d.multiplierUpgrade.price.toString() },
         }))
     ));
+    localStorage.setItem("canShowDegenerators", JSON.stringify(game.canShowDegenerators));
     localStorage.setItem("currentTab", currentTab);
 
     localStorage.setItem("negationUpgrades", JSON.stringify({

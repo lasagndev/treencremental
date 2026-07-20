@@ -37,6 +37,9 @@ export class Game {
     canShowGenerator
     setCanShowGenerator
 
+    canShowDegenerators
+    setCanShowDegenerators
+
     prestigeEnergy
     setPrestigeEnergy
 
@@ -103,6 +106,8 @@ export class Game {
                 setAutomationInterval: React.Dispatch<React.SetStateAction<number>>,
                 canShowGenerator: boolean,
                 setCanShowGenerator: React.Dispatch<React.SetStateAction<boolean>>,
+                canShowDegenerators: boolean[],
+                setCanShowDegenerators: React.Dispatch<React.SetStateAction<boolean[]>>,
                 prestigeEnergy: Decimal,
                 setPrestigeEnergy: React.Dispatch<React.SetStateAction<Decimal>>,
                 generatorDuration: number,
@@ -164,6 +169,8 @@ export class Game {
         this.setAutomationInterval = setAutomationInterval;
         this.canShowGenerator = canShowGenerator;
         this.setCanShowGenerator = setCanShowGenerator;
+        this.canShowDegenerators = canShowDegenerators;
+        this.setCanShowDegenerators = setCanShowDegenerators;
         this.prestigeEnergy = prestigeEnergy;
         this.setPrestigeEnergy = setPrestigeEnergy;
         this.generatorDuration = generatorDuration;

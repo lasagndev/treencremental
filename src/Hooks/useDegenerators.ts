@@ -11,6 +11,7 @@ interface ISavedDegeneratorUpgrade {
 interface ISavedDegenerator {
     id: number;
     amount: string;
+    boughtAmount?: string;
     multiplier: string;
     start: number;
     interval: number;
@@ -32,6 +33,7 @@ function loadDegenerators(): IDegenerator[] {
             return {
                 ...d,
                 amount: new Decimal(s.amount),
+                boughtAmount: s.boughtAmount ? new Decimal(s.boughtAmount) : d.boughtAmount,
                 multiplier: new Decimal(s.multiplier),
                 start: s.start,
                 interval: s.interval,

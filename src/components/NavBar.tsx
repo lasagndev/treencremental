@@ -68,11 +68,13 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                     Negation Tree
                 </button>
 
+                    {game.canShowDegenerators[0] &&
                 <button
                     className={currentTab === "Degenerator" ? "navTab--active" : ""}
                     onClick={() => setCurrentTab("Degenerator")}>
                     Degenerator
                  </button>
+                    }
                 </>
             }
 

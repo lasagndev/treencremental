@@ -5,8 +5,8 @@
     overflow: hidden;
     background-color: #120808;
     background-image:
-            linear-gradient(rgba(255,80,0,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,80,0,0.025) 1px, transparent 1px);
+            linear-gradient(rgba(255,80,0,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,80,0,0.05) 1px, transparent 1px);
     background-size: 40px 40px;
     cursor: grab;
     touch-action: none;
@@ -57,8 +57,8 @@
 }
 
 /* locked */
-.nupgradeLine--locked .nupgradeLine__tube { stroke: #221108; stroke-opacity: 0.8; }
-.nupgradeLine--locked .nupgradeLine__core { stroke: #341c08; }
+.nupgradeLine--locked .nupgradeLine__tube { stroke: #221108; stroke-opacity: 0.8; display: none; }
+.nupgradeLine--locked .nupgradeLine__core { stroke: #341c08; display: none; }
 
 /* default (unlocked, not yet active) */
 .nupgradeLine--default .nupgradeLine__tube { stroke: #502520; stroke-opacity: 0.4; }
@@ -131,6 +131,7 @@
     border-color: #301818;
     color: #ffffff;
     cursor: not-allowed;
+    display: none;
 }
 
 /* ── 2. unaffordable ── */

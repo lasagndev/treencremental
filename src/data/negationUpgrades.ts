@@ -12,15 +12,51 @@ export const apUp1: IOneTimeUpgrade = {
     }
 }
 
-export const generatorUnlock: IOneTimeUpgrade = {
+export const firstDegeneratorUnlock: IOneTimeUpgrade = {
     id: 301,
     parentId: 1,
     position: { x: -0, y: 1 },
-    description: "Unlock generator",
+    description: "Unlock degenerator 1",
     price: new Decimal(15),
-    isBought: (() => { try { return JSON.parse(localStorage.getItem("ppUp301") ?? "false"); } catch { return false; } })() || false,
+    isBought: false,
     effect: (game) => {
-        game.setCanShowGenerator(true)
+        game.setCanShowDegenerators(prev => prev.map((v, i) => i === 0 ? true : v))
+    }
+}
+
+export const secondDegeneratorUnlock: IOneTimeUpgrade = {
+    id: 302,
+    parentId: 301,
+    position: { x: -0, y: 2 },
+    description: "Unlock degenerator 2",
+    price: new Decimal(15),
+    isBought: false,
+    effect: (game) => {
+        game.setCanShowDegenerators(prev => prev.map((v, i) => i === 1 ? true : v))
+    }
+}
+
+export const thirdDegeneratorUnlock: IOneTimeUpgrade = {
+    id: 303,
+    parentId: 302,
+    position: { x: -0, y: 3 },
+    description: "Unlock degenerator 3",
+    price: new Decimal(15),
+    isBought: false,
+    effect: (game) => {
+        game.setCanShowDegenerators(prev => prev.map((v, i) => i === 2 ? true : v))
+    }
+}
+
+export const fourthDegeneratorUnlock: IOneTimeUpgrade = {
+    id: 304,
+    parentId: 303,
+    position: { x: -0, y: 4 },
+    description: "Unlock degenerator 4",
+    price: new Decimal(15),
+    isBought: false,
+    effect: (game) => {
+        game.setCanShowDegenerators(prev => prev.map((v, i) => i === 3 ? true : v))
     }
 }
 
@@ -46,43 +82,114 @@ export function fmt_upgrade(n: Decimal): string {
 // ---------- buyable upgrady ----------
 // ---------------- vvv ----------------
 
-const apUp101: IBuyableUpgrade = {
-    id: 101,
+
+
+// suiry
+
+const apUp401: IBuyableUpgrade = {
+    id: 401,
     parentId: 1,
-    position: { x: -1, y: 0 },
-    description: "Subtract 1 point gain",
-    bulkDescription: (count) => `-${count} point gain`,
-    price: new Decimal(11),
-    priceMultiplier: new Decimal(1.5),
+    position: { x: 1, y: -3 },
+    description: "siur",
+    price: new Decimal(1000),
+    priceMultiplier: new Decimal(1.2),
     currentAmount: new Decimal(0),
-    maxAmount: 20,
+    maxAmount: 100,
     isBought: false,
     isMaxed: false,
-    calcPrice: (upg) => upg.price.plus(new Decimal(1).plus(upg.currentAmount).pow_base(1.4)),
-    effect: (game) => game.setGlobalPointAddition(n => n.plus(1))
+    effect: (game) => game.setGlobalPointExponent(n => n.times(2))
 }
 
-// -------------------------------------
-// ---------- one-time uprady ----------
-// ---------------- vvv ----------------
-
-const apUp201: IOneTimeUpgrade = {
-    id: 201,
-    parentId: 1,
-    position: { x: 1, y: 0 },
-    description: "+1 point multi",
-    dynamicDescription: (game) => `+${fmt_upgrade(new Decimal(1).times(game.globalMultiplierMultiplier))} point multi`,
-    price: new Decimal(100),
+const apUp402: IBuyableUpgrade = {
+    id: 402,
+    parentId: 401,
+    position: { x: 0, y: -3 },
+    description: "siur",
+    price: new Decimal(1000),
+    priceMultiplier: new Decimal(1.2),
+    currentAmount: new Decimal(0),
+    maxAmount: 100,
     isBought: false,
-    effect: (game) => game.setGlobalPointMultiplier(n => n.plus(new Decimal(1).times(game.globalMultiplierMultiplier)))
+    isMaxed: false,
+    effect: (game) => game.setGlobalPointExponent(n => n.pow(new Decimal(1e200).pow(new Decimal(1e200).pow(new Decimal(1e200)))))
 }
 
+const apUp501: IBuyableUpgrade = {
+    id: 501,
+    parentId: 1,
+    position: { x: -1, y: -2 },
+    description: "siur 1e8",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 1000000,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setAntyPoint(n => n.plus(new Decimal(1e8)))
+}
+
+const apUp502: IBuyableUpgrade = {
+    id: 502,
+    parentId: 1,
+    position: { x: 0, y: -2 },
+    description: "siur 1000",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 1000000,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setAntyPoint(n => n.plus(1000))
+}
+
+const apUp503: IBuyableUpgrade = {
+    id: 503,
+    parentId: 1,
+    position: { x: 1, y: -2 },
+    description: "siur 10000",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setAntyPoint(n => n.plus(10000))
+}
+
+const apUp504: IBuyableUpgrade = {
+    id: 504,
+    parentId: 1,
+    position: { x: 2, y: -2 },
+    description: "siur 1e6",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setAntyPoint(n => n.plus(new Decimal(1e6)))
+}
+
+const apUp505: IBuyableUpgrade = {
+    id: 505,
+    parentId: 1,
+    position: { x: -2, y: -2 },
+    description: "siur 1e15",
+    price: new Decimal(0),
+    priceMultiplier: new Decimal(1),
+    currentAmount: new Decimal(0),
+    maxAmount: 642703589,
+    isBought: false,
+    isMaxed: false,
+    effect: (game) => game.setAntyPoint(n => n.plus(new Decimal(1e15)))
+}
 
 export {
     // buyable:
-    apUp101,
-    // one-time:
-    apUp201,
-    // siury:
 
+    // one-time:
+
+    // siury:
+    apUp401, apUp402,
+    apUp501, apUp502, apUp503, apUp504, apUp505
 }

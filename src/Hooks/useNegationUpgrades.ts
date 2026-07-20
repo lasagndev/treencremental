@@ -1,20 +1,27 @@
 import {useState} from "react";
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import {
+    firstDegeneratorUnlock,
+
     // buyable:
-    apUp101,
+    //apUp101,
     // one-time:
-    apUp201,
+    //apUp201,
     // siury:
+    apUp401, apUp402,
+    apUp501, apUp502, apUp503, apUp504, apUp505, secondDegeneratorUnlock, thirdDegeneratorUnlock,
+    fourthDegeneratorUnlock
 
 } from "../data/negationUpgrades.ts";
 import Decimal from "break_eternity.js";
 
 const defaultNegationOneTime: IOneTimeUpgrade[] = [
-    apUp201
+    firstDegeneratorUnlock, secondDegeneratorUnlock, thirdDegeneratorUnlock, fourthDegeneratorUnlock,
+
 ];
 export const defaultNegationBuyable: IBuyableUpgrade[] = [
-    apUp101
+    //apUp101
+    apUp501, apUp502, apUp503, apUp504, apUp505,  apUp401, apUp402
 ];
 
 export function useNegationUpgrades() {

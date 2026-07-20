@@ -4,6 +4,7 @@ import type {IDegeneratorUpgrade} from "./IUpgrade.ts";
 export interface IDegenerator {
     id: number,
     amount: Decimal,
+    boughtAmount: Decimal,
     multiplier: Decimal,
     start: number,
     interval: number,
