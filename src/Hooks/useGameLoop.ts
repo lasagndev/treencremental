@@ -219,6 +219,17 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         return s?.globalPointLossMultiplier ? new Decimal(s.globalPointLossMultiplier as string) : new Decimal(1);
     });
 
+    const [canShowMultiClicker, setCanShowMultiClicker] = useState<boolean>(() => {
+        const s = loadSaved();
+        if (s === null || !("canShowMultiClicker" in s)) return false;
+        return s.canShowMultiClicker === true || s.canShowMultiClicker === "true";
+    });
+
+    const [multiPerClick, setMultiPerClick] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.multiPerClick ? new Decimal(s.multiPerClick as string) : new Decimal(0.01);
+    });
+
     const game = new Game(
         point, setPoint,
         bonusPoints, setBonusPoints,
@@ -248,6 +259,8 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         purePoint, setPurePoint,
         voidPointMulti, setVoidPointMulti,
         globalPointLossMultiplier, setGlobalPointLossMultiplier,
+        canShowMultiClicker, setCanShowMultiClicker,
+        multiPerClick, setMultiPerClick,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);

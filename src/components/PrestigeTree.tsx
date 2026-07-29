@@ -51,9 +51,10 @@ interface PrestigeTreeProps {
     handlePrestigeRef: RefObject<() => void>
     handleVoidRef: RefObject<() => void>
     voidReset: ReturnType<typeof useVoidReset>
+    onVoid?: () => void
 }
 
-const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, voidReset }: PrestigeTreeProps) => {
+const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, setPresTreePosZoom, presTreePosX, setPresTreePosX, presTreePosY, setPresTreePosY, voidReset, onVoid }: PrestigeTreeProps) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
     const visibleOneTime = oneTimeUpgrades.filter(u => u.whenCanShow !== "automation")
 
@@ -318,10 +319,12 @@ const PrestigeTree = ({ game, upgrades, pointUpgrades, stats, presTreePosZoom, s
 
     function buyVoidUnlock() {
         voidReset.buyVoidUnlock(voidPointFormula)
+        onVoid?.()
     }
 
     function handleVoidPoints() {
         voidReset.handleVoidPoints(voidPointFormula)
+        onVoid?.()
     }
 
     const { width, height } = containerSize

@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import type { RefObject } from "react";
 import type {Game} from "../Models/Game.ts";
 
-export function useKeybinds(handlePrestigeRef: RefObject<() => void>, setCurrentTab: React.Dispatch<React.SetStateAction<string>>, game: RefObject<Game>, handleSave: () => void) {
+export function useKeybinds(handlePrestigeRef: RefObject<() => void>, setCurrentTab: React.Dispatch<React.SetStateAction<string>>, game: RefObject<Game>, handleSave: () => void, onPrestige?: () => void) {
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
 
             const gameRef = game.current
 
             switch(e.key) {
-                case "p": if(gameRef.canShowPrestigeTree && gameRef.point.gte(1e15)) handlePrestigeRef.current?.(); break;
+                case "p": if(gameRef.canShowPrestigeTree && gameRef.point.gte(1e15)) { handlePrestigeRef.current?.(); onPrestige?.(); } break;
                 case "s": handleSave(); break;
 
                 case "1": if(!gameRef.isNegated) setCurrentTab("MainTree"); break;

@@ -11,8 +11,8 @@ const deg1: IDegenerator = {
     amountUpgrade: {
         id: 1,
         description: "Add 1 degenerator",
-        price: new Decimal(2),
-        priceMultiplier: new Decimal(12),
+        price: new Decimal(20),
+        priceMultiplier: new Decimal(1.8),
         currentAmount: new Decimal(0),
         effect: (deg) => {
             const boughtAmount = deg.boughtAmount.plus(1);
@@ -27,8 +27,8 @@ const deg1: IDegenerator = {
     intervalUpgrade: {
         id: 2,
         description: "Make the interval faster",
-        price: new Decimal(2),
-        priceMultiplier: new Decimal(12),
+        price: new Decimal(1000),
+        priceMultiplier: new Decimal(10),
         currentAmount: new Decimal(0),
         effect: (deg) => ({
            interval: deg.interval / 1.4
@@ -38,8 +38,8 @@ const deg1: IDegenerator = {
     multiplierUpgrade: {
         id: 3,
         description: "multiplier * 1.2",
-        price: new Decimal(20),
-        priceMultiplier: new Decimal(2),
+        price: new Decimal(200),
+        priceMultiplier: new Decimal(5),
         currentAmount: new Decimal(0),
         effect: (deg) => ({
             multiplier: deg.multiplier.times(1.2)
@@ -57,8 +57,8 @@ const deg2: IDegenerator = {
     amountUpgrade: {
         id: 1,
         description: "Add 1 degenerator",
-        price: new Decimal(2),
-        priceMultiplier: new Decimal(12),
+        price: new Decimal(1000),
+        priceMultiplier: new Decimal(1.8),
         currentAmount: new Decimal(0),
         effect: (deg) => {
             const boughtAmount = deg.boughtAmount.plus(1);
@@ -73,8 +73,8 @@ const deg2: IDegenerator = {
     intervalUpgrade: {
         id: 2,
         description: "Make the interval faster",
-        price: new Decimal(2),
-        priceMultiplier: new Decimal(12),
+        price: new Decimal(10000),
+        priceMultiplier: new Decimal(5),
         currentAmount: new Decimal(0),
         effect: (deg) => ({
             interval: deg.interval / 1.4
@@ -84,7 +84,7 @@ const deg2: IDegenerator = {
     multiplierUpgrade: {
         id: 3,
         description: "multiplier * 1.2",
-        price: new Decimal(20),
+        price: new Decimal(2000),
         priceMultiplier: new Decimal(2),
         currentAmount: new Decimal(0),
         effect: (deg) => ({

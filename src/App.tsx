@@ -33,6 +33,9 @@ import {apUp1} from "./data/negationUpgrades.ts";
 import VoidMilestones from "./components/VoidMilestones.tsx";
 import Degenerator from "./components/Degenerator.tsx";
 import {useDegenerators} from "./Hooks/useDegenerators.ts";
+import MultiClicker from "./components/MultiClicker.tsx";
+import ResetAnimation from "./components/ResetAnimation.tsx";
+import type {ResetAnimState} from "./components/ResetAnimation.tsx";
 //import negationTree from "./components/NegationTree.tsx";
 
 
@@ -255,6 +258,39 @@ function App() {
     }, [automationInterval]);
 
     const [isBuyMaxMode, setIsBuyMaxMode] = useState(false)
+
+    const [prestigeAnimEnabled, setPrestigeAnimEnabled] = useState<boolean>(() => {
+        const saved = localStorage.getItem("prestigeAnimEnabled");
+        return saved === null ? true : saved === "true";
+    });
+    const [voidAnimEnabled, setVoidAnimEnabled] = useState<boolean>(() => {
+        const saved = localStorage.getItem("voidAnimEnabled");
+        return saved === null ? true : saved === "true";
+    });
+    const prestigeAnimEnabledRef = useRef(prestigeAnimEnabled);
+    const voidAnimEnabledRef = useRef(voidAnimEnabled);
+    // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
+    prestigeAnimEnabledRef.current = prestigeAnimEnabled;
+    // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
+    voidAnimEnabledRef.current = voidAnimEnabled;
+
+    useEffect(() => { localStorage.setItem("prestigeAnimEnabled", String(prestigeAnimEnabled)); }, [prestigeAnimEnabled]);
+    useEffect(() => { localStorage.setItem("voidAnimEnabled", String(voidAnimEnabled)); }, [voidAnimEnabled]);
+
+    const [resetAnim, setResetAnim] = useState<ResetAnimState | null>(null);
+    const resetAnimIdRef = useRef(0);
+
+    function triggerPrestigeAnim() {
+        if (!prestigeAnimEnabledRef.current) return;
+        resetAnimIdRef.current += 1;
+        setResetAnim({ type: "prestige", key: resetAnimIdRef.current });
+    }
+
+    function triggerVoidAnim() {
+        if (!voidAnimEnabledRef.current) return;
+        resetAnimIdRef.current += 1;
+        setResetAnim({ type: "void", key: resetAnimIdRef.current });
+    }
     const [autoEnabled, setAutoEnabled] = useState<Record<number, boolean>>({ 3001: true, 3002: true, 3003: true, 3004: true, 3005: true })
     const autoEnabledRef = useRef(autoEnabled)
     // eslint-disable-next-line react-hooks/refs,react-hooks/immutability
@@ -326,7 +362,7 @@ function App() {
     const [toastKey, setToastKey] = useState<number | null>(null);
 
 
-    useKeybinds(handlePrestigeRef, setCurrentTab, gameRef, handleSave);
+    useKeybinds(handlePrestigeRef, setCurrentTab, gameRef, handleSave, triggerPrestigeAnim);
 
      function handleNegation() {
         if(game.isNegated) {
@@ -346,12 +382,14 @@ function App() {
             game.setCanShowDegenerators(prev => prev.map((v, i) => i  ? false : v))
             game.setCanShowDegenerators(prev => prev.map((v, i) => i === 0 ? false : v))
             game.setIsNegated(true);
+            game.setMultiPerClick(new Decimal(0.01))
             setCurrentTab("NegationTree");
         }
     }
 
     return (
         <>
+            <ResetAnimation anim={resetAnim} onDone={() => setResetAnim(null)} />
             <CurrencyBar game={game} generatorUpgrades={generatorUpgrades}/>
             <NavBar currentTab={currentTab} setCurrentTab={setCurrentTab} game={game} />
 
@@ -363,7 +401,8 @@ function App() {
                     pointTreePosZoom={pointTreePosZoom} setPointTreePosZoom={setPointTreePosZoom}
                     pointTreePosX={pointTreePosX} setPointTreePosX={setPointTreePosX}
                     pointTreePosY={pointTreePosY} setPointTreePosY={setPointTreePosY}
-                    handlePrestigeCalcRef={handlePrestigeCalcRef}/> }
+                    handlePrestigeCalcRef={handlePrestigeCalcRef}
+                    onPrestige={triggerPrestigeAnim}/> }
 
                 {currentTab === "PrestigeTree" && <PrestigeTree
                     game={game} upgrades={prestigeUpgrades} pointUpgrades={pointUpgrades} stats={stats}
@@ -373,7 +412,8 @@ function App() {
                     handlePrestigeRef={handlePrestigeRef}
                     generatorUpgrades={generatorUpgrades}
                     handleVoidRef={handleVoidRef}
-                    voidReset={voidReset}/>  }
+                    voidReset={voidReset}
+                    onVoid={triggerVoidAnim}/>  }
 
                 {currentTab === "Achievements" && <AchievementsTab
                     achievements={achievementsHook.achievements} />}
@@ -382,7 +422,9 @@ function App() {
                     stats={stats} />}
 
                 {currentTab === "Settings" && <SettingsTab
-                    onSave={handleSave} game={game} />}
+                    onSave={handleSave} game={game}
+                    prestigeAnimEnabled={prestigeAnimEnabled} setPrestigeAnimEnabled={setPrestigeAnimEnabled}
+                    voidAnimEnabled={voidAnimEnabled} setVoidAnimEnabled={setVoidAnimEnabled} />}
 
                 {currentTab === "Automation" && <AutomationTab
                     game={game} stats={stats}
@@ -410,6 +452,10 @@ function App() {
                     game={game} degenerator={degenerators}/>}
 
                 {currentTab === "VoidMilestones" && <VoidMilestones
+                    game={game}
+                />}
+
+                {currentTab === "MultiClicker" && <MultiClicker
                     game={game}
                 />}
             </section>

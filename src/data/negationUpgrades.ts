@@ -24,10 +24,22 @@ export const firstDegeneratorUnlock: IOneTimeUpgrade = {
     }
 }
 
-export const secondDegeneratorUnlock: IOneTimeUpgrade = {
+export const multiClickerUnlock: IOneTimeUpgrade = {
     id: 302,
     parentId: 301,
     position: { x: -0, y: 2 },
+    description: "Unlock multi clicker",
+    price: new Decimal(1e6),
+    isBought: false,
+    effect: (game) => {
+        game.setCanShowMultiClicker(true)
+    }
+}
+
+export const secondDegeneratorUnlock: IOneTimeUpgrade = {
+    id: 303,
+    parentId: 302,
+    position: { x: -0, y: 3 },
     description: "Unlock degenerator 2",
     price: new Decimal(15),
     isBought: false,
@@ -37,9 +49,9 @@ export const secondDegeneratorUnlock: IOneTimeUpgrade = {
 }
 
 export const thirdDegeneratorUnlock: IOneTimeUpgrade = {
-    id: 303,
-    parentId: 302,
-    position: { x: -0, y: 3 },
+    id: 304,
+    parentId: 303,
+    position: { x: -0, y: 4 },
     description: "Unlock degenerator 3",
     price: new Decimal(15),
     isBought: false,
@@ -49,9 +61,9 @@ export const thirdDegeneratorUnlock: IOneTimeUpgrade = {
 }
 
 export const fourthDegeneratorUnlock: IOneTimeUpgrade = {
-    id: 304,
-    parentId: 303,
-    position: { x: -0, y: 4 },
+    id: 305,
+    parentId: 304,
+    position: { x: -0, y: 5 },
     description: "Unlock degenerator 4",
     price: new Decimal(15),
     isBought: false,

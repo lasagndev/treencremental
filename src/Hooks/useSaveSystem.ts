@@ -89,6 +89,8 @@ export function useSaveSystem(
         purePoint: game.purePoint.toString(),
         voidPointMulti: game.voidPointMulti.toString(),
         globalPointLossMultiplier: game.globalPointLossMultiplier.toString(),
+        canShowMultiClicker: game.canShowMultiClicker,
+        multiPerClick: game.multiPerClick.toString(),
         //pointUpgradesBonusMaxAmount: game.pointUpgradesBonusMaxAmount.toString(),
     }));
 

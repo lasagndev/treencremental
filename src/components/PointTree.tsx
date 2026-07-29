@@ -44,9 +44,10 @@ interface PointTreeProps {
     pointTreePosY: number
     setPointTreePosY: React.Dispatch<React.SetStateAction<number>>
     handlePrestigeCalcRef: RefObject<() => Decimal>
+    onPrestige?: () => void
 }
 
-const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY, handlePrestigeCalcRef} : PointTreeProps ) => {
+const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, setIsBuyMaxMode, pointTreePosZoom, setPointTreePosZoom, pointTreePosX, setPointTreePosX, pointTreePosY, setPointTreePosY, handlePrestigeCalcRef, onPrestige} : PointTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
 
     const containerRef = useRef<HTMLElement>(null)
@@ -277,6 +278,7 @@ const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, set
         // eslint-disable-next-line react-hooks/immutability
         prestigeUnlock.isBought = true
         handlePrestigeRef.current()
+        onPrestige?.()
     }
 
 
@@ -421,9 +423,10 @@ const PointTree = ( {game, upgrades, stats, handlePrestigeRef, isBuyMaxMode, set
             {prestigeUnlock.isBought && (
                 <button
                     className="prestigeButton"
-                    onClick={ // eslint-disable-next-line react-hooks/refs
-                        handlePrestigeRef.current
-                    }
+                    onClick={() => { // eslint-disable-next-line react-hooks/refs
+                        handlePrestigeRef.current()
+                        onPrestige?.()
+                    }}
                     disabled={game.point.lt(1e15)}>
                     PRESTIGE<br/>
                     for { // eslint-disable-next-line react-hooks/refs

@@ -75,6 +75,13 @@ function NavBar( { currentTab, setCurrentTab, game } : Props ) {
                     Degenerator
                  </button>
                     }
+
+                    {game.canShowMultiClicker &&
+                    <button
+                        className={currentTab === "MultiClicker" ? "navTab--active" : ""}
+                        onClick={() => setCurrentTab("MultiClicker")}>
+                        Multi Clicker
+                    </button>}
                 </>
             }
 

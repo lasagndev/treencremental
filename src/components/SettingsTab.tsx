@@ -6,9 +6,13 @@ import type {Game} from "../Models/Game.ts";
 interface Props {
     onSave: () => void
     game: Game
+    prestigeAnimEnabled: boolean
+    setPrestigeAnimEnabled: React.Dispatch<React.SetStateAction<boolean>>
+    voidAnimEnabled: boolean
+    setVoidAnimEnabled: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function SettingsTab({ onSave, game }: Props) {
+function SettingsTab({ onSave, game, prestigeAnimEnabled, setPrestigeAnimEnabled, voidAnimEnabled, setVoidAnimEnabled }: Props) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     return (
@@ -40,6 +44,44 @@ function SettingsTab({ onSave, game }: Props) {
                     Reset Save
                 </button>
             </div>
+
+            {(game.canShowPrestigeTree || game.canShowVoidTree) && <>
+                <br/>
+
+                <h2 className="settingsTab__title">Reset Animations</h2>
+                <div className="settingsTab__toggles">
+                    {game.canShowPrestigeTree &&
+                        <label className="settingsTab__toggleRow">
+                            <span>Prestige reset animation</span>
+                            <span className="toggle">
+                                <input
+                                    type="checkbox"
+                                    checked={prestigeAnimEnabled}
+                                    onChange={e => setPrestigeAnimEnabled(e.target.checked)}
+                                />
+                                <span className="toggle__track">
+                                    <span className="toggle__thumb" />
+                                </span>
+                            </span>
+                        </label>
+                    }
+                    {game.canShowVoidTree &&
+                        <label className="settingsTab__toggleRow">
+                            <span>Void reset animation</span>
+                            <span className="toggle">
+                                <input
+                                    type="checkbox"
+                                    checked={voidAnimEnabled}
+                                    onChange={e => setVoidAnimEnabled(e.target.checked)}
+                                />
+                                <span className="toggle__track">
+                                    <span className="toggle__thumb" />
+                                </span>
+                            </span>
+                        </label>
+                    }
+                </div>
+            </>}
 
             <br/>
 
