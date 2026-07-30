@@ -13,6 +13,7 @@ import {fmt} from "./CurrencyBar.tsx";
 import type {Statistics} from "../Models/Statistics.ts";
 import * as React from "react";
 import type {useNegationUpgrades} from "../Hooks/useNegationUpgrades.ts";
+import type {useDegenerators} from "../Hooks/useDegenerators.ts";
 
 
 const UPGRADE_GAP = 160 // px between upgrade nodes
@@ -50,9 +51,10 @@ interface NegationTreeProps {
     setNegationTreePosY: React.Dispatch<React.SetStateAction<number>>
     //handlePrestigeCalcRef: RefObject<() => Decimal>
     handleNegation: () => void
+    degenerators: ReturnType<typeof useDegenerators>
 }
 
-const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, negationTreePosZoom, setNegationTreePosZoom, negationTreePosX, setNegationTreePosX, negationTreePosY, setNegationTreePosY, handleNegation} : NegationTreeProps ) => {
+const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, negationTreePosZoom, setNegationTreePosZoom, negationTreePosX, setNegationTreePosX, negationTreePosY, setNegationTreePosY, handleNegation, degenerators} : NegationTreeProps ) => {
     const { oneTimeUpgrades, setOneTimeUpgrades, buyableUpgrades, setBuyableUpgrades } = upgrades
 
     const containerRef = useRef<HTMLElement>(null)
@@ -288,7 +290,7 @@ const NegationTree = ( {game, upgrades, stats, isBuyMaxMode, setIsBuyMaxMode, ne
 
     function buyOneTime(upg: IOneTimeUpgrade) {
         game.setAntyPoint(n => n.minus(upg.price))
-        upg.effect(game)
+        upg.effect(game, undefined, degenerators)
         stats.setTotalUpgradesBought(n => n.plus(1))
         setOneTimeUpgrades(prev => prev.map(u => u.id === upg.id ? { ...u, isBought: true } : u))
     }

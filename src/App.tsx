@@ -446,7 +446,8 @@ function App() {
                     negationTreePosZoom={negTreePosZoom} setNegationTreePosZoom={setNegTreePosZoom}
                     negationTreePosX={negTreePosX} setNegationTreePosX={setNegTreePosX}
                     negationTreePosY={negTreePosY} setNegationTreePosY={setNegTreePosY}
-                    handleNegation={handleNegation}/>}
+                    handleNegation={handleNegation}
+                    degenerators={degenerators}/>}
 
                 {currentTab === "Degenerator" && <Degenerator
                     game={game} degenerator={degenerators}/>}

@@ -10,17 +10,19 @@ import {
     // siury:
     apUp401, apUp402,
     apUp501, apUp502, apUp503, apUp504, apUp505, secondDegeneratorUnlock, thirdDegeneratorUnlock,
-    fourthDegeneratorUnlock, multiClickerUnlock
+    fourthDegeneratorUnlock, multiClickerUnlock, apUp201, apUp101, apUp202, apUp203,
 
 } from "../data/negationUpgrades.ts";
 import Decimal from "break_eternity.js";
 
 const defaultNegationOneTime: IOneTimeUpgrade[] = [
     firstDegeneratorUnlock, multiClickerUnlock, secondDegeneratorUnlock, thirdDegeneratorUnlock, fourthDegeneratorUnlock,
+    apUp201, apUp202, apUp203,
 
 ];
 export const defaultNegationBuyable: IBuyableUpgrade[] = [
-    //apUp101
+    apUp101,
+    //apUp102,
     apUp501, apUp502, apUp503, apUp504, apUp505,  apUp401, apUp402
 ];
 

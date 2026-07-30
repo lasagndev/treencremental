@@ -82,6 +82,8 @@ export class Game {
 
     multiPerClick
     setMultiPerClick
+    globalMultiPerClickMultiplier
+    setGlobalMultiPerClickMultiplier
 
     constructor(point: Decimal,
                 setPoint: React.Dispatch<React.SetStateAction<Decimal>>,
@@ -150,6 +152,8 @@ export class Game {
 
                 multiPerClick: Decimal,
                 setMultiPerClick: React.Dispatch<React.SetStateAction<Decimal>>,
+                globalMultiPerClickMultiplier: Decimal,
+                setGlobalMultiPerClickMultiplier: React.Dispatch<React.SetStateAction<Decimal>>,
         ) {
 
         this.point = point;
@@ -211,6 +215,8 @@ export class Game {
         this.canShowMultiClicker = canShowMultiClicker;
         this.setCanShowMultiClicker = setCanShowMultiClicker;
         this.multiPerClick = multiPerClick;
-        this.setMultiPerClick = setMultiPerClick
+        this.setMultiPerClick = setMultiPerClick;
+        this.globalMultiPerClickMultiplier = globalMultiPerClickMultiplier;
+        this.setGlobalMultiPerClickMultiplier = setGlobalMultiPerClickMultiplier;
     }
 }

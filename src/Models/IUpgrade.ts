@@ -1,6 +1,7 @@
 ﻿import type { Game } from "./Game.ts";
 import type Decimal from "break_eternity.js";
 import type {IDegenerator} from "./IDegenerator.ts";
+import type {useDegenerators} from "../Hooks/useDegenerators.ts";
 
 export interface UpgradePosition {
     x: number;
@@ -17,7 +18,7 @@ export interface IOneTimeUpgrade {
     isBought: boolean ;
     whenCanShow?: string;
     exponentBonus?: number;
-    effect: (game: Game, upgrades?: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[]; setOneTimeUpgrades: React.Dispatch<React.SetStateAction<IOneTimeUpgrade[]>>; setBuyableUpgrades: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>>; setPointBuyableUpgrades?: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>> }) => void;
+    effect: (game: Game, upgrades?: { oneTimeUpgrades: IOneTimeUpgrade[]; buyableUpgrades: IBuyableUpgrade[]; setOneTimeUpgrades: React.Dispatch<React.SetStateAction<IOneTimeUpgrade[]>>; setBuyableUpgrades: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>>; setPointBuyableUpgrades?: React.Dispatch<React.SetStateAction<IBuyableUpgrade[]>> }, degenerators?: ReturnType<typeof useDegenerators>) => void;
 }
 
 export interface IBuyableUpgrade {

@@ -49,7 +49,7 @@ const DegeneratorBar = ({d}: {d: IDegenerator}) => {
                 <div className="degenerator-bar__fill" ref={fillRef} />
                 {!isCurrentMode && <div className="degenerator-bar__shimmer" />}
                 <div className="degenerator-bar__label">
-                    {isCurrentMode ? `Generating ${fmt_upgrade(d.amount.times(d.multiplier).div(d.interval).times(1000))}` : `Generating ${fmt_upgrade(d.amount.times(d.multiplier))}`}
+                    {isCurrentMode ? `Generating ${fmt_upgrade(d.amount.times(d.multiplier).div(d.interval).times(1000))}/s` : `Generating ${fmt_upgrade(d.amount.times(d.multiplier))}`}
                 </div>
             </div>
             {!isCurrentMode && <>

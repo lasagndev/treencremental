@@ -230,6 +230,11 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         return s?.multiPerClick ? new Decimal(s.multiPerClick as string) : new Decimal(0.01);
     });
 
+    const [globalMultiPerClickMultiplier, setGlobalMultiPerClickMultiplier] = useState<Decimal>(() => {
+        const s = loadSaved();
+        return s?.globalMultiPerClickMultiplier ? new Decimal(s.globalMultiPerClickMultiplier as string) : new Decimal(1);
+    });
+
     const game = new Game(
         point, setPoint,
         bonusPoints, setBonusPoints,
@@ -261,6 +266,7 @@ export function useGameLoop(stats: Statistics, prestigeBuyableUpgrades: IBuyable
         globalPointLossMultiplier, setGlobalPointLossMultiplier,
         canShowMultiClicker, setCanShowMultiClicker,
         multiPerClick, setMultiPerClick,
+        globalMultiPerClickMultiplier, setGlobalMultiPerClickMultiplier,
     );
 
     const globalPointAdditionRef = useRef(bonusPoints);

@@ -26,7 +26,7 @@ const deg1: IDegenerator = {
     },
     intervalUpgrade: {
         id: 2,
-        description: "Make the interval faster",
+        description: "interval / 1.4",
         price: new Decimal(1000),
         priceMultiplier: new Decimal(10),
         currentAmount: new Decimal(0),
@@ -57,8 +57,8 @@ const deg2: IDegenerator = {
     amountUpgrade: {
         id: 1,
         description: "Add 1 degenerator",
-        price: new Decimal(1000),
-        priceMultiplier: new Decimal(1.8),
+        price: new Decimal(2e8),
+        priceMultiplier: new Decimal(2.3),
         currentAmount: new Decimal(0),
         effect: (deg) => {
             const boughtAmount = deg.boughtAmount.plus(1);
@@ -72,23 +72,23 @@ const deg2: IDegenerator = {
     },
     intervalUpgrade: {
         id: 2,
-        description: "Make the interval faster",
-        price: new Decimal(10000),
-        priceMultiplier: new Decimal(5),
+        description: "Interval / 1.5",
+        price: new Decimal(1e9),
+        priceMultiplier: new Decimal(12),
         currentAmount: new Decimal(0),
         effect: (deg) => ({
-            interval: deg.interval / 1.4
+            interval: deg.interval / 1.5
         })
     },
 
     multiplierUpgrade: {
         id: 3,
-        description: "multiplier * 1.2",
-        price: new Decimal(2000),
-        priceMultiplier: new Decimal(2),
+        description: "multiplier * 1.4",
+        price: new Decimal(1e8),
+        priceMultiplier: new Decimal(7),
         currentAmount: new Decimal(0),
         effect: (deg) => ({
-            multiplier: deg.multiplier.times(1.2)
+            multiplier: deg.multiplier.times(1.4)
         })
     }
 }

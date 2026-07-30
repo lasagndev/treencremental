@@ -1,5 +1,6 @@
 import type {IBuyableUpgrade, IOneTimeUpgrade} from "../Models/IUpgrade.ts";
 import Decimal from "break_eternity.js";
+//import {fmt} from "../components/CurrencyBar.tsx";
 
 export const apUp1: IOneTimeUpgrade = {
     id: 1,
@@ -41,7 +42,7 @@ export const secondDegeneratorUnlock: IOneTimeUpgrade = {
     parentId: 302,
     position: { x: -0, y: 3 },
     description: "Unlock degenerator 2",
-    price: new Decimal(15),
+    price: new Decimal(1e8),
     isBought: false,
     effect: (game) => {
         game.setCanShowDegenerators(prev => prev.map((v, i) => i === 1 ? true : v))
@@ -91,9 +92,88 @@ export function fmt_upgrade(n: Decimal): string {
 
 
 // -------------------------------------
+// ---------- one time upgrady ----------
+// ---------------- vvv ----------------
+
+
+const apUp201: IOneTimeUpgrade = {
+    id: 201,
+    parentId: 1,
+    position: { x: 1, y: 0 },
+    description: "First degenerator multi *2",
+    price: new Decimal(100000),
+    isBought: false,
+    effect: (__, _, degenerators) => {
+        degenerators?.setDegenerators(prev => prev.map((d, i) => i === 0 ? { ...d, multiplier: d.multiplier.times(2) } : d))
+    }
+}
+
+const apUp202: IOneTimeUpgrade = {
+    id: 202,
+    parentId: 201,
+    position: { x: 2, y: -0.5 },
+    description: "*2 MPC",
+    price: new Decimal(1e9),
+    isBought: false,
+    effect: (game) => {
+        game.setMultiPerClick(prev => prev.times(2))
+        game.setGlobalMultiPerClickMultiplier(prev => prev.times(2))
+    }
+}
+
+const apUp203: IOneTimeUpgrade = {
+    id: 203,
+    parentId: 201,
+    position: { x: 2, y: 0.5 },
+    description: "Second degenerator multi *2",
+    price: new Decimal(5e9),
+    isBought: false,
+    effect: (__, _, degenerators) => {
+        degenerators?.setDegenerators(prev => prev.map((d, i) => i === 1 ? { ...d, multiplier: d.multiplier.times(2) } : d))
+    }
+}
+
+
+// -------------------------------------
 // ---------- buyable upgrady ----------
 // ---------------- vvv ----------------
 
+
+const apUp101: IBuyableUpgrade = {
+    id: 101,
+    parentId: 1,
+    position: { x: -1, y: 0 },
+    description: "",
+    dynamicDescription: (game) => `+${new Decimal(0.01).times(game.globalMultiPerClickMultiplier)} MPC`,
+    price: new Decimal(1e6),
+    priceMultiplier: new Decimal(2),
+    currentAmount: new Decimal(0),
+    maxAmount: 9,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setMultiPerClick(prev => prev.plus(new Decimal(0.01).times(game.globalMultiPerClickMultiplier)))
+    }
+}
+
+const apUp102: IBuyableUpgrade = {
+    id: 102,
+    parentId: 101,
+    position: { x: -2, y: 0 },
+    description: "*2 MPC",
+    price: new Decimal(1e6),
+    priceMultiplier: new Decimal(5),
+    currentAmount: new Decimal(0),
+    maxAmount: 9,
+    isBought: false,
+    isMaxed: false,
+    whenCanShow: "prestige",
+    effect: (game) =>{
+        game.setMultiPerClick(prev => prev.times(2))
+        game.setGlobalMultiPerClickMultiplier(prev => prev.times(2))
+    }
+}
 
 
 // suiry
@@ -198,9 +278,9 @@ const apUp505: IBuyableUpgrade = {
 
 export {
     // buyable:
-
+    apUp101, apUp102,
     // one-time:
-
+    apUp201, apUp202, apUp203,
     // siury:
     apUp401, apUp402,
     apUp501, apUp502, apUp503, apUp504, apUp505
